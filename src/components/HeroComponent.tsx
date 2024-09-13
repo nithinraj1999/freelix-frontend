@@ -1,13 +1,23 @@
-import React from 'react'
 
-function HeroComponent() {
+
+//  interface for the props
+interface HeroComponentProps {
+  radius?: string; // Optional string prop for border radius
+  width?:string;
+  height?:string;
+  color?:string;
+  children?: React.ReactNode; // Accepting children prop for nested components
+
+}
+
+function HeroComponent({ radius,width,height,color,children }: HeroComponentProps) {
   return (
     <div className='flex justify-center'>
-      <div className='h-[400px] bg-brand-color w-11/12  justify-center mt-10 rounded-3xl'>
-
+      <div className={`${height} ${color} ${width} justify-center mt-10 ${radius}`}>
+       {children}
       </div>
     </div>
   )
 }
 
-export default HeroComponent
+export default HeroComponent;

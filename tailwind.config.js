@@ -10,6 +10,10 @@ export default {
         // Add your custom colors here
         'brand-color': '#1D6363', // Example of a custom orange color
       },
+      zIndex: {
+        '600': '600', // Add custom z-index if needed
+        '1000':'1000'
+      },
     },
     screens: {
       'sm': '640px',
