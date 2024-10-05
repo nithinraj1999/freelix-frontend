@@ -10,6 +10,7 @@ import AdminLandingPage from "./pages/admin/adminLandingPage";
 import ClientManagement from "./pages/admin/ClientManagement";
 import FreelancerLandingPage from "./pages/freelancer/freelancerLandingPage";
 import FreelancerManagement from "./pages/admin/FreelancerManagement";
+import JobPostForm from "./components/client/JobPost/JobPostForm";
 
 import AdminRouteGuard from "./router/AdminRouteGuard";
 import AdminLoginGuard from "./router/AdminLoginGuard";
@@ -23,6 +24,11 @@ function App() {
         <Route path="/verification" element={<VerifyOtp />} />
         <Route path="/home" element={<UserLandingPage />} />
         <Route path="/become-a-freelancer" element={<BecomeFreelancerForm />} />
+
+        {/* ------------------- Client --------------------- */}
+
+
+        <Route path="/post-a-job" element={<JobPostForm />} />
 
         {/* ------------------- freelancer -------------------- */}
 

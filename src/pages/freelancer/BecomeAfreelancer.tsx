@@ -105,7 +105,10 @@ const BecomeFreelancerForm: React.FC = () => {
   };
 
   return (
-    <form className="max-w-3xl mx-auto p-8 bg-white shadow-lg rounded-lg" onSubmit={handleSubmit}>
+    <div className='bg-slate-100 py-1	'>
+
+  
+    <form className="max-w-3xl mx-auto p-8 bg-white  rounded-lg" onSubmit={handleSubmit}>
       <h2 className="text-3xl font-semibold text-gray-700 mb-6">Professional Info</h2>
       <p className="text-sm text-gray-500 mb-8">Tell us a bit about yourself. This information will appear on your public profile.</p>
 
@@ -155,7 +158,7 @@ const BecomeFreelancerForm: React.FC = () => {
           value={description}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2"
-          rows={3}
+          rows={6}
           placeholder="Share a bit about your work experience..."
         />
       </div>
@@ -239,6 +242,7 @@ const BecomeFreelancerForm: React.FC = () => {
         Submit
       </button>
     </form>
+    </div>
   );
 };
 

@@ -41,6 +41,10 @@ const Navbar: React.FC = () => {
     setDropdownVisible((prev) => !prev);
   };
 
+  const postAJob = ()=>{
+    navigate('/post-a-job')
+  }
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -145,12 +149,17 @@ const Navbar: React.FC = () => {
                           Seller account blocked
                         </span>
                       ) : (
-                        <button
-                          className="text-neutral-50"
-                          onClick={() => switchToSellingMode(user._id)}
-                        >
-                          Switch to Selling Mode
-                        </button>
+                        <>
+                          <button
+                            className="text-neutral-50"
+                            onClick={() => switchToSellingMode(user._id)}
+                          >
+                            Switch to Selling Mode
+                          </button>
+                          <button className="text-neutral-50">
+                            POST A JOB
+                          </button>
+                        </>
                       )
                     ) : (
                       <button
@@ -162,12 +171,17 @@ const Navbar: React.FC = () => {
                     )}
                   </>
                 ) : (
+                  <>
                   <button
                     className="text-neutral-50"
                     onClick={becomeFreelancer}
                   >
                     Become a Freelancer
                   </button>
+                  <button className="text-neutral-50 bg-green-400 font-bold w-24 h-8 rounded" onClick={postAJob}>
+                  Post a Job
+                </button>
+                </>
                 )}
                 <IoIosNotificationsOutline color="white" size={24} />
                 <RxEnvelopeClosed color="white" size={24} />
