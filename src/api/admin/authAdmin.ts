@@ -27,14 +27,10 @@ interface Admin {
   }
 
 
-
-  
 export const loginAdmin= async (data: LoginData): Promise<LoginResponse> => {
     try {
       const response = await adminInstance.post("/login", data);
       const { accessToken } = response.data;
-      console.log("access...",accessToken);
-      
       setAccessToken(accessToken);
       return response.data;
     } catch (error) {

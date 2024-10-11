@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../state/store';
 import { useEffect } from 'react';
 import Sidebar from '../../components/freelancer/SideBar';
+import FreelancerNavbar from '../../components/freelancer/FreelancerNavbar';
 function FreelancerLandingPage() {
 
 
@@ -20,7 +21,7 @@ function FreelancerLandingPage() {
 
   return (
     <>
-    <Navbar/>
+    <FreelancerNavbar/>
     <Sidebar/>
     </>
   )

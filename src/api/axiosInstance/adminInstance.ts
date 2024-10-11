@@ -2,9 +2,9 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { refreshAccessToken } from '../admin/adminServices';
 import { useDispatch } from 'react-redux';
-
 import { adminLogout } from '../../state/slices/adminSlice';
 import store from '../../state/store';
+
 const adminInstance = axios.create({
   baseURL: 'http://localhost:5000/api/admin',
   withCredentials: true, 
@@ -53,19 +53,17 @@ adminInstance.interceptors.response.use(
       if (originalRequest.url.includes('/refresh-token')) {
         return Promise.reject(error);
       }
-
       originalRequest._retry = true; // Mark the request as retried
-
       try {
         const newToken = await refreshAccessToken(); // Try refreshing the token
 
         if (!newToken) {
           store.dispatch(adminLogout())
           console.error('Refresh token expired, logging out...');
-          localStorage.removeItem('accessToken'); // Adjust for your use case
+          localStorage.removeItem('accessToken');
           Cookies.remove('adminRefreshJWT');
           
-          window.location.href = '/admin/login'; // Adjust this according to your routing setup
+          window.location.href = '/admin/login';
           return Promise.reject('Refresh token expired');
         }
 
@@ -89,9 +87,6 @@ adminInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-
-
 
 
 export default adminInstance

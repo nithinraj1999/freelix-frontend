@@ -4,46 +4,32 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../state/store";
 import { userLogout } from "../state/slices/userSlice";
-import { switchToBuying } from "../api/admin/freelancerServices";
-import { switchToSelling } from "../api/admin/freelancerServices";
-import { userLogin } from "../state/slices/userSlice";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { RxEnvelopeClosed } from "react-icons/rx";
-
+import { switchToSelling } from "../api/freelancer/freelancerServices";
+import { userLogin } from "../state/slices/userSlice";
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
 
   const [sidebarVisible, setSidebarVisible] = useState(false);
-
-  const toggleSidebar = () => {
-    setSidebarVisible((prev) => !prev);
-  };
+  const toggleSidebar = () => setSidebarVisible((prev) => !prev);
 
   const [dropdownVisible, setDropdownVisible] = useState(false); // State for dropdown visibility
   const dropdownRef = useRef<HTMLDivElement>(null); // Ref for dropdown
 
-  const handleSigninClick = () => {
-    navigate("login");
-  };
-
-  const handleJoin = () => {
-    navigate("signup");
-  };
+  const handleSigninClick = () => navigate("login");
+  const handleJoin = () => navigate("signup");
 
   const handleLogout = () => {
     dispatch(userLogout()); // Dispatch logout action
     navigate("/"); // Navigate to home or login page
   };
 
-  const handleDropdownToggle = () => {
-    setDropdownVisible((prev) => !prev);
-  };
+  const handleDropdownToggle = () => setDropdownVisible((prev) => !prev);
 
-  const postAJob = ()=>{
-    navigate('/post-a-job')
-  }
+  const postAJob = () => navigate("/post-a-job");
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -54,46 +40,18 @@ const Navbar: React.FC = () => {
         setDropdownVisible(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const becomeFreelancer = () => {
-    navigate("/become-a-freelancer");
-  };
-
-  useEffect(() => {
-    if (user?.role == "freelancer") {
-      navigate("/freelancer");
-    } else if (user?.role == "client") {
-      navigate("/home");
-    } else if (user?.role == "admin") {
-      navigate("/admin");
-    }
-  }, [user]);
 
   const switchToSellingMode = async (userID: string) => {
     const response = await switchToSelling(userID);
     if (response) {
       dispatch(userLogin(response.freelancerData));
-      console.log(response.freelancerData);
+      navigate('/freelancer')
     }
   };
-
-  const switchToBuyingMode = async (userID: string) => {
-    console.log("bffbh");
-
-    const response = await switchToBuying(userID);
-    if (response) {
-      dispatch(userLogin(response.freelancerData));
-      console.log(response.freelancerData);
-
-      // console.log(response);
-    }
-  };
+  
   return (
     <>
       {/* Navbar */}
@@ -122,67 +80,27 @@ const Navbar: React.FC = () => {
                 <a href="#" className="text-neutral-50 ml-8 mr-4">
                   Hire Freelancer
                 </a>
-                <a href="#" className="text-neutral-50">
-                  Find Work
+                <a href="#" className="text-neutral-50  mr-4">
+                  Find job
                 </a>
               </>
-            ) : user.role === "client" ? (
+            ) : (
               <a href="#" className="text-neutral-50 ml-8 mr-4">
                 Hire Freelancer
               </a>
-            ) : user.role === "freelancer" ? (
-              <a href="#" className="text-neutral-50 ml-8 mr-4">
-                Find Work
-              </a>
-            ) : null}
+            )}
           </div>
 
           {/* Right-aligned content for screens larger than `md` */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
-                {user.hasFreelancerAccount ? (
-                  <>
-                    {user.role === "client" ? (
-                      user.isFreelancerBlock ? (
-                        <span className="text-red-500">
-                          Seller account blocked
-                        </span>
-                      ) : (
-                        <>
-                          <button
-                            className="text-neutral-50"
-                            onClick={() => switchToSellingMode(user._id)}
-                          >
-                            Switch to Selling Mode
-                          </button>
-                          <button className="text-neutral-50">
-                            POST A JOB
-                          </button>
-                        </>
-                      )
-                    ) : (
-                      <button
-                        className="text-neutral-50"
-                        onClick={() => switchToBuyingMode(user._id)}
-                      >
-                        Switch to Buying Mode
-                      </button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                  <button
-                    className="text-neutral-50"
-                    onClick={becomeFreelancer}
-                  >
-                    Become a Freelancer
-                  </button>
-                  <button className="text-neutral-50 bg-green-400 font-bold w-24 h-8 rounded" onClick={postAJob}>
+                <button
+                  className="text-neutral-50 bg-green-400 font-bold w-24 h-8 rounded"
+                  onClick={postAJob}
+                >
                   Post a Job
                 </button>
-                </>
-                )}
                 <IoIosNotificationsOutline color="white" size={24} />
                 <RxEnvelopeClosed color="white" size={24} />
                 <p className="text-white">{user.name}</p>
@@ -207,6 +125,15 @@ const Navbar: React.FC = () => {
                       >
                         Profile
                       </a>
+
+                      {user.hasFreelancerAccount && (
+                        <button
+                          className="block w-full text-left px-4 py-2 text-neutral-50 hover:bg-neutral-700"
+                          onClick={()=>switchToSellingMode(user._id)}
+                        >
+                          Switch To Selling
+                        </button>
+                      )}
                       <button
                         className="block w-full text-left px-4 py-2 text-neutral-50 hover:bg-neutral-700"
                         onClick={handleLogout}
@@ -219,9 +146,6 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                {/* <button className="text-neutral-50" onClick={becomeFreelancer}>
-              Become a Freelancer
-            </button> */}
                 <button className="text-neutral-50" onClick={handleSigninClick}>
                   Sign in
                 </button>
@@ -269,12 +193,6 @@ const Navbar: React.FC = () => {
           </a>
           <a href="#" className="text-neutral-50">
             Hire Freelancer
-          </a>
-          <a href="#" className="text-neutral-50">
-            Find Work
-          </a>
-          <a href="#" className="text-neutral-50">
-            Become a Freelancer
           </a>
         </nav>
       </div>

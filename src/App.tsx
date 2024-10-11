@@ -12,8 +12,12 @@ import FreelancerLandingPage from "./pages/freelancer/freelancerLandingPage";
 import FreelancerManagement from "./pages/admin/FreelancerManagement";
 import JobPostForm from "./components/client/JobPost/JobPostForm";
 
+import FreelancerProfile from "./pages/freelancer/ProfileOverview";
+
 import AdminRouteGuard from "./router/AdminRouteGuard";
 import AdminLoginGuard from "./router/AdminLoginGuard";
+
+import JobListPage from "./pages/freelancer/JobListPage";
 function App() {
   return (
     <Router>
@@ -33,12 +37,13 @@ function App() {
         {/* ------------------- freelancer -------------------- */}
 
         <Route path="/freelancer" element={<FreelancerLandingPage />} />
+        <Route path="/freelancer/profile" element={<FreelancerProfile />} />
+        <Route path="/freelancer/job-list" element={<JobListPage />} />
 
-        <Route
-          path="/admin/login"
-          element={<AdminLoginGuard element={<AdminLogin />} />}
-        />
 
+        {/* admin */}
+
+        <Route path="/admin/login" element={<AdminLoginGuard element={<AdminLogin />} />}/>
         <Route element={<AdminRouteGuard />}>
           <Route path="/admin/" element={<AdminLandingPage />} />
           <Route path="/admin/clients" element={<ClientManagement />} />

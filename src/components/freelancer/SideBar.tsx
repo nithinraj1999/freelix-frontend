@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Sidebar: React.FC = () => {
   return (
-    <div className="w-64 h-screen bg-gray-800 text-white">
+    <div className="w-64 h-screen bg-gray-800 text-white md:pl-16">
       <div className="p-4 text-xl font-bold border-b border-gray-700">
         Menu
       </div>

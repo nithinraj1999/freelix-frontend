@@ -110,18 +110,21 @@ const Client: React.FC = () => {
     }));
   };
 
+
+
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = new FormData();
-
     try {
       payload.append("_id",editFormData._id)
       payload.append("name",editFormData.name)
       payload.append("email",editFormData.email)
       payload.append("phone", editFormData.phone);
+
       if (editFormData.profilePicture) {
         payload.append("profilePicture", editFormData.profilePicture);
       }
+
       const response = await editUser(payload);
       console.log(response);
       setIsEditModalOpen(false);
@@ -143,6 +146,8 @@ const Client: React.FC = () => {
     }
 
     try {
+      console.log(payload);
+      
       const response = await createUser(payload);
       console.log(response);
       setIsModalOpen(false);

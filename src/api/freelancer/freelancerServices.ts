@@ -37,3 +37,10 @@ export const createFreelancerAccount = async (data: FormData) => {
     const response =  await freelancerInstance.post("/switch-to-selling",data)
     return response.data
   }
+
+
+    
+  export const getJobList = async()=>{
+    const response =  await freelancerInstance.get("/job-list")
+    return response.data
+  }

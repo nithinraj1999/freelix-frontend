@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createFreelancerAccount } from '../../api/admin/freelancerServices';
+import { createFreelancerAccount } from '../../api/freelancer/freelancerServices';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from '../../state/store';
 import { useNavigate } from 'react-router-dom';
