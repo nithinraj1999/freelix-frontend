@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+:root {
+    --bg-color: #f0f0f0; /* Change this to your desired color */
+  }
+  
+  body {
+    background-color: var(--bg-color);
+  }

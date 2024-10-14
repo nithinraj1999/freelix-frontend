@@ -10,6 +10,8 @@ export interface Freelancer{
 }
 
 export const createFreelancerAccount = async (data: FormData) => {
+  console.log("freelancer service");
+  
     const response = await freelancerInstance.post("/create-freelancer-account", data, {
       headers: {
         'Content-Type': 'multipart/form-data', // header for file uploads

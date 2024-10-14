@@ -44,14 +44,18 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
+  const becomeSeller = ()=>{
+    navigate("/become-a-freelancer")
+  }
   const switchToSellingMode = async (userID: string) => {
     const response = await switchToSelling(userID);
     if (response) {
       dispatch(userLogin(response.freelancerData));
-      navigate('/freelancer')
+      navigate("/freelancer");
     }
   };
-  
+
   return (
     <>
       {/* Navbar */}
@@ -95,6 +99,15 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
+                {!user.hasFreelancerAccount && (
+                  <button
+                    className="text-neutral-50   w-30 h-8 rounded"
+                    onClick={becomeSeller}
+                  >
+                    Become A Freelancer
+                  </button>
+                )}
+
                 <button
                   className="text-neutral-50 bg-green-400 font-bold w-24 h-8 rounded"
                   onClick={postAJob}
@@ -129,7 +142,7 @@ const Navbar: React.FC = () => {
                       {user.hasFreelancerAccount && (
                         <button
                           className="block w-full text-left px-4 py-2 text-neutral-50 hover:bg-neutral-700"
-                          onClick={()=>switchToSellingMode(user._id)}
+                          onClick={() => switchToSellingMode(user._id)}
                         >
                           Switch To Selling
                         </button>

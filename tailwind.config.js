@@ -8,7 +8,8 @@ export default {
     extend: {
       colors: {
         // Add your custom colors here
-        'brand-color': '#1D6363', // Example of a custom orange color
+        'brand-color': '#1D6363', 
+        'customGreen': '#1DBF73',
       },
       zIndex: {
         '600': '600', // Add custom z-index if needed
