@@ -19,7 +19,7 @@ const Modal: React.FC<ContainerProps> = ({ title, children,image }) => {
             <img
               className="object-cover w-full h-full"
               src={image}
-              alt="Fiverr"
+              alt="Freelix"
             />
           </div>
           <div className="w-[50%] h-full overflow-hidden">

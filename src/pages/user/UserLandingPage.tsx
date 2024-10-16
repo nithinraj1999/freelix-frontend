@@ -21,6 +21,10 @@ const UserLandingPage: React.FC = () => {
     }
   }, [user, navigate, dispatch]);
 
+
+  const postJob = ()=>{
+    navigate("/post-a-job")
+  }
   return (
     <>
       <Navbar />
@@ -42,7 +46,7 @@ const UserLandingPage: React.FC = () => {
           <h2 className="text-2xl text-white font-semibold mb-4">
             Find the perfect freelancer for your project
           </h2>
-          <button className="bg-black text-white py-3 px-6 rounded-lg transition duration-300">
+          <button className="bg-black text-white py-3 px-6 rounded-lg transition duration-300" onClick={postJob}>
             Post a Job
           </button>
         </div>

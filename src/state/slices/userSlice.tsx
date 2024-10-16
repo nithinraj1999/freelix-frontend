@@ -5,6 +5,9 @@ interface User {
   name: string;
   email: string;
   phone:number;
+  title:string;
+  description:string;
+  skills:string[];
   hasFreelancerAccount:boolean;
   role:string;
   profilePicture?:string;

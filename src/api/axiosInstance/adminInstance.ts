@@ -76,8 +76,6 @@ adminInstance.interceptors.response.use(
         console.error('Failed to refresh token:', refreshError);
         localStorage.removeItem('accessToken');
         Cookies.remove('adminRefreshJWT');
-        
-
         window.location.href = '/admin/login'; // Redirect to login page
         return Promise.reject(refreshError);
       } 

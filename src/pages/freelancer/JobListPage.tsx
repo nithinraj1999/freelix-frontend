@@ -19,9 +19,9 @@ const JobListPage: React.FC = () => {
           <JobList />
         </div>
         {/* ProfileOverview - Fixed on the right side */}
-        <div className="sticky top-16 h-[600px]  mt-32">
+        {/* <div className="sticky top-16 h-[600px]  mt-32">
           <ProfileOverview />
-        </div>
+        </div> */}
       </div>
     </>
   );

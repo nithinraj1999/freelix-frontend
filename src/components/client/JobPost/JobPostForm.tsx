@@ -439,8 +439,8 @@ const JobPostForm: React.FC = () => {
 
     
     category: z.string().min(1, "Category is required"),
-    subCategory: z.string().min(1, "Subcategory is required"),
-    description: z.string().min(1, "Description is required"),
+    // subCategory: z.string().min(1, "Subcategory is required"),
+    // description: z.string().min(1, "Description is required"),
     skills: z.array(z.string()).min(1, "At least one skill is required"),
     experience: z.string().min(1, "Experience level is required"),
     paymentType: z.enum(["hourly", "fixed"]).optional(),
@@ -617,7 +617,7 @@ const JobPostForm: React.FC = () => {
                 </li>
               </ul>
             </div>
-            <div>
+          <div>
               <h3 className="text-lg font-bold mt-6">
                 Select Category & subcategory
               </h3>
@@ -635,7 +635,7 @@ const JobPostForm: React.FC = () => {
                 onChange={(e) => setSubCategory(e.target.value)}
               ></input>
                {errors.subCategory && <p className="text-red-500">{errors.subCategory}</p>}
-            </div>
+            </div> 
             <div>
               <h3 className="text-lg font-bold mt-6">Description</h3>
               <textarea

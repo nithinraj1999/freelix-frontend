@@ -1,4 +1,5 @@
 import userInstance from "../axiosInstance/userInstance";
+import { setAccessToken } from "../axiosInstance/userInstance";
 
 export const registerUser = async (data: object) => {
   try {
@@ -29,6 +30,9 @@ interface User {
   _id: string;
   name: string;
   email: string;
+  title:string;
+  description:string;
+  skills:string[];
   phone:number;
   role:string;
   profilePicture?:string;
@@ -47,6 +51,8 @@ export interface LoginResponse {
 export const loginUser = async (data: LoginData): Promise<LoginResponse> => {
   try {
     const response = await userInstance.post("/login", data);
+    const { accessToken } = response.data;
+    setAccessToken(accessToken);
     return response.data;
   } catch (error) {
     console.error(error);

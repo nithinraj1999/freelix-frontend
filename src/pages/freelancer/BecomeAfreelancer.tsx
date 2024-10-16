@@ -1,81 +1,172 @@
-
-
-import React, { useState } from 'react';
-import { z } from 'zod';
-import { createFreelancerAccount } from '../../api/freelancer/freelancerServices';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../state/store';
-import { useNavigate } from 'react-router-dom';
-import { userLogin } from '../../state/slices/userSlice';
+import React, { useState } from "react";
+import { z } from "zod";
+import { createFreelancerAccount } from "../../api/freelancer/freelancerServices";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import { useNavigate } from "react-router-dom";
+import { userLogin } from "../../state/slices/userSlice";
 
 // Zod schema for validation
 const freelancerSchema = z.object({
   name: z
     .string()
-    .min(1, 'Name cannot be blank')
-    .refine((value) => !/^ /.test(value), 'Name cannot start with a space'),
+    .min(1, "Name cannot be blank")
+    .refine((value) => !/^ /.test(value), "Name cannot start with a space"),
 
   description: z
     .string()
-    .min(1, 'Description cannot be blank')
-    .refine((value) => !/^ /.test(value), 'Description cannot start with a space'),
+    .min(1, "Description cannot be blank")
+    .refine(
+      (value) => !/^ /.test(value),
+      "Description cannot start with a space"
+    ),
 
   skills: z
-    .array(z.string().min(1, 'Skill cannot be empty'))
-    .min(1, 'At least one skill is required')
-    .refine((value) => !value.some(skill => /^ /.test(skill)), 'Skills cannot start with a space'),
+    .array(z.string().min(1, "Skill cannot be empty"))
+    .min(1, "At least one skill is required")
+    .refine(
+      (value) => !value.some((skill) => /^ /.test(skill)),
+      "Skills cannot start with a space"
+    ),
 
   languages: z
-    .array(z.string().min(1, 'Language cannot be empty'))
-    .min(1, 'At least one language is required')
-    .refine((value) => !value.some(language => /^ /.test(language)), 'Languages cannot start with a space'),
+    .array(z.string().min(1, "Language cannot be empty"))
+    .min(1, "At least one language is required")
+    .refine(
+      (value) => !value.some((language) => /^ /.test(language)),
+      "Languages cannot start with a space"
+    ),
 
   profilePicture: z
     .instanceof(File)
-    .refine((file) => file.size > 0, 'Profile picture is required.'),
+    .refine((file) => file.size > 0, "Profile picture is required."),
 });
 
+const predefinedLanguages = [
+  "Afrikaans",
+  "Albanian",
+  "Amharic",
+  "Arabic",
+  "Armenian",
+  "Bengali",
+  "Bosnian",
+  "Bulgarian",
+  "Catalan",
+  "Chinese (Simplified)",
+  "Chinese (Traditional)",
+  "Croatian",
+  "Czech",
+  "Danish",
+  "Dutch",
+  "English",
+  "Estonian",
+  "Filipino",
+  "Finnish",
+  "French",
+  "Georgian",
+  "German",
+  "Greek",
+  "Gujarati",
+  "Hebrew",
+  "Hindi",
+  "Hungarian",
+  "Icelandic",
+  "Indonesian",
+  "Irish",
+  "Italian",
+  "Japanese",
+  "Javanese",
+  "Kannada",
+  "Kazakh",
+  "Khmer",
+  "Korean",
+  "Latvian",
+  "Lithuanian",
+  "Malay",
+  "Malayalam",
+  "Marathi",
+  "Nepali",
+  "Norwegian",
+  "Persian",
+  "Polish",
+  "Portuguese",
+  "Punjabi",
+  "Romanian",
+  "Russian",
+  "Spanish",
+  "Swedish",
+];
+
 const BecomeFreelancerForm: React.FC = () => {
-  const [name, setName] = useState<string>('');
+  const [name, setName] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [description, setDescription] = useState<string>('');
+  const [description, setDescription] = useState<string>("");
   const [skills, setSkills] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, type } = e.target;
 
-    if (type === 'file') {
+    if (type === "file") {
       const target = e.target as HTMLInputElement;
       setProfilePicture(target.files ? target.files[0] : null);
-    } else if (name === 'name') {
+    } else if (name === "name") {
       setName(value);
-    } else if (name === 'description') {
+    } else if (name === "description") {
       setDescription(value);
     }
   };
 
-  const addSkill = () => setSkills([...skills, '']);
+  const addSkill = () => setSkills([...skills, ""]);
   const handleSkillChange = (index: number, value: string) => {
     const updatedSkills = [...skills];
     updatedSkills[index] = value;
     setSkills(updatedSkills);
   };
-  const removeSkill = (index: number) => setSkills(skills.filter((_, i) => i !== index));
+  const removeSkill = (index: number) =>
+    setSkills(skills.filter((_, i) => i !== index));
 
-  const addLanguage = () => setLanguages([...languages, '']);
+
   const handleLanguageChange = (index: number, value: string) => {
-    const updatedLanguages = [...languages];
-    updatedLanguages[index] = value;
-    setLanguages(updatedLanguages);
-  };
-  const removeLanguage = (index: number) => setLanguages(languages.filter((_, i) => i !== index));
+    const newLanguages = [...languages];
+    newLanguages[index] = value;
+    setLanguages(newLanguages);
 
+    // Filter suggestions based on input
+    if (value) {
+      const filteredSuggestions = predefinedLanguages.filter((lang) =>
+        lang.toLowerCase().startsWith(value.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const selectSuggestion = (index: number, suggestion: string) => {
+    const newLanguages = [...languages];
+    newLanguages[index] = suggestion;
+    setLanguages(newLanguages);
+    setSuggestions([]); // Clear suggestions after selection
+  };
+
+  const addLanguage = () => {
+    setLanguages([...languages, ""]);
+  };
+
+  // const removeLanguage = (index: number) => setLanguages(languages.filter((_, i) => i !== index));
+  const removeLanguage = (index: number) => {
+    setLanguages(languages.filter((_, i) => i !== index));
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -93,30 +184,32 @@ const BecomeFreelancerForm: React.FC = () => {
       });
 
       const data = new FormData();
-      data.append('name', formData.name);
-      data.append('description', formData.description);
-      data.append('skills', JSON.stringify(formData.skills));
-      data.append('languages', JSON.stringify(formData.languages));
+      data.append("name", formData.name);
+      data.append("description", formData.description);
+      data.append("skills", JSON.stringify(formData.skills));
+      data.append("languages", JSON.stringify(formData.languages));
 
       if (profilePicture) {
-        data.append('profilePicture', profilePicture);
+        data.append("profilePicture", profilePicture);
       }
       if (user?._id) {
-        data.append('userID', user._id);
+        data.append("userID", user._id);
       }
 
       const response = await createFreelancerAccount(data);
       if (response.success) {
+        console.log(response);
+        
         dispatch(userLogin(response.freelancerData));
-        navigate('/freelancer');
+        navigate("/freelancer");
       } else {
-        navigate('/home');
+        navigate("/home");
       }
     } catch (error) {
       // Catch validation errors
       if (error instanceof z.ZodError) {
         const validationErrors: Record<string, string> = {};
-        error.errors.forEach(err => {
+        error.errors.forEach((err) => {
           validationErrors[err.path[0]] = err.message;
         });
         setErrors(validationErrors); // Set validation errors in state
@@ -125,30 +218,46 @@ const BecomeFreelancerForm: React.FC = () => {
   };
 
   return (
-    <div className='bg-slate-100 py-1'>
-      <form className="max-w-3xl mx-auto p-8 bg-white rounded-lg" onSubmit={handleSubmit}>
-        <h2 className="text-3xl font-semibold text-gray-700 mb-6">Professional Info</h2>
-        <p className="text-sm text-gray-500 mb-8">Tell us a bit about yourself. This information will appear on your public profile.</p>
+    <div className="bg-slate-100 py-1">
+      <form
+        className="max-w-3xl mx-auto p-8 bg-white rounded-lg"
+        onSubmit={handleSubmit}
+      >
+        <h2 className="text-3xl font-semibold text-gray-700 mb-6">
+          Professional Info
+        </h2>
+        <p className="text-sm text-gray-500 mb-8">
+          Tell us a bit about yourself. This information will appear on your
+          public profile.
+        </p>
 
         {/* Full Name Section */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Title
+            </label>
             <input
               type="text"
               name="name"
               value={name}
               onChange={handleChange}
-              className={`mt-1 block w-full border ${errors.name ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
-              placeholder="Allen"
+              className={`mt-1 block w-full border ${
+                errors.name ? "border-red-500" : "border-gray-300"
+              } rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
+              placeholder="Title"
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name}</p>
+            )}
           </div>
         </div>
 
         {/* Profile Picture Section */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">Profile Picture</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Profile Picture
+          </label>
           <div className="mt-2">
             <div className="flex items-center">
               {profilePicture ? (
@@ -166,27 +275,37 @@ const BecomeFreelancerForm: React.FC = () => {
                 className="ml-4 p-2 border border-gray-300 rounded-md shadow-sm"
               />
             </div>
-            {errors.profilePicture && <p className="text-red-500 text-sm">{errors.profilePicture}</p>}
+            {errors.profilePicture && (
+              <p className="text-red-500 text-sm">{errors.profilePicture}</p>
+            )}
           </div>
         </div>
 
         {/* Description Section */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">Description</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Description
+          </label>
           <textarea
             name="description"
             value={description}
             onChange={handleChange}
-            className={`mt-1 block w-full border ${errors.description ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
+            className={`mt-1 block w-full border ${
+              errors.description ? "border-red-500" : "border-gray-300"
+            } rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
             rows={6}
             placeholder="Share a bit about your work experience..."
           />
-          {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
+          {errors.description && (
+            <p className="text-red-500 text-sm">{errors.description}</p>
+          )}
         </div>
 
         {/* Skills Section */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">Skills</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Skills
+          </label>
           <div className="space-y-2">
             {skills.map((skill, index) => (
               <div key={index} className="flex items-center">
@@ -194,23 +313,35 @@ const BecomeFreelancerForm: React.FC = () => {
                   type="text"
                   value={skill}
                   onChange={(e) => handleSkillChange(index, e.target.value)}
-                  className={`mt-1 block w-full border ${errors.skills ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
+                  className={`mt-1 block w-full border ${
+                    errors.skills ? "border-red-500" : "border-gray-300"
+                  } rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
                   placeholder="Select Skill"
                 />
-                <button type="button" onClick={() => removeSkill(index)} className="ml-2 text-red-600">
+                <button
+                  type="button"
+                  onClick={() => removeSkill(index)}
+                  className="ml-2 text-red-600"
+                >
                   Remove
                 </button>
               </div>
             ))}
-            {errors.skills && <p className="text-red-500 text-sm">{errors.skills}</p>}
+            {errors.skills && (
+              <p className="text-red-500 text-sm">{errors.skills}</p>
+            )}
           </div>
-          <button type="button" onClick={addSkill} className="mt-2 text-green-600">
+          <button
+            type="button"
+            onClick={addSkill}
+            className="mt-2 text-green-600"
+          >
             Add
           </button>
         </div>
 
         {/* Languages Section */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700">Languages</label>
           <div className="space-y-2">
             {languages.map((language, index) => (
@@ -232,10 +363,51 @@ const BecomeFreelancerForm: React.FC = () => {
           <button type="button" onClick={addLanguage} className="mt-2 text-green-600">
             Add
           </button>
-        </div>
+        </div> */}
+       <div className="mb-6">
+      <label className="block text-sm font-medium text-gray-700">Languages</label>
+      <div className="space-y-2">
+        {languages.map((language, index) => (
+          <div key={index} className="flex items-center relative">
+            <input
+              type="text"
+              value={language}
+              onChange={(e) => handleLanguageChange(index, e.target.value)}
+              className={`mt-1 block w-full border ${errors.languages ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
+              placeholder="Language"
+            />
+            <button type="button" onClick={() => removeLanguage(index)} className="ml-2 text-red-600">
+              Remove
+            </button>
+
+            {/* Show suggestions below the input box */}
+            {suggestions.length > 0 && (
+              <ul className="absolute left-0 top-full z-10 bg-white border border-gray-300 rounded-md mt-1 w-full max-h-40 overflow-y-auto">
+                {suggestions.map((suggestion, i) => (
+                  <li
+                    key={i}
+                    className="cursor-pointer p-2 hover:bg-gray-200"
+                    onClick={() => selectSuggestion(index, suggestion)}
+                  >
+                    {suggestion}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+        {errors.languages && <p className="text-red-500 text-sm">{errors.languages}</p>}
+      </div>
+      <button type="button" onClick={addLanguage} className="mt-2 text-green-600">
+        Add
+      </button>
+    </div>
 
         {/* Submit Button */}
-        <button type="submit" className="w-full bg-green-500 text-white p-2 rounded-md">
+        <button
+          type="submit"
+          className="w-full bg-green-500 text-white p-2 rounded-md"
+        >
           Submit
         </button>
       </form>

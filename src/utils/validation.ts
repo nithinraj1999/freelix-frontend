@@ -56,4 +56,4 @@ export const signupValidation = (
   
     return { isValid, validationErrors };
   };
-  
+   

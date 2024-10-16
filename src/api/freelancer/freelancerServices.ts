@@ -46,3 +46,15 @@ export const createFreelancerAccount = async (data: FormData) => {
     const response =  await freelancerInstance.get("/job-list")
     return response.data
   }
+
+
+  export const editFreelancerProfile = async (data: any) => {
+    try {
+      const response = await freelancerInstance.post("/profile/edit", data);
+      return response.data;
+    } catch (error) {
+      console.error("Error while editing freelancer profile:", error);
+      throw error;  // You can handle the error as needed
+    }
+  };
+  

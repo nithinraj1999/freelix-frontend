@@ -1,18 +1,20 @@
-
-import React, { useState } from 'react';
-import ProfileModal from './ProfileModal'; // Adjust the import path if necessary
-
+import React, { useState } from "react";
+import ProfileModal from "./ProfileModal"; // Adjust the import path if necessary
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../state/store";
+import { editFreelancerProfile } from "../../../api/freelancer/freelancerServices";
+import { userLogin } from "../../../state/slices/userSlice";
 const ProfileOverview: React.FC = () => {
   // Sample long profile overview text
-  const [profileOverview, setProfileOverview] = useState(`Emma Smith is a talented graphic designer with over 5 years of experience in creating stunning visuals for various clients. 
-  She has a passion for design and a keen eye for detail. Emma has worked on a variety of projects, from branding and logo design to web and mobile app design. 
-  Her expertise includes Adobe Creative Suite, Sketch, and Figma. She loves collaborating with clients to understand their needs and translate their ideas into visually appealing designs. 
-  Emma is always looking to expand her skill set and stay updated with the latest design trends. 
-  In her free time, she enjoys exploring new design techniques and contributing to design communities.`);
+  const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
+
+  const [profileOverview, setProfileOverview] = useState(
+    user ? user.description : ""
+  );
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const dispatch = useDispatch();
   // Toggle function to show/hide the full overview
   const toggleOverview = () => {
     setIsExpanded(!isExpanded);
@@ -23,16 +25,30 @@ const ProfileOverview: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  // Save the edited overview (from the modal's textarea input)
-  const handleSaveOverview = (newOverview: string | File | string[]) => {
-    if (typeof newOverview === 'string') {
+  const handleSaveOverview = async (newOverview: string | File | string[]) => {
+    if (typeof newOverview === "string") {
       setProfileOverview(newOverview);
+      try {
+        const updatedData = { description: newOverview,userID:user?._id };
+
+        const response = await editFreelancerProfile(updatedData);
+        if (response.success) {
+          dispatch(userLogin(response.data));
+          console.log("res...", response);
+          setIsModalOpen(false); // Close the modal after saving
+        }
+      } catch (error) {
+        console.error("Failed to update profile overview:", error);
+      }
     }
+    // Close the modal after saving
     setIsModalOpen(false);
   };
 
   // Display only the first part of the overview if not expanded
-  const displayedOverview = isExpanded ? profileOverview : `${profileOverview.substring(0, 150)}...`;
+  const displayedOverview = isExpanded
+    ? profileOverview
+    : `${profileOverview.substring(0, 150)}...`;
 
   return (
     <div className="pt-8 pl-14 pr-14">
@@ -50,7 +66,7 @@ const ProfileOverview: React.FC = () => {
         onClick={toggleOverview}
         className="mt-4 text-blue-500 hover:underline"
       >
-        {isExpanded ? 'Show Less' : 'Show More'}
+        {isExpanded ? "Show Less" : "Show More"}
       </button>
 
       {/* Edit Modal */}
@@ -61,7 +77,7 @@ const ProfileOverview: React.FC = () => {
           title="Edit Profile Overview"
           currentValue={profileOverview}
           onSave={handleSaveOverview}
-          inputType="textarea"  // Specifies that this modal is for editing long text
+          inputType="textarea" // Specifies that this modal is for editing long text
         />
       )}
     </div>

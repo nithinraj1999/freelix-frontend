@@ -63,7 +63,6 @@ const handleClickOnsignup = async()=>{
           <h1 className="text-2xl px-5 font-bold">
             {/* Continue with Email or Username */}
             Continue with Email
-
           </h1>
 
           <div className="px-5 py-5 space-y-3.5">

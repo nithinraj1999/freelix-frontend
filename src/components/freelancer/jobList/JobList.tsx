@@ -17,14 +17,15 @@ const JobList: React.FC = () => {
     fixedPrice?: number;
     description: string;
     skills: string[];
+    hourlyPrice:any;
   }
 
   useEffect(() => {
     const fetchJobList = async () => {
       const response = await getJobList();
-        setJobList(response.jobList);
-        console.log(response.jobList);
-        console.log(response.jobList.skills);
+      setJobList(response.jobList);
+      console.log(response.jobList);
+      console.log(response.jobList.skills);
     };
 
     fetchJobList();
@@ -33,8 +34,6 @@ const JobList: React.FC = () => {
   const toggleExpand = (id: string) => {
     setIsExpanded(isExpanded === id ? null : id);
   };
-
-
 
   return (
     <div className=" w-full mt-32 ">
@@ -68,24 +67,32 @@ const JobList: React.FC = () => {
             className="w-full mt-4 bg-white	 rounded px-8 py-8 min-h-[250px] cursor-pointer "
           >
             <div className="flex justify-between items-start">
-              <h1 className="text-black text-xl font-bold">
-                {job.title}
-              </h1>
+              <h1 className="text-black text-xl font-bold">{job.title}</h1>
               <IoBookmarkOutline color="black" size={25} />
             </div>
 
             {/* Job details below the title */}
-            <p className="text-slate-400 text-sm mt-1">
+            {/* <p className="text-slate-400 text-sm mt-1">
               {job.paymentType} - {job.experience} - Est. Budget: ${job?.fixedPrice}
+            </p> */}
+            <p className="text-slate-400 text-sm mt-1">
+              {job.paymentType} - {job.experience} - Est. Budget:{" "}
+              {job.paymentType === "hourly"
+                ? `${job.hourlyPrice.from} - ${job.hourlyPrice.to}`
+                : `$${job.fixedPrice}`}
             </p>
 
             <div
               className={`transition-all duration-300  ${
-                isExpanded === job._id ? "max-h-full" : "max-h-[150px] overflow-hidden"
+                isExpanded === job._id
+                  ? "max-h-full"
+                  : "max-h-[150px] overflow-hidden"
               }`}
             >
               <p className="text-slate-300 mt-2 text-slate-500	">
-                {isExpanded === job._id ? job.description : `${job.description.split(" ").slice(0, 30).join(" ")}...`}
+                {isExpanded === job._id
+                  ? job.description
+                  : `${job.description.split(" ").slice(0, 30).join(" ")}...`}
                 {job.description.length > 100 && (
                   <span
                     className="text-blue-400 cursor-pointer ml-1"
@@ -100,7 +107,10 @@ const JobList: React.FC = () => {
             {/* Skills Section */}
             <div className="mt-4 flex flex-wrap gap-2">
               {job.skills.map((skill, index) => (
-                <span key={index} className="bg-slate-300	 text-black rounded-full px-3 py-1 text-sm">
+                <span
+                  key={index}
+                  className="bg-slate-300	 text-black rounded-full px-3 py-1 text-sm"
+                >
                   {skill}
                 </span>
               ))}
