@@ -29,7 +29,7 @@ const ProfileReview: React.FC = () => {
   ];
 
   return (
-    <div className="px-14">
+    <div className="px-14 ">
       <h2 className="text-2xl font-semibold mb-4 pb-8">Client Reviews</h2>
       {reviews.map(review => (
         <div key={review.id} className="bg-white border-2	border-inherit	 rounded-lg p-4 mb-4">

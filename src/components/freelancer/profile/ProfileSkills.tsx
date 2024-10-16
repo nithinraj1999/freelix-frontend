@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { useSelector } from "react-redux";
 import { RootState } from "../../../state/store";
+import { useSelector, useDispatch } from "react-redux";
+
 import ProfileModal from './ProfileModal'; // Make sure the import path is correct
+import { editFreelancerProfile } from "../../../api/freelancer/freelancerServices";
+import { userLogin } from "../../../state/slices/userSlice";
 
 const ProfileSkills: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
   const [skills, setSkills] = useState<string[]>(user?.skills || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const dispatch = useDispatch();
 
   // Handle modal opening
   const handleEditSkills = () => {
@@ -14,15 +19,23 @@ const ProfileSkills: React.FC = () => {
   };
 
   // Save new skills from the modal
-  const handleSaveSkills = (newSkills: string | File | string[]) => {
+  const handleSaveSkills = async (newSkills: string | File | string[]) => {
     if (Array.isArray(newSkills)) {
       setSkills(newSkills); // Only update if the new value is an array of skills
+      const updatedData = { skills: newSkills,userID:user?._id };
+
+      const response = await editFreelancerProfile(updatedData);
+      if (response.success) {
+        dispatch(userLogin(response.data));
+        console.log("res...", response);
+        setIsModalOpen(false); // Close the modal after saving
+      }
     }
     setIsModalOpen(false);
   };
 
   return (
-    <div className="px-14">
+    <div className="px-14 ">
       <div className="flex items-center">
         <h2 className="text-2xl font-semibold mb-4">Skills</h2>
         <span

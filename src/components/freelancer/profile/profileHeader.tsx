@@ -4,6 +4,7 @@ import { useSelector,useDispatch } from "react-redux";
 import { RootState } from "../../../state/store";
 import { editFreelancerProfile } from "../../../api/freelancer/freelancerServices";
 import { userLogin } from "../../../state/slices/userSlice";
+
 const ProfileHeader: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentField, setCurrentField] = useState<keyof typeof currentData | null>(null);
@@ -14,8 +15,8 @@ const ProfileHeader: React.FC = () => {
     title: user?user.title :"",
     hourlyRate: "$30 USD/hour",
   });
-  const dispatch = useDispatch()
 
+  const dispatch = useDispatch()
   const handleEdit = (field: keyof typeof currentData) => {
     setCurrentField(field);
     setIsModalOpen(true);
@@ -64,9 +65,9 @@ const ProfileHeader: React.FC = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative bg-white">
       {/* Cover Picture */}
-      <div className="h-60 bg-cover bg-indigo-200 w-full"></div>
+      <div className="h-60 bg-cover bg-pink-600	 w-full"></div>
       <div>
         <img
           src={user?.profilePicture}
@@ -75,9 +76,9 @@ const ProfileHeader: React.FC = () => {
         />
       </div>
       {/* Body Section */}
-      <div className="pl-14">
+      <div className="">
         {/* Name with Pencil Icon */}
-        <div className="flex items-center pt-24">
+        <div className="flex items-center  pt-24 pl-14">
           <p className="text-4xl tracking-tight font-bold">{currentData.name}</p>
           <span
             onClick={() => handleEdit('name')}
@@ -88,13 +89,13 @@ const ProfileHeader: React.FC = () => {
         </div>
 
         {/* Rating */}
-        <div className="text-slate-500	 font-semibold text-3xl mr-2">
+        <div className="text-slate-500	 font-semibold text-3xl mr-2 pl-14">
           {currentData.rating}
         </div>
 
         {/* Title with Pencil Icon */}
         <div className="flex items-center">
-          <p className="text-3xl">{currentData.title}</p>
+          <p className="text-3xl pl-14">{currentData.title}</p>
           <span
             onClick={() => handleEdit('title')}
             className="cursor-pointer ml-2 flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full hover:bg-gray-300 transition duration-200"
@@ -104,7 +105,7 @@ const ProfileHeader: React.FC = () => {
         </div>
 
         {/* Hourly Rate with Pencil Icon */}
-        <div className="flex items-center">
+        <div className="flex items-center pl-14">
           <p>{currentData.hourlyRate}</p>
           <span
             onClick={() => handleEdit('hourlyRate')}

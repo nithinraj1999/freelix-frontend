@@ -340,30 +340,7 @@ const BecomeFreelancerForm: React.FC = () => {
           </button>
         </div>
 
-        {/* Languages Section */}
-        {/* <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">Languages</label>
-          <div className="space-y-2">
-            {languages.map((language, index) => (
-              <div key={index} className="flex items-center">
-                <input
-                  type="text"
-                  value={language}
-                  onChange={(e) => handleLanguageChange(index, e.target.value)}
-                  className={`mt-1 block w-full border ${errors.languages ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
-                  placeholder="Language"
-                />
-                <button type="button" onClick={() => removeLanguage(index)} className="ml-2 text-red-600">
-                  Remove
-                </button>
-              </div>
-            ))}
-            {errors.languages && <p className="text-red-500 text-sm">{errors.languages}</p>}
-          </div>
-          <button type="button" onClick={addLanguage} className="mt-2 text-green-600">
-            Add
-          </button>
-        </div> */}
+       
        <div className="mb-6">
       <label className="block text-sm font-medium text-gray-700">Languages</label>
       <div className="space-y-2">

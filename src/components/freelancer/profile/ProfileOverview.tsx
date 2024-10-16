@@ -7,7 +7,6 @@ import { userLogin } from "../../../state/slices/userSlice";
 const ProfileOverview: React.FC = () => {
   // Sample long profile overview text
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
-
   const [profileOverview, setProfileOverview] = useState(
     user ? user.description : ""
   );
@@ -51,7 +50,7 @@ const ProfileOverview: React.FC = () => {
     : `${profileOverview.substring(0, 150)}...`;
 
   return (
-    <div className="pt-8 pl-14 pr-14">
+    <div className="pt-8 pl-14 pr-14 ">
       <div className="flex items-center">
         <h2 className="text-2xl font-bold text-slate-700">Profile Overview</h2>
         <span

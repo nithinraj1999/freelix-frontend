@@ -10,7 +10,7 @@ const FreelancerProfile: React.FC = () => {
     <>
       <FreelancerNavbar />
       <div className="px-16 	">
-        <div className="border-2 border-inherit	">
+        <div className="border-2 border-inherit	bg-white">
           <ProfileHeader />
           <ProfileOverview />
           <Portfolio />
