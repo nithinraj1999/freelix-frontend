@@ -3,6 +3,7 @@ import { useState } from "react";
 import { registerUser } from "../api/user/authUser";
 import { signupValidation } from "../utils/validation";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Using react-icons for eye icons
 
 const SignupComponent: React.FC = () => {
   const [name, setName] = useState("");
@@ -12,13 +13,19 @@ const SignupComponent: React.FC = () => {
 
   const [errors, setErrors] = useState<Record<string, string>>({}); // For storing validation errors
   const [loading, setLoading] = useState(false); // Add loading state
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
+
   const navigate = useNavigate();
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
   const handleRegister = async () => {
     try {
       // Start loading
       setLoading(true);
 
+      
       const { isValid, validationErrors } = signupValidation(
         name,
         email,
@@ -42,8 +49,7 @@ const SignupComponent: React.FC = () => {
 
       const response = await registerUser(data);
       const userID = response.userID;
-      
-      
+
       // Stop loading after success
       setLoading(false);
 
@@ -55,12 +61,15 @@ const SignupComponent: React.FC = () => {
     }
   };
 
-  const handleClickOnSignin = ()=>{
-    navigate('/login')
-  }
+  const handleClickOnSignin = () => {
+    navigate("/login");
+  };
   return (
     <>
-      <Modal title="Sign Up" image="https://res.cloudinary.com/dhir9n7dj/image/upload/v1726150553/steptodown.com774020_my7gko.jpg">
+      <Modal
+        title="Sign Up"
+        image="https://res.cloudinary.com/dhir9n7dj/image/upload/v1726150553/steptodown.com774020_my7gko.jpg"
+      >
         <div>
           <div>
             <div className="py-4 px-5 flex items-center">
@@ -96,12 +105,22 @@ const SignupComponent: React.FC = () => {
 
             <div>
               <h1 className="font-medium">Password</h1>
-              <input
-                type="password"
-                value={password}
-                className="border-2 w-full h-10 font-medium rounded-md px-3"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? "text" : "password"} // Toggle input type
+                  value={password}
+                  className="border-2 w-full h-10 font-medium rounded-md px-3 pr-10" // Add padding-right for icon space
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                />
+                <div
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}{" "}
+                  {/* Icon toggles */}
+                </div>
+              </div>
               {errors.password && (
                 <span className="text-red-500">{errors.password}</span>
               )}{" "}
@@ -135,9 +154,16 @@ const SignupComponent: React.FC = () => {
               >
                 Continue
               </button>
-              
             )}
-            <h1>Already have account?<span className="underline cursor-pointer" onClick={handleClickOnSignin}>sign in</span></h1>
+            <h1>
+              Already have account?
+              <span
+                className="underline cursor-pointer"
+                onClick={handleClickOnSignin}
+              >
+                sign in
+              </span>
+            </h1>
           </div>
         </div>
       </Modal>
