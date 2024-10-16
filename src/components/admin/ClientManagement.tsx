@@ -146,7 +146,6 @@ const Client: React.FC = () => {
     }
 
     try {
-      console.log(payload);
       
       const response = await createUser(payload);
       console.log(response);
@@ -157,12 +156,15 @@ const Client: React.FC = () => {
     }
   };
 
-  
 
   const handleBlock = async (clientID: string) => {
     const response = await blockClient(clientID);
     if (response.success) {
-      fetchClients();
+      setClients((prevClients) =>
+        prevClients.map((client) =>
+          client._id === clientID ? { ...client, isBlock: true } : client
+        )
+      );
       dispatch(updateUserBlockStatus({ userId: clientID, isBlock: true }));
     }
   };
@@ -170,10 +172,15 @@ const Client: React.FC = () => {
   const handleUnblock = async (clientID: string) => {
     const response = await unblockClient(clientID);
     if (response.success) {
-      fetchClients();
+      setClients((prevClients) =>
+        prevClients.map((client) =>
+          client._id === clientID ? { ...client, isBlock: false } : client
+        )
+      );
       dispatch(updateUserBlockStatus({ userId: clientID, isBlock: false }));
     }
   };
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
