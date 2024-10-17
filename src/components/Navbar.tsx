@@ -8,14 +8,14 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { RxEnvelopeClosed } from "react-icons/rx";
 import { switchToSelling } from "../api/freelancer/freelancerServices";
 import { userLogin } from "../state/slices/userSlice";
+
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
-
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const toggleSidebar = () => setSidebarVisible((prev) => !prev);
-
   const [dropdownVisible, setDropdownVisible] = useState(false); // State for dropdown visibility
   const dropdownRef = useRef<HTMLDivElement>(null); // Ref for dropdown
 

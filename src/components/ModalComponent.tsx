@@ -6,7 +6,6 @@ interface ContainerProps {
   title: string;
   children: React.ReactNode;
   image:string
-
 }
 
 const Modal: React.FC<ContainerProps> = ({ title, children,image }) => {

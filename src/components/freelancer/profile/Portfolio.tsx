@@ -1,35 +1,51 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import ProfileModal from "./ProfileModal"; // Assuming the reusable modal is in the same folder
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../state/store";
+import { editFreelancerProfile } from "../../../api/freelancer/freelancerServices";
+import { userLogin } from "../../../state/slices/userSlice";
 
-interface PortfolioItem {
-  id: number;
+interface PortfolioItems {
   image: string;
   title: string;
+  description:string;
 }
 
 const Portfolio: React.FC = () => {
-  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([
-    { id: 1, image: "https://res.cloudinary.com/dhir9n7dj/image/upload/v1720798873/cld-sample.jpg", title: "Project 1" },
-    { id: 2, image: "https://via.placeholder.com/300", title: "Project 2" },
-    { id: 3, image: "https://via.placeholder.com/300", title: "Project 3" },
-    { id: 4, image: "https://via.placeholder.com/300", title: "Project 4" },
-  ]);
+  const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
 
+  const [portfolioItems, setPortfolioItems] =useState<Array<{ image: string; title: string; description: string }>>([]);
+
+  console.log("portfoliooo",portfolioItems);
+
+  useEffect(()=>{
+    setPortfolioItems(user?.portfolio || [])
+  },[])
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const dispatch = useDispatch();
 
-  const handleAddImage = (newImage: string | File | string[]) => {
+  const handleAddImage = async (newImage: string | File | string[]) => {
     if (typeof newImage === "string") {
       setPortfolioItems((prevItems) => [
         ...prevItems,
-        { id: prevItems.length + 1, image: newImage, title: `Project ${prevItems.length + 1}` },
+        { image: newImage, title: `Project ${prevItems?.length + 1}`,description:"sample desription" },
       ]);
     } else if (newImage instanceof File) {
       const newImageUrl = URL.createObjectURL(newImage);
       setPortfolioItems((prevItems) => [
         ...prevItems,
-        { id: prevItems.length + 1, image: newImageUrl, title: `Project ${prevItems.length + 1}` },
+        { image: newImageUrl, title: `Project ${prevItems.length + 1}`,description:"sample desription" },
       ]);
     }
+    const updatedData = { portfolio: newImage,userID:user?._id };
+
+      const response = await editFreelancerProfile(updatedData);
+      if (response.success) {
+        dispatch(userLogin(response.data));
+        console.log("res...", response.data);
+        setIsModalOpen(false); // Close the modal after saving
+      }
   };
 
   return (
@@ -37,8 +53,8 @@ const Portfolio: React.FC = () => {
       <h2 className="text-2xl font-bold text-slate-700 pl-14 pr-14 pb-8 bg-white">Portfolio</h2>
       <div className="flex flex-wrap justify-start pl-14 pr-14">
         {portfolioItems.length > 0 ? (
-          portfolioItems.map((item) => (
-            <div key={item.id} className="w-full sm:w-1/2 md:w-1/3 p-2">
+          portfolioItems.map((item,index) => (
+            <div key={index} className="w-full sm:w-1/2 md:w-1/3 p-2">
               <div className="bg-white rounded shadow-md overflow-hidden relative group">
                 <img
                   src={item.image}

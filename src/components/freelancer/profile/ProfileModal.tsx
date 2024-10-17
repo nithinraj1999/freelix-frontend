@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
 interface PortfolioItem {
-  id: number;
   image: string;
   title: string;
+  description:string;
 }
 
 interface ProfileModalProps {
@@ -13,7 +13,7 @@ interface ProfileModalProps {
   currentValue: string | File | string[]; // Allow string[], string, or File
   onSave: (newValue: string | File | string[], updatedPortfolioImages?: PortfolioItem[]) => void; // Pass updated portfolio images
   inputType: "text" | "textarea" | "file" | "skills";
-  portfolioImages?: PortfolioItem[]; // Only relevant when inputType is 'file'
+  portfolioImages?: PortfolioItem[] ; // Only relevant when inputType is 'file'
   setPortfolioImages?: React.Dispatch<React.SetStateAction<PortfolioItem[]>>; // Function to update portfolio images
   availableSkills?: string[]; // Only relevant when inputType is 'skills'
 }
@@ -109,11 +109,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             <div className="flex flex-wrap mt-2">
               {portfolioImages.length > 0 ? (
                 portfolioImages.map((item, index) => (
-                  <div key={index} className="flex items-center mb-2">
+                  <div key={index} className="flex items-center mb-2 ">
                     <img
                       src={item.image} // Use image from PortfolioItem
                       alt={`Portfolio ${item.title}`} // Display the title for better accessibility
-                      className="w-20 h-20 mr-2 rounded"
+                      className="w-20 h-20 mr-2 rounded object-cover"
                     />
                     <button
                       onClick={() => handleRemoveImage(index)}
@@ -131,6 +131,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             {/* File input for new image */}
             <input
               type="file"
+              name ="portfolio"
               onChange={handleInputChange}
               className="border border-gray-300 p-2 w-full rounded mt-4"
             />
@@ -139,7 +140,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             {previewImage && (
               <div className="mt-4">
                 <h3 className="text-slate-500">Image Preview</h3>
-                <img src={previewImage} alt="Selected" className="w-20 h-20 rounded mt-2" />
+                <img src={previewImage} alt="Selected" className="w-20 h-20 rounded mt-2 object-cover" />
               </div>
             )}
           </div>

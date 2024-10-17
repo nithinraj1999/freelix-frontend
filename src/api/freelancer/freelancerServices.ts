@@ -9,8 +9,7 @@ export interface Freelancer{
     educations:string[]
 }
 
-export const createFreelancerAccount = async (data: FormData) => {
-  console.log("freelancer service");
+export const createFreelancerAccount = async (data: FormData) => {  
   
     const response = await freelancerInstance.post("/create-freelancer-account", data, {
       headers: {
@@ -50,6 +49,8 @@ export const createFreelancerAccount = async (data: FormData) => {
 
   export const editFreelancerProfile = async (data: any) => {
     try {
+      console.log(data);
+      
       const response = await freelancerInstance.post("/profile/edit", data, {
         headers: {
           "Content-Type": "multipart/form-data",

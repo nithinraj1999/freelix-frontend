@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+
+
+export interface PortfolioItem {
+  image: string;
+  title: string;
+  description:string;
+}
 interface User {
   _id: string;
   name: string;
@@ -14,6 +21,7 @@ interface User {
   isBlock:boolean;
   isVerified:boolean;
   isFreelancerBlock:boolean;
+  portfolio?:PortfolioItem[];
 }
 
 
