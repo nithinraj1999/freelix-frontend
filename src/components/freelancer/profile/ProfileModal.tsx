@@ -4,10 +4,11 @@ interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  currentValue: string | File; // Handle text or file inputs
-  onSave: (newValue: string | File) => void;
-  inputType: "text" | "textarea" | "file";
-  portfolioImages?: string[]; // Optional: existing portfolio images
+  currentValue: string | File | string[];
+  onSave: (newValue: string | File | string[]) => void;
+  inputType: "text" | "textarea" | "file" | "skills";
+  portfolioImages?: string[];
+  availableSkills?: string[];
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -18,10 +19,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   onSave,
   inputType,
   portfolioImages = [],
+  availableSkills = [],
 }) => {
-  const [newValue, setNewValue] = useState<string | File>(currentValue);
+  const [newValue, setNewValue] = useState<string | File | string[]>(currentValue);
   const [currentPortfolioImages, setCurrentPortfolioImages] = useState<string[]>(portfolioImages);
   const [previewImage, setPreviewImage] = useState<string | null>(null); // State for image preview
+  const [newSkills, setNewSkills] = useState<string[]>(Array.isArray(currentValue) ? currentValue : []); // Handle skills array
+  const [searchQuery, setSearchQuery] = useState(""); // State for search bar
 
   // Handle input changes based on type
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -36,9 +40,25 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
     }
   };
 
+  const handleAddSkill = (skill: string) => {
+    if (!newSkills.includes(skill)) {
+      setNewSkills([...newSkills, skill]);
+    }
+    setSearchQuery(""); // Clear the search after adding the skill
+  };
+
+  const handleRemoveSkill = (skill: string) => {
+    setNewSkills(newSkills.filter((s) => s !== skill));
+  };
+
   const handleRemoveImage = (index: number) => {
     setCurrentPortfolioImages(currentPortfolioImages.filter((_, i) => i !== index));
   };
+
+  // Filter available skills based on search query and exclude already selected skills
+  const filteredSkills = availableSkills.filter(
+    (skill) => skill.toLowerCase().includes(searchQuery.toLowerCase()) && !newSkills.includes(skill)
+  );
 
   if (!isOpen) return null;
 
@@ -109,16 +129,70 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           </div>
         )}
 
+        {inputType === "skills" && (
+          <div>
+            <h3 className="text-slate-500 mt-6">Your Skills</h3>
+            <div className="flex flex-wrap mt-2">
+              {newSkills.length > 0 ? (
+                newSkills.map((skill, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-200 rounded-full px-4 py-2 mr-2 mb-2 flex items-center"
+                  >
+                    {skill}
+                    <button
+                      className="ml-2 text-red-500 hover:text-red-700"
+                      onClick={() => handleRemoveSkill(skill)}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500">No skills added yet.</p>
+              )}
+            </div>
+
+            <h3 className="text-slate-500 mt-6">Add Skills</h3>
+            {/* Search bar for skill selection */}
+            <input
+              type="text"
+              placeholder="Search skills"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="border border-gray-300 p-2 w-full rounded mb-2"
+            />
+            <div className="flex flex-wrap mt-2">
+              {/* Only show suggestions when the user is typing */}
+              {searchQuery && filteredSkills.length > 0 ? (
+                filteredSkills.map((skill, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleAddSkill(skill)}
+                    className={`px-4 py-2 mr-2 mb-2 rounded ${
+                      newSkills.includes(skill)
+                        ? "bg-green-400 text-white"
+                        : "bg-gray-200 hover:bg-gray-300"
+                    }`}
+                    disabled={newSkills.includes(skill)}
+                  >
+                    {skill}
+                  </button>
+                ))
+              ) : (
+                <p className="text-gray-500">{searchQuery ? "No matching skills found." : ""}</p>
+              )}
+            </div>
+          </div>
+        )}
+
         <div className="flex justify-end mt-4">
-          <button
-            onClick={onClose}
-            className="mr-2 text-gray-600 hover:underline"
-          >
+          <button onClick={onClose} className="mr-2 text-gray-600 hover:underline">
             Cancel
           </button>
           <button
             onClick={() => {
-              onSave(newValue);
+              onSave(inputType === "skills" ? newSkills : newValue);
               onClose();
             }}
             className="bg-blue-500 text-white px-4 py-2 rounded"
