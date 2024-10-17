@@ -1,14 +1,21 @@
 import React, { useState } from "react";
 
+interface PortfolioItem {
+  id: number;
+  image: string;
+  title: string;
+}
+
 interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  currentValue: string | File | string[];
-  onSave: (newValue: string | File | string[]) => void;
+  currentValue: string | File | string[]; // Allow string[], string, or File
+  onSave: (newValue: string | File | string[], updatedPortfolioImages?: PortfolioItem[]) => void; // Pass updated portfolio images
   inputType: "text" | "textarea" | "file" | "skills";
-  portfolioImages?: string[];
-  availableSkills?: string[];
+  portfolioImages?: PortfolioItem[]; // Only relevant when inputType is 'file'
+  setPortfolioImages?: React.Dispatch<React.SetStateAction<PortfolioItem[]>>; // Function to update portfolio images
+  availableSkills?: string[]; // Only relevant when inputType is 'skills'
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -19,10 +26,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   onSave,
   inputType,
   portfolioImages = [],
+  setPortfolioImages = () => {}, // Provide a default no-op function
   availableSkills = [],
 }) => {
-  const [newValue, setNewValue] = useState<string | File | string[]>(currentValue);
-  const [currentPortfolioImages, setCurrentPortfolioImages] = useState<string[]>(portfolioImages);
+  const [newValue, setNewValue] = useState<string | File | string[]>(currentValue); // Updated state to handle all types
   const [previewImage, setPreviewImage] = useState<string | null>(null); // State for image preview
   const [newSkills, setNewSkills] = useState<string[]>(Array.isArray(currentValue) ? currentValue : []); // Handle skills array
   const [searchQuery, setSearchQuery] = useState(""); // State for search bar
@@ -30,29 +37,38 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   // Handle input changes based on type
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const target = e.target;
-
     if (inputType === "file" && target instanceof HTMLInputElement && target.files) {
       const file = target.files[0];
       setNewValue(file); // Accept only one file at a time
       setPreviewImage(URL.createObjectURL(file)); // Generate preview URL for the selected image
     } else if (inputType !== "file") {
-      setNewValue(target.value);
+      setNewValue(target.value); // Handle text or textarea input
     }
   };
 
+  const handleRemoveImage = (index: number) => {
+    const updatedImages = portfolioImages.filter((_, i) => i !== index);
+    setPortfolioImages(updatedImages); // Update the state with remaining images
+  
+    // Update newValue to be an array of image URLs (if needed)
+    const newImageUrls = updatedImages.map(item => item.image);
+    setNewValue(newImageUrls); // Now newValue is of type string[]
+  };
+  
+
   const handleAddSkill = (skill: string) => {
     if (!newSkills.includes(skill)) {
-      setNewSkills([...newSkills, skill]);
+      const updatedSkills = [...newSkills, skill];
+      setNewSkills(updatedSkills);
+      setNewValue(updatedSkills); // Update newValue with skills array
     }
     setSearchQuery(""); // Clear the search after adding the skill
   };
 
   const handleRemoveSkill = (skill: string) => {
-    setNewSkills(newSkills.filter((s) => s !== skill));
-  };
-
-  const handleRemoveImage = (index: number) => {
-    setCurrentPortfolioImages(currentPortfolioImages.filter((_, i) => i !== index));
+    const updatedSkills = newSkills.filter((s) => s !== skill);
+    setNewSkills(updatedSkills);
+    setNewValue(updatedSkills); // Update newValue with skills array
   };
 
   // Filter available skills based on search query and exclude already selected skills
@@ -91,12 +107,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             {/* Display available portfolio images */}
             <h3 className="text-slate-500 mt-6">Portfolio Images</h3>
             <div className="flex flex-wrap mt-2">
-              {currentPortfolioImages.length > 0 ? (
-                currentPortfolioImages.map((image, index) => (
+              {portfolioImages.length > 0 ? (
+                portfolioImages.map((item, index) => (
                   <div key={index} className="flex items-center mb-2">
                     <img
-                      src={image}
-                      alt={`Portfolio ${index}`}
+                      src={item.image} // Use image from PortfolioItem
+                      alt={`Portfolio ${item.title}`} // Display the title for better accessibility
                       className="w-20 h-20 mr-2 rounded"
                     />
                     <button
@@ -152,7 +168,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                 <p className="text-gray-500">No skills added yet.</p>
               )}
             </div>
-
             <h3 className="text-slate-500 mt-6">Add Skills</h3>
             {/* Search bar for skill selection */}
             <input
@@ -192,7 +207,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           </button>
           <button
             onClick={() => {
-              onSave(inputType === "skills" ? newSkills : newValue);
+              onSave(newValue); // Pass updated portfolio images
               onClose();
             }}
             className="bg-blue-500 text-white px-4 py-2 rounded"
