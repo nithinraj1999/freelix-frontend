@@ -1,5 +1,6 @@
 import HomePage from "./pages/HomePage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
 import LoginComponent from "./components/LoginComponent";
 import SignupComponent from "./components/SignupComponent";
 import VerifyOtp from "./components/verifyOtpComponent";
@@ -11,14 +12,32 @@ import ClientManagement from "./pages/admin/ClientManagement";
 import FreelancerLandingPage from "./pages/freelancer/freelancerLandingPage";
 import FreelancerManagement from "./pages/admin/FreelancerManagement";
 import JobPostForm from "./components/client/JobPost/JobPostForm";
-
 import FreelancerProfile from "./pages/freelancer/ProfileOverview";
-
 import AdminRouteGuard from "./router/AdminRouteGuard";
 import AdminLoginGuard from "./router/AdminLoginGuard";
-
 import JobListPage from "./pages/freelancer/JobListPage";
+import { useDispatch,useSelector } from "react-redux";
+import socket from "./socket/socket";
+
+import { addNotification } from "./state/slices/notificationSlice";
+import { RootState } from "./state/store";
 function App() {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
+  const userID = user?._id
+  useEffect(() => {
+    // Listen for different types of notifications from the server
+    socket.on("newJobNotification", (notification) => {
+      if (notification.userId === userID) {
+        dispatch(addNotification(notification)); // Only add the notification if it matches the current user
+      }  
+    });
+
+    return () => {
+      socket.off("newJobNotification"); // Clean up the event listener
+    };
+  }, [dispatch]);
+  
   return (
     <Router>
       <Routes>
@@ -31,7 +50,6 @@ function App() {
 
         {/* ------------------- Client --------------------- */}
 
-
         <Route path="/post-a-job" element={<JobPostForm />} />
 
         {/* ------------------- freelancer -------------------- */}
@@ -40,10 +58,12 @@ function App() {
         <Route path="/freelancer/profile" element={<FreelancerProfile />} />
         <Route path="/freelancer/job-list" element={<JobListPage />} />
 
-
         {/* admin */}
 
-        <Route path="/admin/login" element={<AdminLoginGuard element={<AdminLogin />} />}/>
+        <Route
+          path="/admin/login"
+          element={<AdminLoginGuard element={<AdminLogin />} />}
+        />
         <Route element={<AdminRouteGuard />}>
           <Route path="/admin/" element={<AdminLandingPage />} />
           <Route path="/admin/clients" element={<ClientManagement />} />

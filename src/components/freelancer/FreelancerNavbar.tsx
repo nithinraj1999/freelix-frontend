@@ -7,12 +7,15 @@ import { userLogout, userLogin } from "../../state/slices/userSlice";
 import { switchToBuying } from "../../api/freelancer/freelancerServices";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { RxEnvelopeClosed } from "react-icons/rx";
+import { HiOutlineFolderOpen } from "react-icons/hi2";
+import JobNotification from "./jobNotification/JobNotification";
 
 const FreelancerNavbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user);
   const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [jobNotificationVisible, setJobNotificationVisible] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -20,6 +23,9 @@ const FreelancerNavbar: React.FC = () => {
     setSidebarVisible((prev) => !prev);
   };
 
+  const toggleJobNotification = () => {
+    setJobNotificationVisible((prev) => !prev);
+  };
   const handleLogout = () => {
     dispatch(userLogout());
     navigate("/");
@@ -92,6 +98,20 @@ const FreelancerNavbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-4">
             {user && (
               <>
+                <div className="relative">
+                  <HiOutlineFolderOpen
+                    color="white"
+                    size={24}
+                    onClick={toggleJobNotification}
+                    className="cursor-pointer"
+                  />
+
+                  {jobNotificationVisible && (
+                    <div className="absolute top-12 right-[-100px] w-[400px] bg-slate-800 h-[400px] rounded-md z-50">
+                      <JobNotification />
+                    </div>
+                  )}
+                </div>
                 <IoIosNotificationsOutline
                   color="white"
                   size={24}
@@ -175,6 +195,8 @@ const FreelancerNavbar: React.FC = () => {
           onClick={toggleSidebar}
         ></div>
       )}
+
+      
     </div>
   );
 };
