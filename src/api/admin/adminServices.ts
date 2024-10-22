@@ -16,10 +16,10 @@ import adminInstance from "../axiosInstance/adminInstance";
 
 
   
-export const getAllClientData= async (): Promise<any> => {
+export const getAllClientData= async (page: number, limit: number): Promise<any> => {
     try {
 
-      const response = await adminInstance.get("/clients-details");
+      const response = await adminInstance.get(`/clients-details?page=${page}&limit=${limit}`);
       return response.data;
     } catch (error) {
       console.error(error);
@@ -161,11 +161,10 @@ export const unblockClient = async (clientID:string): Promise<any> => {
             withCredentials: true, // To include cookies for HttpOnly refresh token
         });
         const { accessToken } = response.data;
-
+        
         if (!accessToken) {
             throw new Error('No access token returned from refresh token endpoint');
         }
-
         localStorage.setItem('accessToken', accessToken); // Store new access token in localStorage
         return accessToken;
     } catch (error) {

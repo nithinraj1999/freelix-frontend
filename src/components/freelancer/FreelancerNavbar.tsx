@@ -107,7 +107,7 @@ const FreelancerNavbar: React.FC = () => {
                   />
 
                   {jobNotificationVisible && (
-                    <div className="absolute top-12 right-[-100px] w-[400px] bg-slate-800 h-[400px] rounded-md z-50">
+                    <div className="absolute max-h-[300px] overflow-y-auto top-12 right-[-100px] w-[400px] bg-slate-800 h-[400px]  z-50">
                       <JobNotification />
                     </div>
                   )}

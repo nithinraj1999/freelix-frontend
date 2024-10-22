@@ -1,25 +1,8 @@
 import adminInstance from "../axiosInstance/adminInstance";
 import { setAccessToken } from "../axiosInstance/adminInstance";
+import { LoginData,Admin } from "./interfaces/IAdminApi";
 
 
-interface LoginData {
-    email: string;
-    password: string;
-  }
-
-
-  
-interface Admin {
-    id: string;
-    name: string;
-    email: string;
-    phone:number;
-    role:string;
-    profilePicture?:string;
-    isBlock:boolean;
-    isVerified:boolean;
-  }
-  
   export interface LoginResponse {
     success: boolean;
     admin?: Admin;

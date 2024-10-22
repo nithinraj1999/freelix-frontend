@@ -49,8 +49,6 @@ export const createFreelancerAccount = async (data: FormData) => {
 
   export const editFreelancerProfile = async (data: any) => {
     try {
-      console.log(data);
-      
       const response = await freelancerInstance.post("/profile/edit", data, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -62,4 +60,44 @@ export const createFreelancerAccount = async (data: FormData) => {
       throw error;  // You can handle the error as needed
     }
   };
+
   
+  export const getJobDetails = async (data: any) => {
+    try {
+      const response = await freelancerInstance.post("/job-detils",data)
+      return response.data;
+    } catch (error) {
+      console.error("Error while editing freelancer profile:", error);
+      throw error;  // You can handle the error as needed
+    }
+  };
+  
+
+  export const submitBid =async (data:any)=>{
+    try{
+      const response = await freelancerInstance.post("/submit-bid",data)
+      return response.data;
+    }catch(error){
+      console.error(error);
+      throw error
+      
+    }
+  }
+
+  export const isBidAlreadyBid = async (jobId:string,userId:string )=>{
+    try{
+      console.log("services");
+      
+      const data = {
+        jobId,
+        userId
+      }
+      const response = await freelancerInstance.post("/check-for-existing-bidder",data)
+      console.log(response);
+      
+      return response.data;
+    }catch(error){
+      console.error(error);
+      
+    }
+  }

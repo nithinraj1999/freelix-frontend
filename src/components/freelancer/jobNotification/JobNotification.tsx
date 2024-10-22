@@ -9,12 +9,13 @@ const JobNotification: React.FC = () => {
     dispatch(markAsRead(id)); // Mark notification as read in the Redux store
     // You can also send a request to the server here if needed
   };
+  const sortedNotifications = [...notifications].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   return (
     <div className='w-full bg-white'>
-      {notifications.map((notification) => (
+      {sortedNotifications.map((notification) => (
         <div 
-          key={notification.id} 
+          key={notification.jobId} 
           className={`h-[100px] p-4 cursor-pointer ${notification.isRead ? 'bg-gray-100' : 'bg-white'}`} 
           onClick={() => handleNotificationClick(notification.id)}
         >

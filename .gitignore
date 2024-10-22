@@ -24,6 +24,6 @@ dist-ssr
 *.sw?
 .env
 
-
+env.d.ts
 
 .prettierrc

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState,useEffect } from "react";
 import { RootState } from "../../../state/store";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -6,9 +6,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { createJobPost } from "../../../api/client/clientServices";
 import { z } from "zod"; // Import Zod
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { userLogout } from "../../../state/slices/userSlice";
 
 const JobPostForm: React.FC = () => {
-
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
@@ -16,7 +18,7 @@ const JobPostForm: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null); // Reference to the hidden input
-  const [skillInput, setSkillInput] = useState<string>(""); 
+  const [skillInput, setSkillInput] = useState<string>("");
   const [skillList, setSkillList] = useState<string[]>([]); // State for storing the list of skills
   const [selectedLevel, setSelectedLevel] = useState<string>("");
   const [selectedPaymentType, setSelectedPaymentType] = useState<string>("");
@@ -24,28 +26,72 @@ const JobPostForm: React.FC = () => {
   const [hourlyRateTo, setHourlyRateTo] = useState<number | "">(""); // State for "To"
   const [totalAmount, setTotalAmount] = useState<number | "">(""); // State for fixed total amount
   const [errors, setErrors] = useState<Record<string, string>>({});
-
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    } else if (user.isBlock) {
+      dispatch(userLogout());
+      navigate("/");
+    }
+  }, [user, navigate, dispatch]);
 
+  const schema = z
+    .object({
+      title: z
+        .string()
+        .min(1, "Title cannot be blank")
+        .refine(
+          (value) => !/^ /.test(value),
+          "Title cannot start with a space"
+        ),
 
+     
+      description: z.string().min(1, "Description is required"),
+      skills: z.array(z.string()).min(1, "At least one skill is required"),
+      experience: z.string().min(1, "Experience level is required"),
+      paymentType: z.enum(["hourly", "fixed"]),
 
-  const schema = z.object({
-    title: z
-    .string()
-    .min(1, 'Title cannot be blank')
-    .refine((value) => !/^ /.test(value), 'Title cannot start with a space'),
+      hourlyRateFrom: z
+        .number()
+        .positive("Hourly rate must be a positive number") // Use positive() for clarity
+        .optional(),
 
-    
-    category: z.string().min(1, "Category is required"),
-    subCategory: z.string().min(1, "Subcategory is required"),
-    description: z.string().min(1, "Description is required"),
-    skills: z.array(z.string()).min(1, "At least one skill is required"),
-    experience: z.string().min(1, "Experience level is required"),
-    paymentType: z.enum(["hourly", "fixed"]).optional(),
-    hourlyRateFrom: z.number().min(0, "Hourly rate must be a positive number").optional(),
-    hourlyRateTo: z.number().min(0, "Hourly rate must be a positive number").optional(),
-    totalAmount: z.number().min(0, "Total amount must be a positive number").optional(),
-  });
+      hourlyRateTo: z
+        .number()
+        .positive("Hourly rate must be a positive number") // Use positive() for clarity
+        .optional(),
+
+      totalAmount: z
+        .number()
+        .positive("Total amount must be a positive number") // Use positive() for clarity
+        .optional(),
+    })
+    .refine(
+      (data) => {
+        if (data.paymentType === "hourly") {
+          // Ensure both hourlyRateFrom and hourlyRateTo are provided for hourly payment type
+          return (
+            data.hourlyRateFrom !== undefined &&
+            data.hourlyRateTo !== undefined &&
+            data.hourlyRateFrom > 0 &&
+            data.hourlyRateTo > 0
+          ); // Ensure positive numbers
+        } else if (data.paymentType === "fixed") {
+          // Ensure totalAmount is provided for fixed payment type
+          return data.totalAmount !== undefined && data.totalAmount > 0; // Ensure positive number
+        }
+        return true; // If paymentType is not set, return true (not expected)
+      },
+      {
+        message:
+          "",
+        path: ["paymentType"], // Specify where to show the error
+      }
+    );
 
   const handleFileDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -90,7 +136,6 @@ const JobPostForm: React.FC = () => {
     }
   };
 
-
   const handleRemoveSkill = (
     skill: string,
     event: React.MouseEvent<HTMLButtonElement>
@@ -99,11 +144,9 @@ const JobPostForm: React.FC = () => {
     setSkillList(skillList.filter((s) => s !== skill));
   };
 
-
   const handleChange = (level: string) => {
     setSelectedLevel(level);
   };
-
 
   const onPaymentTypeChange = (type: string) => {
     setSelectedPaymentType(type);
@@ -112,16 +155,15 @@ const JobPostForm: React.FC = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-
     const validationResult = schema.safeParse({
       title,
-      category,
-      subCategory,
+      
       description,
       skills: skillList,
       experience: selectedLevel,
       paymentType: selectedPaymentType,
-      hourlyRateFrom: selectedPaymentType === "hourly" ? hourlyRateFrom : undefined,
+      hourlyRateFrom:
+        selectedPaymentType === "hourly" ? hourlyRateFrom : undefined,
       hourlyRateTo: selectedPaymentType === "hourly" ? hourlyRateTo : undefined,
       totalAmount: selectedPaymentType === "fixed" ? totalAmount : undefined,
     });
@@ -146,12 +188,11 @@ const JobPostForm: React.FC = () => {
       }
       postData.append("skills", JSON.stringify(skillList));
       postData.append("title", title);
-      postData.append("category", category);
-      postData.append("subCategory", subCategory);
+  
       postData.append("description", description);
       postData.append("experience", selectedLevel);
       postData.append("paymentType", selectedPaymentType);
-      
+
       if (selectedPaymentType === "hourly") {
         postData.append("hourlyPrice[from]", hourlyRateFrom.toString()); // Use the correct nested structure
         postData.append("hourlyPrice[to]", hourlyRateTo.toString()); // Use the correct nested structure
@@ -162,7 +203,7 @@ const JobPostForm: React.FC = () => {
 
       if (response.success) {
         toast.success("Job post created successfully!", {
-          position: "top-right", 
+          position: "top-right",
         });
         console.log("Job post created successfully:", response);
       } else {
@@ -201,7 +242,7 @@ const JobPostForm: React.FC = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               ></input>
-               {errors.title && <p className="text-red-500">{errors.title}</p>}
+              {errors.title && <p className="text-red-500">{errors.title}</p>}
               <h3 className="text-slate-500 mt-1">Example titles</h3>
               <ul className="list-disc pl-8 text-slate-400 mt-1">
                 <li>
@@ -215,25 +256,7 @@ const JobPostForm: React.FC = () => {
                 </li>
               </ul>
             </div>
-          <div>
-              <h3 className="text-lg font-bold mt-6">
-                Select Category & subcategory
-              </h3>
-              <input
-                placeholder="Category"
-                className="h-10 mt-1 px-2 mr-2"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              ></input>
-               {errors.Category && <p className="text-red-500">{errors.Category}</p>}
-              <input
-                placeholder="subcategory"
-                className="h-10 mt-1 px-2"
-                value={subCategory}
-                onChange={(e) => setSubCategory(e.target.value)}
-              ></input>
-               {errors.subCategory && <p className="text-red-500">{errors.subCategory}</p>}
-            </div> 
+           
             <div>
               <h3 className="text-lg font-bold mt-6">Description</h3>
               <textarea
@@ -242,7 +265,9 @@ const JobPostForm: React.FC = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               ></textarea>
-               {errors.description && <p className="text-red-500">{errors.description}</p>}
+              {errors.description && (
+                <p className="text-red-500">{errors.description}</p>
+              )}
             </div>
             <div
               onDrop={handleFileDrop}
@@ -297,6 +322,9 @@ const JobPostForm: React.FC = () => {
                 <p className="text-slate-400 mt-1">
                   for the best results.add 3-5 skills
                 </p>
+                {errors.skills && (
+                  <p className="text-red-500">{errors.skills}</p>
+                )}
               </div>
               <div>
                 <h3 className="text-slate-500 mt-6">Selected Skills</h3>
@@ -344,6 +372,9 @@ const JobPostForm: React.FC = () => {
                     </label>
                   ))}
                 </div>
+                {errors.experience && (
+                  <p className="text-red-500">{errors.experience}</p>
+                )}
               </div>
               <div className="mb-32">
                 <h3 className="text-lg font-bold mt-6">
@@ -394,9 +425,12 @@ const JobPostForm: React.FC = () => {
                       </div>
                     </label>
                   </div>
+                  {errors.paymentType && (
+                    <p className="text-red-500">{errors.paymentType}</p>
+                  )}
 
                   {/* Conditional Input Fields */}
-                  {selectedPaymentType === "hourly" && (
+                  {/* {selectedPaymentType === "hourly" && (
                     <div className="flex space-x-4">
                       <input
                         type="number"
@@ -413,8 +447,40 @@ const JobPostForm: React.FC = () => {
 
                         onChange={(e) => setHourlyRateTo(e.target.value ? parseFloat(e.target.value) : "")} // Update state
                         />
+                  {errors.hourlyRateFrom && <p className="text-red-500">{errors.hourlyRateFrom}</p>}
+
+                    </div>
+                  )} */}
+                  {selectedPaymentType === "hourly" && (
+                    <div className="flex space-x-4">
+                      <input
+                        type="number"
+                        placeholder="From"
+                        className="p-3 border rounded-lg w-1/2"
+                        value={hourlyRateFrom} // Use state value
+                        onChange={(e) =>
+                          setHourlyRateFrom(
+                            e.target.value ? parseFloat(e.target.value) : ""
+                          )
+                        } // Parse to float
+                      />
+                      <input
+                        type="number"
+                        placeholder="To"
+                        className="p-3 border rounded-lg w-1/2"
+                        value={hourlyRateTo} // Use state value
+                        onChange={(e) =>
+                          setHourlyRateTo(
+                            e.target.value ? parseFloat(e.target.value) : ""
+                          )
+                        } // Parse to float
+                      />
+                      {errors.hourlyRateFrom && (
+                        <p className="text-red-500">{errors.hourlyRateFrom}</p>
+                      )}
                     </div>
                   )}
+
                   {selectedPaymentType === "fixed" && (
                     <div className="flex space-x-4 mt-4">
                       <input
@@ -422,11 +488,18 @@ const JobPostForm: React.FC = () => {
                         placeholder="Total Amount"
                         className="p-3 border rounded-lg w-full"
                         value={totalAmount} // Use state value
-                        onChange={(e) => setTotalAmount(e.target.value ? parseFloat(e.target.value) : "")} // Update state
-            
+                        onChange={(e) =>
+                          setTotalAmount(
+                            e.target.value ? parseFloat(e.target.value) : ""
+                          )
+                        } // Update state
                       />
+                      
                     </div>
                   )}
+                   {errors.totalAmount && (
+                        <p className="text-red-500">{errors.totalAmount}</p>
+                      )}
                 </div>
               </div>
             </div>
@@ -442,5 +515,3 @@ const JobPostForm: React.FC = () => {
 };
 
 export default JobPostForm;
-
-

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { IoBookmarkOutline } from "react-icons/io5";
 import { getJobList } from "../../../api/freelancer/freelancerServices";
-
+import { useNavigate } from "react-router-dom";
 const JobList: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState<string | null>(null);
   const [jobList, setJobList] = useState<Job[]>([]);
 
+  const navigate = useNavigate()
   interface Job {
     _id: string;
     userID: string;
@@ -24,8 +25,6 @@ const JobList: React.FC = () => {
     const fetchJobList = async () => {
       const response = await getJobList();
       setJobList(response.jobList);
-      console.log(response.jobList);
-      console.log(response.jobList.skills);
     };
 
     fetchJobList();
@@ -34,6 +33,11 @@ const JobList: React.FC = () => {
   const toggleExpand = (id: string) => {
     setIsExpanded(isExpanded === id ? null : id);
   };
+
+  const navigateToDetails = (jobId:string)=>{
+    localStorage.setItem("selectedJobId", jobId);
+    navigate('/freelancer/job/details',{ state: { jobId }})
+  }
 
   return (
     <div className=" w-full mt-32 ">
@@ -64,17 +68,15 @@ const JobList: React.FC = () => {
         jobList.map((job) => (
           <div
             key={job._id}
-            className="w-full mt-4 bg-white	 rounded px-8 py-8 min-h-[250px] cursor-pointer "
+            className="w-full mt-4 bg-white	 rounded px-8 py-8 min-h-[250px] cursor-pointer"
+            onClick={()=>navigateToDetails(job._id)}
           >
             <div className="flex justify-between items-start">
               <h1 className="text-black text-xl font-bold">{job.title}</h1>
               <IoBookmarkOutline color="black" size={25} />
             </div>
 
-            {/* Job details below the title */}
-            {/* <p className="text-slate-400 text-sm mt-1">
-              {job.paymentType} - {job.experience} - Est. Budget: ${job?.fixedPrice}
-            </p> */}
+            
             <p className="text-slate-400 text-sm mt-1">
               {job.paymentType} - {job.experience} - Est. Budget:{" "}
               {job.paymentType === "hourly"

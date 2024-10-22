@@ -4,11 +4,12 @@ import {
   blockClient,
   unblockClient,
   createUser,
-  editUser
+  editUser,
 } from "../../api/admin/adminServices";
 import { useDispatch } from "react-redux";
 import { updateUserBlockStatus } from "../../state/slices/userSlice";
 import Modal from "./Modal";
+import { useSearchParams } from "react-router-dom";
 
 const Client: React.FC = () => {
   interface Client {
@@ -20,22 +21,31 @@ const Client: React.FC = () => {
     isBlock: boolean;
     status: "Active" | "Blocked";
   }
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get("page") || "1");
   const [clients, setClients] = useState<Client[]>([]);
   const dispatch = useDispatch();
+  // const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const clientsPerPage = 5;
 
-  const fetchClients = async () => {
+  const fetchClients = async (page: number) => {
     try {
-      const response = await getAllClientData();
+      const response = await getAllClientData(page, clientsPerPage);
+      console.log(response);
+
       setClients(response.clients);
+      const totalClients = response.totalClients;
+      // Set total pages by calculating based on the number of clients per page
+      setTotalPages(Math.ceil(totalClients / clientsPerPage));
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchClients();
-  }, []);
+    fetchClients(currentPage);
+  }, [currentPage]);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
@@ -57,20 +67,25 @@ const Client: React.FC = () => {
   });
 
   const [editFormData, setEditFormData] = useState<{
-    _id:string;
+    _id: string;
     name: string;
     email: string;
     phone: string;
     profilePicture: File | null;
     profilePicturePreview: string;
   }>({
-    _id:"",
+    _id: "",
     name: "",
     email: "",
     phone: "",
     profilePicture: null,
     profilePicturePreview: "",
   });
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // Pagination state
 
   // Handle form field changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,15 +98,15 @@ const Client: React.FC = () => {
 
   const openEditModal = (clientID: string) => {
     try {
-      const clientData = clients.find((client) => client._id === clientID); // Use '===' for comparison
+      const clientData = clients.find((client) => client._id === clientID);
       if (clientData) {
         setEditFormData({
-          _id:clientID,
+          _id: clientID,
           name: clientData.name,
           email: clientData.email,
           phone: clientData.phone,
-          profilePicture: null, // Profile picture logic goes here
-          profilePicturePreview: clientData.profilePicture || "", // Set the preview
+          profilePicture: null,
+          profilePicturePreview: clientData.profilePicture || "",
         });
         setIsEditModalOpen(true);
       } else {
@@ -106,19 +121,17 @@ const Client: React.FC = () => {
     const { name, value } = e.target;
     setEditFormData((prevData) => ({
       ...prevData,
-      [name]: value, // Dynamically update the field based on the input name
+      [name]: value,
     }));
   };
-
-
 
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = new FormData();
     try {
-      payload.append("_id",editFormData._id)
-      payload.append("name",editFormData.name)
-      payload.append("email",editFormData.email)
+      payload.append("_id", editFormData._id);
+      payload.append("name", editFormData.name);
+      payload.append("email", editFormData.email);
       payload.append("phone", editFormData.phone);
 
       if (editFormData.profilePicture) {
@@ -128,7 +141,7 @@ const Client: React.FC = () => {
       const response = await editUser(payload);
       console.log(response);
       setIsEditModalOpen(false);
-      fetchClients(); // Reload the client list
+      fetchClients(currentPage); // Reload the client list
     } catch (error) {
       console.error("Error updating user:", error);
     }
@@ -146,16 +159,14 @@ const Client: React.FC = () => {
     }
 
     try {
-      
       const response = await createUser(payload);
       console.log(response);
       setIsModalOpen(false);
-      fetchClients();
+      fetchClients(currentPage);
     } catch (error) {
       console.error("Error creating user:", error);
     }
   };
-
 
   const handleBlock = async (clientID: string) => {
     const response = await blockClient(clientID);
@@ -180,7 +191,6 @@ const Client: React.FC = () => {
       dispatch(updateUserBlockStatus({ userId: clientID, isBlock: false }));
     }
   };
-
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -209,7 +219,6 @@ const Client: React.FC = () => {
     setIsEditModalOpen(false);
   };
 
-
   const handleEditFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -220,11 +229,38 @@ const Client: React.FC = () => {
       }));
     }
   };
-  
+
+  // Search function
+  const filteredClients = clients.filter((client) =>
+    client.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Pagination logic
+  const indexOfLastClient = currentPage * clientsPerPage;
+  const indexOfFirstClient = indexOfLastClient - clientsPerPage;
+  const currentClients = filteredClients;
+
+  const paginate = (pageNumber: number) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setSearchParams({ page: pageNumber.toString() }); // Update URL parameter for the page number
+    }
+  };
 
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-2">Manage Clients</h1>
+
+      {/* Search Bar */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border border-gray-300 rounded px-3 py-2 w-full"
+        />
+      </div>
+
       <button
         onClick={() => setIsModalOpen(true)}
         className="mt-4 bg-green-500 text-white px-4 py-2 mb-2 rounded hover:bg-green-700"
@@ -245,58 +281,81 @@ const Client: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {clients.map((client, index) => (
+          {currentClients.map((client, index) => (
             <tr key={client._id} className="text-center">
-              <td className="border px-4 py-2">{index + 1}</td>
+              <td className="border px-4 py-2">
+                {index + 1 + indexOfFirstClient}
+              </td>
               <td className="border px-4 py-2">
                 <img
-                  src={
-                    client.profilePicture ||
-                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                  }
+                  src={client.profilePicture}
                   alt={client.name}
-                  className="rounded-full h-8 w-8 mx-auto"
+                  className="w-10 h-10 rounded-full"
                 />
               </td>
               <td className="border px-4 py-2">{client.name}</td>
               <td className="border px-4 py-2">{client.email}</td>
               <td className="border px-4 py-2">{client.phone}</td>
-              <td
-                className={`border px-4 py-2 ${
-                  client.isBlock ? "text-red-500" : "text-green-500"
-                }`}
-              >
-                {client.isBlock ? "Blocked" : "Active"}
+              <td className="border px-4 py-2">
+                {client.isBlock ? (
+                  <button
+                    className="bg-red-500 text-white px-2 py-1 rounded"
+                    onClick={() => handleUnblock(client._id)}
+                  >
+                    Unblock
+                  </button>
+                ) : (
+                  <button
+                    className="bg-blue-500 text-white px-2 py-1 rounded"
+                    onClick={() => handleBlock(client._id)}
+                  >
+                    Block
+                  </button>
+                )}
               </td>
               <td className="border px-4 py-2">
-                <div className="flex justify-center space-x-2">
-                  {client.isBlock ? (
-                    <button
-                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
-                      onClick={() => handleUnblock(client._id)}
-                    >
-                      Activate
-                    </button>
-                  ) : (
-                    <button
-                      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
-                      onClick={() => handleBlock(client._id)}
-                    >
-                      Block
-                    </button>
-                  )}
-                  <button
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
-                    onClick={() => openEditModal(client._id)}
-                  >
-                    Edit
-                  </button>
-                </div>
+                <button
+                  onClick={() => openEditModal(client._id)}
+                  className="bg-yellow-500 text-white px-2 py-1 rounded"
+                >
+                  Edit
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Pagination */}
+      <div className="pagination-controls flex justify-center items-center mt-4 space-x-4">
+        <button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 rounded-lg text-white ${
+            currentPage === 1
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
+        >
+          Previous
+        </button>
+
+        <span className="text-lg font-semibold">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className={`px-4 py-2 rounded-lg text-white ${
+            currentPage === totalPages
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
+        >
+          Next
+        </button>
+      </div>
 
       {/* Create user Modal */}
       <Modal

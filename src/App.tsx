@@ -1,5 +1,5 @@
 import HomePage from "./pages/HomePage";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route,Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import LoginComponent from "./components/LoginComponent";
 import SignupComponent from "./components/SignupComponent";
@@ -18,26 +18,40 @@ import AdminLoginGuard from "./router/AdminLoginGuard";
 import JobListPage from "./pages/freelancer/JobListPage";
 import { useDispatch,useSelector } from "react-redux";
 import socket from "./socket/socket";
-
 import { addNotification } from "./state/slices/notificationSlice";
 import { RootState } from "./state/store";
+import JobDetailsPage from "./pages/freelancer/JobDetailsPage";
+
+import JobBidPage from "./pages/freelancer/JobBidPage";
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
   const userID = user?._id
+
+  socket.on('connect', () => {
+    console.log('Connected to server with socket ID:', socket.id);
+  });
+  
   useEffect(() => {
-    // Listen for different types of notifications from the server
+    // Register user when component mounts
+    if (userID) {
+      console.log(`Registering user with ID: ${userID}`);
+      socket.emit("registerUser", userID); // Register user with socket ID
+    }
+
     socket.on("newJobNotification", (notification) => {
+      console.log(notification);
+      
       if (notification.userId === userID) {
         dispatch(addNotification(notification)); // Only add the notification if it matches the current user
-      }  
+      }
     });
 
     return () => {
-      socket.off("newJobNotification"); // Clean up the event listener
+      socket.off("newJobNotification"); 
     };
-  }, [dispatch]);
-  
+  }, [dispatch, userID]);
+
   return (
     <Router>
       <Routes>
@@ -57,13 +71,13 @@ function App() {
         <Route path="/freelancer" element={<FreelancerLandingPage />} />
         <Route path="/freelancer/profile" element={<FreelancerProfile />} />
         <Route path="/freelancer/job-list" element={<JobListPage />} />
+        <Route path="/freelancer/job/details" element={<JobBidPage/>} />
+        <Route path="/freelancer/job/:view" element={<JobBidPage />} />
 
         {/* admin */}
 
-        <Route
-          path="/admin/login"
-          element={<AdminLoginGuard element={<AdminLogin />} />}
-        />
+        <Route path="/admin/login" element={<AdminLoginGuard element={<AdminLogin />} />} />
+
         <Route element={<AdminRouteGuard />}>
           <Route path="/admin/" element={<AdminLandingPage />} />
           <Route path="/admin/clients" element={<ClientManagement />} />
