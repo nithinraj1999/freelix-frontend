@@ -92,6 +92,7 @@ const FreelancerNavbar: React.FC = () => {
             <button className="text-neutral-50 ml-8 mr-4" onClick={getJobList}>
               Find Work
             </button>
+            
           </div>
 
           {/* Right-aligned content for freelancer */}

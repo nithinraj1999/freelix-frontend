@@ -205,6 +205,7 @@ const JobPostForm: React.FC = () => {
         toast.success("Job post created successfully!", {
           position: "top-right",
         });
+        navigate("/my-job-post")
         console.log("Job post created successfully:", response);
       } else {
         console.error("Failed to create job post:", response.statusText);

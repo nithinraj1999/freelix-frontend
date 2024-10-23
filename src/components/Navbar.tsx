@@ -56,6 +56,9 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const yourYobPost = ()=>{
+    navigate("/my-job-post")
+  }
   return (
     <>
       {/* Navbar */}
@@ -89,9 +92,14 @@ const Navbar: React.FC = () => {
                 </a>
               </>
             ) : (
-              <a href="#" className="text-neutral-50 ml-8 mr-4">
+              <>
+              <button className="text-neutral-50 ml-8 ">
                 Hire Freelancer
-              </a>
+              </button>
+              <button className="text-neutral-50 ml-4 mr-4" onClick={yourYobPost}>
+              Your posts
+            </button>
+            </>
             )}
           </div>
 

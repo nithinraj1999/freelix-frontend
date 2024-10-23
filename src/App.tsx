@@ -20,8 +20,7 @@ import { useDispatch,useSelector } from "react-redux";
 import socket from "./socket/socket";
 import { addNotification } from "./state/slices/notificationSlice";
 import { RootState } from "./state/store";
-import JobDetailsPage from "./pages/freelancer/JobDetailsPage";
-
+import AllJobPostsPage from "./pages/user/allJobPostsPage";
 import JobBidPage from "./pages/freelancer/JobBidPage";
 function App() {
   const dispatch = useDispatch();
@@ -65,6 +64,7 @@ function App() {
         {/* ------------------- Client --------------------- */}
 
         <Route path="/post-a-job" element={<JobPostForm />} />
+        <Route path="/my-job-post" element={<AllJobPostsPage />} />
 
         {/* ------------------- freelancer -------------------- */}
 
