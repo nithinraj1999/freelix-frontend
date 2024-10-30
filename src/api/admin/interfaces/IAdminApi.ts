@@ -1,9 +1,7 @@
-
 export interface LoginData {
     email: string;
     password: string;
   }
-
 
 export interface Admin {
     id: string;
@@ -14,7 +12,7 @@ export interface Admin {
     profilePicture?:string;
     isBlock:boolean;
     isVerified:boolean;
-  }
+}
   
 
   

@@ -24,6 +24,7 @@ const JobDetails: React.FC = () => {
     deliveryDays: "",
     proposal: "",
   });
+  
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const bidFormRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);

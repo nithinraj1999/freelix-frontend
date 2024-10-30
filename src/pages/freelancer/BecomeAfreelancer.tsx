@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { createFreelancerAccount } from "../../api/freelancer/freelancerServices";
 import { useDispatch, useSelector } from "react-redux";
@@ -110,6 +110,7 @@ const BecomeFreelancerForm: React.FC = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

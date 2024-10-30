@@ -42,3 +42,25 @@ export const editPost = async (data:object)=>{
     console.error(error);
   }
 }
+
+
+export const selectedJobDetails =async (data:object)=>{
+  try {
+    const response = await userInstance.post("/my-job-details", data);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+export const fetchAllBids = async(data:object)=>{
+  try{
+    const allBids = await userInstance.post("/all-bids", data);
+    return allBids.data
+    
+  }catch(error){
+    console.error(error);
+    
+  }
+}

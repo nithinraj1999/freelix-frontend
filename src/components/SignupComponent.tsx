@@ -44,7 +44,7 @@ const SignupComponent: React.FC = () => {
         name,
         email,
         password,
-        phone: parseInt(phoneNumber), // Convert back to number
+        phone:phoneNumber, // Convert back to number
       };
 
       const response = await registerUser(data);
@@ -53,7 +53,7 @@ const SignupComponent: React.FC = () => {
       // Stop loading after success
       setLoading(false);
 
-      // Navigate to verification page
+      // Navigate to verification page  
       navigate(`/verification?id=${userID}`);
     } catch (error) {
       console.error(error);

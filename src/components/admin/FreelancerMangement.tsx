@@ -12,7 +12,6 @@ import { updateFreelancerBlockStatus } from "../../state/slices/userSlice";
 import Modal from "./Modal";
 const Freelancer: React.FC = () => {
 
-  console.log("Freelancer....compo");
   
   interface Freelancer {
     _id: string;

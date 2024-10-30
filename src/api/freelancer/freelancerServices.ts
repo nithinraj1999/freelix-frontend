@@ -1,5 +1,5 @@
 import freelancerInstance from "../axiosInstance/freelancerInstance";
-
+import { setAccessToken } from "../axiosInstance/userInstance";
 
 export interface Freelancer{
     name:string;
@@ -10,7 +10,6 @@ export interface Freelancer{
 }
 
 export const createFreelancerAccount = async (data: FormData) => {  
-  
     const response = await freelancerInstance.post("/create-freelancer-account", data, {
       headers: {
         'Content-Type': 'multipart/form-data', // header for file uploads
@@ -26,6 +25,10 @@ export const createFreelancerAccount = async (data: FormData) => {
       userID :userID
     }
     const response =  await freelancerInstance.post("/switch-to-buying",data)
+    console.log(response);
+    
+    const { accessToken } = response.data;
+    setAccessToken(accessToken);
     return response.data
   }
 
@@ -36,6 +39,10 @@ export const createFreelancerAccount = async (data: FormData) => {
       userID :userID
     }
     const response =  await freelancerInstance.post("/switch-to-selling",data)
+    console.log(response);
+
+    const { accessToken } = response.data;
+    setAccessToken(accessToken);
     return response.data
   }
 
@@ -99,5 +106,15 @@ export const createFreelancerAccount = async (data: FormData) => {
     }catch(error){
       console.error(error);
       
+    }
+  }
+
+
+  export const fetchAllBids = async(data:object)=>{
+    try{
+      const allBids = await freelancerInstance.post("/all-bids", data);
+      return allBids.data
+    }catch(error){
+      console.error(error);
     }
   }

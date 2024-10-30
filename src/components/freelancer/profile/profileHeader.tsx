@@ -28,7 +28,6 @@ const ProfileHeader: React.FC = () => {
       if (typeof newValue === 'string') {
         setCurrentData((prev) => ({ ...prev, [currentField]: newValue }));
       }
-      console.log("gvvv",currentField);
       const formData = new FormData();
       if (typeof newValue === 'string') {
         formData.append(currentField, newValue);
@@ -39,8 +38,7 @@ const ProfileHeader: React.FC = () => {
       console.log(formData);
       
       const response = await editFreelancerProfile (formData)
-    
-      
+
       if(response.success){
         dispatch(userLogin(response.data))
         console.log("res...",response);

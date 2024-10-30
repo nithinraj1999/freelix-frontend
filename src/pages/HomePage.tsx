@@ -5,13 +5,11 @@ import CategoryListComponent from "../components/CategoryListComponent";
 import { useNavigate } from "react-router-dom";
 import {useSelector } from "react-redux";
 import { RootState } from "../state/store";
+
 function HomePage() {
   
-  
 const navigate = useNavigate()
-
 const { user } = useSelector((state: RootState) => state.user);
-
 
 useEffect(() => {
   if (user) {
