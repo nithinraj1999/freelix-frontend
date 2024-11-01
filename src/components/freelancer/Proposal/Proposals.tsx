@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import { fetchAllBids } from "../../../api/freelancer/freelancerServices";
 import { RootState } from "../../../state/store";
 import { useSelector } from "react-redux";
+import EditProposalModal from "./EditProposalModal";
+import { withdrawMyBid } from "../../../api/freelancer/freelancerServices";
 const Proposal: React.FC = () => {
   
   const [isExpanded, setIsExpanded] = useState(false);
   const { user } = useSelector((state: RootState) => state.user);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [myBid, setMyBid] = useState<Bid | null>(null);
+  
 
   interface Bid {
     _id: string;
@@ -40,15 +45,18 @@ const Proposal: React.FC = () => {
     {}
   );
 
+  const openEditModal = ()=>{
+    console.log(myBid);
+    setIsModalOpen(true)
+  }
   useEffect(() => {
     async function fetchBids() {
       if (!jobId) return;
       const data = { jobId};
-      try {
+      try { 
         const allBids = await fetchAllBids(data);
         console.log(allBids);
         setBids(allBids.allBids);
-       
       } catch (error) {
         console.error("Error fetching bids:", error);
       }
@@ -57,12 +65,29 @@ const Proposal: React.FC = () => {
     fetchBids();
   }, [jobId]);
 
+  useEffect(() => {
+    if (bids.length > 0) {
+      const bid = bids.find((bid) => bid.freelancerId._id === user?._id) || null;
+      setMyBid(bid);
+    }
+  }, [bids, user]);
+
   const toggleExpand = (bidId: string) => {
     setExpandedBids((prev) => ({
       ...prev,
       [bidId]: !prev[bidId],
     }));
   };
+
+
+  const withdrawBid = async(bidID:string)=>{
+    const data = {
+      bidId:bidID
+    }
+    const response = await withdrawMyBid(data)
+    console.log(response);
+    
+  }
 
   return (
     <>
@@ -151,15 +176,25 @@ const Proposal: React.FC = () => {
             </div>
 
             <div className="flex space-x-2 h-12 ">
-              <button className="bg-black text-white px-4 py-2 rounded">
+            <button className="bg-gray-400 text-white px-4 py-2 rounded" onClick={()=>withdrawBid(bid._id)}>
+                Withdraw Bid
+              </button>
+              <button className="bg-black text-white px-4 py-2 rounded" onClick={openEditModal}>
                 Edit Bid
               </button>
-             
             </div>
           </div>
         </div>
       ))}
-     
+
+      {isModalOpen &&
+      (<EditProposalModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        bid={myBid}
+       
+      />)
+      }
 
       {bids.filter(bid => bid.freelancerId._id !== user?._id)
       .map((bid) => (
@@ -220,6 +255,7 @@ const Proposal: React.FC = () => {
           </div>
         </div>
       ))}
+     
     </>
   );
 };

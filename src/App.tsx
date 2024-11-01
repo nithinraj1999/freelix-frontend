@@ -25,7 +25,8 @@ import JobBidPage from "./pages/freelancer/JobBidPage";
 import FreelancerRouteGuard from "./router/FreelancerRouteGuard";
 import ClientRouteGuard from "./router/ClientRouteGuard";
 import MyJobDetails from "./pages/user/MyJobdetails";
-
+import MyBids from "./pages/freelancer/MyBids";
+import MyBidsDetails from "./pages/freelancer/MyBidDetails";
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
@@ -84,6 +85,10 @@ function App() {
         <Route path="/freelancer/job-list" element={<JobListPage />} />
         <Route path="/freelancer/job/details" element={<JobBidPage/>} />
         <Route path="/freelancer/job/:view" element={<JobBidPage />} />
+        <Route path="/freelancer/your-bids" element={<MyBids />} />
+        <Route path="/freelancer/your-bids/details" element={<MyBidsDetails />} />
+
+
       </Route>
         {/* admin */}
 

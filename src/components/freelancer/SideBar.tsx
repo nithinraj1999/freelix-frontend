@@ -26,7 +26,7 @@ const Sidebar: React.FC = () => {
         </li>
         <li>
           <Link
-            to="/your-bid"
+            to="/freelancer/your-bids"
             className="block px-4 py-2 hover:bg-gray-700 transition-colors"
           >
             Your Bid

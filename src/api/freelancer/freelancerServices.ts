@@ -99,9 +99,7 @@ export const createFreelancerAccount = async (data: FormData) => {
         jobId,
         userId
       }
-      const response = await freelancerInstance.post("/check-for-existing-bidder",data)
-      console.log(response);
-      
+      const response = await freelancerInstance.post("/check-for-existing-bidder",data)      
       return response.data;
     }catch(error){
       console.error(error);
@@ -116,5 +114,48 @@ export const createFreelancerAccount = async (data: FormData) => {
       return allBids.data
     }catch(error){
       console.error(error);
+    }
+  }
+
+  export const editMyBid = async(data:object)=>{
+    try{
+      const editedBid = await freelancerInstance.post("/edit-my-bid", data);
+      return editedBid.data
+    }catch(error){
+      console.error(error);
+    }
+  }
+
+
+
+  export const myBids  = async (data:object)=>{
+    try{
+     
+      
+      const allMyBids = await freelancerInstance.post("/my-bids",data);
+      return allMyBids.data
+    }catch(error){
+      console.error(error);
+      
+    }
+  }
+
+  export const getBidDetails = async (data:object)=>{
+    try{
+      const bidDetails = await freelancerInstance.post("/my-bids/details",data);
+      return bidDetails.data
+    }catch(error){
+      console.error(error);
+      
+    }
+  }
+
+  export const withdrawMyBid = async (data:object)=>{
+    try{
+      const withdrawBid = await freelancerInstance.post("/withdraw-my-bid",data);
+      return withdrawBid.data
+    }catch(error){
+      console.error(error);
+      
     }
   }

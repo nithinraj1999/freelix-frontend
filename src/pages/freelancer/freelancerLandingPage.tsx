@@ -4,7 +4,6 @@ import { RootState } from '../../state/store';
 import { useEffect } from 'react';
 import Sidebar from '../../components/freelancer/SideBar';
 import FreelancerNavbar from '../../components/freelancer/FreelancerNavbar';
-
 function FreelancerLandingPage() {
   
   const { user } = useSelector((state: RootState) => state.user); 
@@ -19,7 +18,10 @@ function FreelancerLandingPage() {
   return (
     <>
     <FreelancerNavbar/>
+    <div className='flex'>
     <Sidebar/>
+    </div>
+    
     </>
   )
 }

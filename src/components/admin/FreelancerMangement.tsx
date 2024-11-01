@@ -12,7 +12,7 @@ import { updateFreelancerBlockStatus } from "../../state/slices/userSlice";
 import Modal from "./Modal";
 const Freelancer: React.FC = () => {
 
-  
+   
   interface Freelancer {
     _id: string;
     profilePicture: string;
