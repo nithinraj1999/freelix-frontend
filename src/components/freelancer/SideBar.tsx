@@ -16,14 +16,7 @@ const Sidebar: React.FC = () => {
             Dashboard
           </Link>
         </li>
-        <li>
-          <Link
-            to="/manage-gig"
-            className="block px-4 py-2 hover:bg-gray-700 transition-colors"
-          >
-            Manage Gig
-          </Link>
-        </li>
+       
         <li>
           <Link
             to="/freelancer/your-bids"

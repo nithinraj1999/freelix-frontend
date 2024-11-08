@@ -35,6 +35,7 @@ const JobList: React.FC = () => {
   };
 
   const navigateToDetails = (jobId:string)=>{
+    
     localStorage.setItem("selectedJobId", jobId);
     navigate('/freelancer/job/details',{ state: { jobId }})
   }

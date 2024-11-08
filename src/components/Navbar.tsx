@@ -8,7 +8,7 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { RxEnvelopeClosed } from "react-icons/rx";
 import { switchToSelling } from "../api/freelancer/freelancerServices";
 import { userLogin } from "../state/slices/userSlice";
-
+import ClientNotification from "./client/notification/ClientNotification";
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -18,13 +18,18 @@ const Navbar: React.FC = () => {
   const toggleSidebar = () => setSidebarVisible((prev) => !prev);
   const [dropdownVisible, setDropdownVisible] = useState(false); // State for dropdown visibility
   const dropdownRef = useRef<HTMLDivElement>(null); // Ref for dropdown
+  const [notificationVisible, setNotificationVisible] = useState(false);
 
   const handleSigninClick = () => navigate("login");
   const handleJoin = () => navigate("signup");
 
   const handleLogout = () => {
+    const ACCESS_TOKEN_KEY = 'userAccessToken';
+
+    localStorage.removeItem(ACCESS_TOKEN_KEY);
+
     dispatch(userLogout()); // Dispatch logout action
-    navigate("/"); // Navigate to home or login page
+    navigate("/",{ replace: true }); 
   };
 
   const handleDropdownToggle = () => setDropdownVisible((prev) => !prev);
@@ -58,6 +63,10 @@ const Navbar: React.FC = () => {
 
   const yourYobPost = ()=>{
     navigate("/my-job-post")
+  }
+
+  const toggleNotification =()=>{
+    setNotificationVisible((prev) => !prev)
   }
   return (
     <>
@@ -122,7 +131,12 @@ const Navbar: React.FC = () => {
                 >
                   Post a Job
                 </button>
-                <IoIosNotificationsOutline color="white" size={24} />
+                <IoIosNotificationsOutline color="white" className="cursor-pointer" onClick={toggleNotification} size={24} />
+                {notificationVisible && (
+                <div className="absolute max-h-[300px] overflow-y-auto top-20 right-[100px] w-[400px] bg-slate-800 h-[400px] z-50">
+                  <ClientNotification/>
+                </div>
+              )}
                 <RxEnvelopeClosed color="white" size={24} />
                 <p className="text-white">{user.name}</p>
                 <div

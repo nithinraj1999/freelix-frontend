@@ -56,6 +56,9 @@ export const createFreelancerAccount = async (data: FormData) => {
 
   export const editFreelancerProfile = async (data: any) => {
     try {
+     
+      
+      
       const response = await freelancerInstance.post("/profile/edit", data, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -130,8 +133,6 @@ export const createFreelancerAccount = async (data: FormData) => {
 
   export const myBids  = async (data:object)=>{
     try{
-     
-      
       const allMyBids = await freelancerInstance.post("/my-bids",data);
       return allMyBids.data
     }catch(error){
@@ -154,6 +155,28 @@ export const createFreelancerAccount = async (data: FormData) => {
     try{
       const withdrawBid = await freelancerInstance.post("/withdraw-my-bid",data);
       return withdrawBid.data
+    }catch(error){
+      console.error(error);
+      
+    }
+  }
+
+  
+
+  export const fetchfreelancerDetails = async (data:object)=>{
+    try{
+      const freelancer = await freelancerInstance.post("/freelancer-details",data);
+      return freelancer.data
+    }catch(error){
+      console.error(error);
+      
+    }
+  }
+
+  export const deletePortFolio = async (data:object)=>{
+    try{
+      const response = await freelancerInstance.post("/delete-portfolio",data);
+      return response.data
     }catch(error){
       console.error(error);
       

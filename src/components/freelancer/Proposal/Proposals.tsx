@@ -4,6 +4,7 @@ import { RootState } from "../../../state/store";
 import { useSelector } from "react-redux";
 import EditProposalModal from "./EditProposalModal";
 import { withdrawMyBid } from "../../../api/freelancer/freelancerServices";
+import { useNavigate } from "react-router-dom";
 const Proposal: React.FC = () => {
   
   const [isExpanded, setIsExpanded] = useState(false);
@@ -11,11 +12,11 @@ const Proposal: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [myBid, setMyBid] = useState<Bid | null>(null);
   
-
-  interface Bid {
+const navigate = useNavigate()
+   interface Bid {
     _id: string;
-    bidAmount: number;
-    deliveryDays: number;
+    bidAmount: string;
+    deliveryDays: string;
     proposal: string;
     freelancerId: {
       _id: string;
@@ -23,6 +24,7 @@ const Proposal: React.FC = () => {
       profilePicture: string;
       title: string;
     };
+    status:string
   }
 
   const proposalText = `Thank you for considering me for your logo design project. I am
@@ -55,7 +57,6 @@ const Proposal: React.FC = () => {
       const data = { jobId};
       try { 
         const allBids = await fetchAllBids(data);
-        console.log(allBids);
         setBids(allBids.allBids);
       } catch (error) {
         console.error("Error fetching bids:", error);
@@ -68,10 +69,13 @@ const Proposal: React.FC = () => {
   useEffect(() => {
     if (bids.length > 0) {
       const bid = bids.find((bid) => bid.freelancerId._id === user?._id) || null;
+      console.log("my bid",bid);
+      
       setMyBid(bid);
     }
   }, [bids, user]);
 
+  
   const toggleExpand = (bidId: string) => {
     setExpandedBids((prev) => ({
       ...prev,
@@ -85,13 +89,17 @@ const Proposal: React.FC = () => {
       bidId:bidID
     }
     const response = await withdrawMyBid(data)
-    console.log(response);
-    
+    if(response.success){
+      navigate("/freelancer/job/details")
+    }
+    window.location.reload()
+
   }
+  console.log(myBid);
 
   return (
     <>
-      <div className="mt-6 p-6 bg-white">
+      {/* <div className="mt-6 p-6 bg-white">
         <div className="flex">
           <div className="w-28 h-28">
             <img
@@ -125,9 +133,9 @@ const Proposal: React.FC = () => {
             {isExpanded ? "View Less" : "View More"}
           </button>
         </div>
-      </div>
+      </div> */}
 
-{bids.filter(bid => bid.freelancerId._id == user?._id)
+{bids.filter(bid => bid.freelancerId._id == user?._id && bid.status !=="Withdrawn")
       .map((bid) => (
         <div key={bid._id} className="mt-6 p-6 bg-white">
           <div className="flex">
@@ -191,8 +199,8 @@ const Proposal: React.FC = () => {
       (<EditProposalModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        // setMyBid={(updatedBid:Bid) => setMyBid(updatedBid)}
         bid={myBid}
-       
       />)
       }
 
@@ -244,14 +252,7 @@ const Proposal: React.FC = () => {
               </button>
             </div>
 
-            <div className="flex space-x-2 h-12 ">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Chat
-              </button>
-              <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                Hire
-              </button>
-            </div>
+           
           </div>
         </div>
       ))}

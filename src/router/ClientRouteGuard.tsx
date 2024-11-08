@@ -5,7 +5,7 @@ import { RootState } from "../state/store";
 
 function ClientRouteGuard() {
   const { user } = useSelector((state: RootState) => state.user);
-
+  
   return user?.role === "client" ? <Outlet /> : user?.role === "freelancer" ? <Navigate to="/freelancer" /> : null;
  
 }

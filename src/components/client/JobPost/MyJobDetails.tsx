@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import { selectedJobDetails } from "../../../api/client/clientServices";
 import EditJobPostModal from "./EditJobPostModal";
 import { deletepost } from "../../../api/client/clientServices";
+import Swal from 'sweetalert2';
+
 const JobDetail: React.FC = () => {
   interface Job {
     _id: string;
@@ -63,17 +65,42 @@ const JobDetail: React.FC = () => {
     setSelectedJob(null);
   };
 
-  const deletePost = async (jobId: string) => {
+
+const deletePost = async (jobId: string) => {
+  // Show a confirmation dialog using SweetAlert
+  const { isConfirmed } = await Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!',
+  });
+
+  // If the user confirms, proceed with the deletion
+  if (isConfirmed) {
     try {
       const data = { jobId: jobId };
-        const response = await deletepost(data);
+      const response = await deletepost(data);
+      if (response) {
+        setJobDetails(null); // Clear job details after deletion
+        navigate("/my-job-post")
+        // Show a success message
+        Swal.fire('Deleted!', 'Your job has been deleted.', 'success');
+      }
     } catch (error) {
       console.error(`Error deleting job:`, error);
+      // Optionally, show an error message
+      Swal.fire('Error!', 'There was an error deleting the job.', 'error');
     }
-  };
+  }
+};
+
 
   return (
     <>
+    
       <div className="mt-4 px-16 w-full">
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">{jobDetails?.title}</h1>
@@ -127,6 +154,7 @@ const JobDetail: React.FC = () => {
         )}
         
       </div>
+    
     </>
   );
 };

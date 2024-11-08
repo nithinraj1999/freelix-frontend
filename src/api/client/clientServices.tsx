@@ -64,3 +64,37 @@ export const fetchAllBids = async(data:object)=>{
     
   }
 }
+
+
+export const fetchfreelancerDetails = async (data:object)=>{
+  try{
+    const freelancer = await userInstance.post("/freelancer-details",data);
+    return freelancer.data
+  }catch(error){
+    console.error(error);
+    
+  }
+
+}
+
+
+export const fetchAllNotifications = async (data:object)=>{
+  try{
+    const notifications = await userInstance.post("/all-notifications",data);
+    return notifications.data
+  }catch(error){
+    console.error(error);
+  }
+
+}
+
+export const fetchSkills = async ()=>{
+  try{
+    const response = await userInstance.get("/get-skills");
+    
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+
+}

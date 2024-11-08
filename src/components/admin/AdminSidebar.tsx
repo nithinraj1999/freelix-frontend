@@ -11,6 +11,9 @@ const AdminSidebar: React.FC = () => {
         navigate('/admin/freelancer')
     }
 
+    const navigateManageSkills =()=>{
+        navigate('/admin/skills')
+    }
     return (
         <div className="w-64 h-screen px-2 bg-gray-800 text-white">
         <div className="p-4">
@@ -31,7 +34,7 @@ const AdminSidebar: React.FC = () => {
                     </li>
                 </ul>
             </li>
-            <li className="hover:bg-gray-700">
+            {/* <li className="hover:bg-gray-700">
                 <span className="block px-4 py-2">Manage Categories</span>
                 <ul className="ml-4">
                     <li className="hover:bg-gray-600">
@@ -41,9 +44,9 @@ const AdminSidebar: React.FC = () => {
                         <span className="block px-4 py-2 cursor-pointer">Subcategory</span>
                     </li>
                 </ul>
-            </li>
+            </li> */}
             <li className="hover:bg-gray-700">
-                <span className="block px-4 py-2 cursor-pointer">Manage Skills</span>
+                <span className="block px-4 py-2 cursor-pointer" onClick={navigateManageSkills}>Manage Skills</span>
             </li>
         </ul>
     </div>

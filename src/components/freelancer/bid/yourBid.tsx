@@ -4,34 +4,17 @@ import { useSelector } from "react-redux";
 import { myBids } from "../../../api/freelancer/freelancerServices";
 import { useNavigate } from "react-router-dom";
 // Dummy data for bids
-const bids = [
-  {
-    jobTitle: "Website Redesign",
-    bidAmount: "$500",
-    submittedDate: "Oct 25, 2024",
-    status: "Pending",
-  },
-  {
-    jobTitle: "Mobile App Development",
-    bidAmount: "$1200",
-    submittedDate: "Oct 20, 2024",
-    status: "Accepted",
-  },
-  {
-    jobTitle: "E-commerce Platform Setup",
-    bidAmount: "$750",
-    submittedDate: "Oct 15, 2024",
-    status: "Rejected",
-  },
-];
+
 
 const YourBid: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
+
   interface Job {
     _id: string;
     title: string;
   }
+  
   interface Bid {
     _id: string;
     jobId: Job;

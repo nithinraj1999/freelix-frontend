@@ -1,10 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface JobNotification {
-  id: string; // Unique identifier for the notification
+  _id: string; // Unique identifier for the notification
   userId: string; // ID of the user receiving the notification
   type: 'job' | 'bidding' | 'message'; // Type of notification
   jobTitle:string;
+  fixedPrice?: number;
+  hourlyPrice?: {
+    from: number; // Start of hourly rate range
+    to: number; // End of hourly rate range
+  };
   jobId: string; // ID of the job related to the notification
   isRead: boolean; // Flag to indicate if the notification has been read
   createdAt: Date; // Timestamp of when the notification was created
@@ -29,7 +34,7 @@ const notificationsSlice = createSlice({
     // Action to mark a notification as read
     markAsRead: (state, action: PayloadAction<string>) => {
       const notification = state.notifications.find(
-        (n) => n.id === action.payload
+        (n) => n._id === action.payload
       );
       if (notification) {
         notification.isRead = true;
@@ -38,7 +43,7 @@ const notificationsSlice = createSlice({
     // Action to remove a notification
     removeNotification: (state, action: PayloadAction<string>) => {
       state.notifications = state.notifications.filter(
-        (n) => n.id !== action.payload
+        (n) => n._id !== action.payload
       );
     },
     // Action to set all notifications

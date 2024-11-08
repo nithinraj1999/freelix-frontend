@@ -80,9 +80,9 @@ const handleClickOnsignup = async()=>{
               value={password}
               onChange={(e)=>setPassword(e.target.value)}
             />
-            <h1 className="text-right underline cursor-pointer">
+            {/* <h1 className="text-right underline cursor-pointer">
               Forgot password?
-            </h1>
+            </h1> */}
             <button className="w-full h-10 font-white bg-black text-white" onClick={handleLogin}>
               login
             </button>

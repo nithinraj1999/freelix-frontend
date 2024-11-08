@@ -11,7 +11,7 @@ interface ContainerProps {
 const Modal: React.FC<ContainerProps> = ({ title, children,image }) => {
   return (
     <div className="min-h-screen bg-gray-200 flex items-center justify-center">
-      <div className="w-[55%] h-[600px] bg-white rounded-xl overflow-hidden mx-auto my-10">
+      <div className="w-[55%] h-[650px] bg-white rounded-xl overflow-hidden mx-auto my-10">
         {/* Container Content */}
         <div className="flex h-full">
           <div className="w-[50%] h-full overflow-hidden relative">

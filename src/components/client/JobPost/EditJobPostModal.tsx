@@ -88,7 +88,11 @@ const EditJobPostModal: React.FC<EditJobPostModalProps> = ({
       }
 
       const response = await editPost(updatedData);
+      console.log(response);
+      
+     
       if (response.success) {
+        window.location.reload()
         toast.success("Job post updated successfully!");
         onClose();
       } else {
@@ -215,6 +219,8 @@ const EditJobPostModal: React.FC<EditJobPostModalProps> = ({
                   onChange={(e) => setHourlyRateFrom(Number(e.target.value))}
                   className="border p-1 w-full"
                 />
+              {errors.hourlyRateFrom && <p className="text-red-500">{errors.hourlyRateFrom}</p>}
+
                 <label>Hourly Rate To</label>
                 <input
                   type="number"
@@ -222,6 +228,8 @@ const EditJobPostModal: React.FC<EditJobPostModalProps> = ({
                   onChange={(e) => setHourlyRateTo(Number(e.target.value))}
                   className="border p-1 w-full"
                 />
+              {errors.hourlyRateTo && <p className="text-red-500">{errors.hourlyRateTo}</p>}
+
               </div>
             )}
 
@@ -234,6 +242,7 @@ const EditJobPostModal: React.FC<EditJobPostModalProps> = ({
                   onChange={(e) => setTotalAmount(Number(e.target.value))}
                   className="border p-1 w-full"
                 />
+                 {errors.totalAmount && <p className="text-red-500">{errors.totalAmount}</p>}
               </div>
             )}
 

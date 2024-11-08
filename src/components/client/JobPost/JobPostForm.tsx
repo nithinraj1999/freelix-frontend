@@ -9,7 +9,7 @@ import { z } from "zod"; // Import Zod
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userLogout } from "../../../state/slices/userSlice";
-
+import { fetchSkills } from "../../../api/client/clientServices";
 const JobPostForm: React.FC = () => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -215,6 +215,48 @@ const JobPostForm: React.FC = () => {
     }
   };
 
+  const [predefinedSkills, setPredefinedSkills] = useState<string[]>([]); // Initialize as an empty array of strings
+
+  useEffect(() => {
+    async function getSkills() {
+      const response = await fetchSkills();
+      console.log(response);
+      const skillArray = response.skills.map((item: { skill: string }) => item.skill);
+      setPredefinedSkills(skillArray);
+    }
+    getSkills();
+  }, []);
+  
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
+  
+  useEffect(() => {
+    // Filter the skills based on the input
+    if (searchInput) {
+      const filtered = predefinedSkills.filter(skill =>
+        skill.toLowerCase().includes(searchInput.toLowerCase())
+      );
+      setSuggestedSkills(filtered);
+    } else {
+      setSuggestedSkills([]);
+    }
+  }, [searchInput]);
+  
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
+
+  const selectSkill = (skill: string) => {
+    // Function to add the selected skill to the skill list
+    setSkillList([...skillList, skill]);
+    console.log(`Selected skill: ${skill}`);
+    setSearchInput(''); // Clear the input after selection
+    setSuggestedSkills([]); // Clear suggestions
+  };
+
+
+
   return (
     <>
       <div className="min-h-screen flex items-center justify-center">
@@ -307,7 +349,7 @@ const JobPostForm: React.FC = () => {
               <h3 className="text-lg font-bold mt-6">
                 What are the main skills required for your work?
               </h3>
-              <div>
+              {/* <div>
                 <input
                   placeholder="search skills"
                   value={skillInput}
@@ -326,7 +368,30 @@ const JobPostForm: React.FC = () => {
                 {errors.skills && (
                   <p className="text-red-500">{errors.skills}</p>
                 )}
-              </div>
+              </div> */}
+
+              <div>
+      <input
+        placeholder="Search skills"
+        value={searchInput}
+        onChange={handleInputChange}
+        className="h-10 mt-1 px-2 w-1/2"
+      />
+      {suggestedSkills.length > 0 && (
+        <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 w-1/2 z-10">
+          {suggestedSkills.map((skill, index) => (
+            <li
+              key={index}
+              onClick={() => selectSkill(skill)}
+              className="cursor-pointer hover:bg-blue-100 px-2 py-1"
+            >
+              {skill}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
               <div>
                 <h3 className="text-slate-500 mt-6">Selected Skills</h3>
                 <div className="flex flex-wrap mt-2">
@@ -430,28 +495,7 @@ const JobPostForm: React.FC = () => {
                     <p className="text-red-500">{errors.paymentType}</p>
                   )}
 
-                  {/* Conditional Input Fields */}
-                  {/* {selectedPaymentType === "hourly" && (
-                    <div className="flex space-x-4">
-                      <input
-                        type="number"
-                        placeholder="From"
-                        className="p-3 border rounded-lg w-1/2"
-                        value={hourlyRateFrom} // Use state value
-                        onChange={(e) => setHourlyRateFrom(e.target.value ? parseFloat(e.target.value) : "")} // Update state
-                        />
-                      <input
-                        type="number"
-                        placeholder="To"
-                        className="p-3 border rounded-lg w-1/2"
-                        value={hourlyRateTo} // Use state value
-
-                        onChange={(e) => setHourlyRateTo(e.target.value ? parseFloat(e.target.value) : "")} // Update state
-                        />
-                  {errors.hourlyRateFrom && <p className="text-red-500">{errors.hourlyRateFrom}</p>}
-
-                    </div>
-                  )} */}
+                 
                   {selectedPaymentType === "hourly" && (
                     <div className="flex space-x-4">
                       <input

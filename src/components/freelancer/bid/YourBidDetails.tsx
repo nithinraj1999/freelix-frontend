@@ -15,6 +15,7 @@ const YourBidDetails: React.FC = () => {
         jobId:IJobDetailsType;
         bidAmount:number;
         freelancerId:string;
+        status?:string;
         proposal:string;
         deliveryDays:number
       }
@@ -94,8 +95,13 @@ const YourBidDetails: React.FC = () => {
           <div className="flex justify-between mt-4">
             <h1 className="text-2xl font-bold">Bid Details</h1>
             <div className="flex ">
-            <button className="bg-black bg-gray-100 w-32 h-12">WithDraw Bid</button>
-            <button className="bg-black text-white w-32 h-12" onClick={openEditModal}>Edit Bid</button>
+              {bidDetails?.status !== "Withdrawn" &&(
+                <>
+ <button className="bg-black bg-gray-100 w-32 h-12">WithDraw Bid</button>
+ <button className="bg-black text-white w-32 h-12" onClick={openEditModal}>Edit Bid</button>
+ </>
+              )}
+           
             </div>
             {isModalOpen &&
       (<EditProposalModal

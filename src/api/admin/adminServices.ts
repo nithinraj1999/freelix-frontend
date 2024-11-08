@@ -178,4 +178,14 @@ export const unblockClient = async (clientID:string): Promise<any> => {
     }
 };
 
+
+export const addSkills = async (data:any)=>{
+  try{
+    const response =  await adminInstance.post("/add-skills",data)
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}
+
   

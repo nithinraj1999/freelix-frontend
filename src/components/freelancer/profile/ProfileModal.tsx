@@ -1,9 +1,14 @@
 import React, { useState } from "react";
+import { deletePortFolio } from "../../../api/freelancer/freelancerServices";
+import { RootState } from "../../../state/store";
+import { useSelector } from "react-redux";
+import { IPortfolioItem } from "./interface/interface";
 
 interface PortfolioItem {
+  _id: string;
   image: string;
   title: string;
-  description:string;
+  description: string;
 }
 
 interface ProfileModalProps {
@@ -11,10 +16,13 @@ interface ProfileModalProps {
   onClose: () => void;
   title: string;
   currentValue: string | File | string[]; // Allow string[], string, or File
-  onSave: (newValue: string | File | string[], updatedPortfolioImages?: PortfolioItem[]) => void; // Pass updated portfolio images
+  onSave: (
+    newValue: string | File | string[],
+    updatedPortfolioImages?: IPortfolioItem[]
+  ) => void; // Pass updated portfolio images
   inputType: "text" | "textarea" | "file" | "skills";
-  portfolioImages?: PortfolioItem[] ; // Only relevant when inputType is 'file'
-  setPortfolioImages?: React.Dispatch<React.SetStateAction<PortfolioItem[]>>; // Function to update portfolio images
+  portfolioImages?: IPortfolioItem[]; // Only relevant when inputType is 'file'
+  setPortfolioImages?: React.Dispatch<React.SetStateAction<IPortfolioItem[]>>; // Function to update portfolio images
   availableSkills?: string[]; // Only relevant when inputType is 'skills'
 }
 
@@ -29,15 +37,28 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   setPortfolioImages = () => {}, // Provide a default no-op function
   availableSkills = [],
 }) => {
-  const [newValue, setNewValue] = useState<string | File | string[]>(currentValue); // Updated state to handle all types
+
+  const { user } = useSelector((state: RootState) => state.user); 
+
+  const [newValue, setNewValue] = useState<string | File | string[]>(
+    currentValue
+  ); // Updated state to handle all types
   const [previewImage, setPreviewImage] = useState<string | null>(null); // State for image preview
-  const [newSkills, setNewSkills] = useState<string[]>(Array.isArray(currentValue) ? currentValue : []); // Handle skills array
+  const [newSkills, setNewSkills] = useState<string[]>(
+    Array.isArray(currentValue) ? currentValue : []
+  ); // Handle skills array
   const [searchQuery, setSearchQuery] = useState(""); // State for search bar
 
   // Handle input changes based on type
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const target = e.target;
-    if (inputType === "file" && target instanceof HTMLInputElement && target.files) {
+    if (
+      inputType === "file" &&
+      target instanceof HTMLInputElement &&
+      target.files
+    ) {
       const file = target.files[0];
       setNewValue(file); // Accept only one file at a time
       setPreviewImage(URL.createObjectURL(file)); // Generate preview URL for the selected image
@@ -46,15 +67,22 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
     }
   };
 
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveImage = async (index: number, imageId: string) => {
+    const data = {
+      imageId: imageId,
+      userId:user?._id,
+    };
+    const response = await deletePortFolio(data);
+    console.log(response);
+
     const updatedImages = portfolioImages.filter((_, i) => i !== index);
+
     setPortfolioImages(updatedImages); // Update the state with remaining images
-  
+
     // Update newValue to be an array of image URLs (if needed)
-    const newImageUrls = updatedImages.map(item => item.image);
+    const newImageUrls = updatedImages.map((item) => item.image);
     setNewValue(newImageUrls); // Now newValue is of type string[]
   };
-  
 
   const handleAddSkill = (skill: string) => {
     if (!newSkills.includes(skill)) {
@@ -73,7 +101,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 
   // Filter available skills based on search query and exclude already selected skills
   const filteredSkills = availableSkills.filter(
-    (skill) => skill.toLowerCase().includes(searchQuery.toLowerCase()) && !newSkills.includes(skill)
+    (skill) =>
+      skill.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !newSkills.includes(skill)
   );
 
   if (!isOpen) return null;
@@ -116,7 +146,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                       className="w-20 h-20 mr-2 rounded object-cover"
                     />
                     <button
-                      onClick={() => handleRemoveImage(index)}
+                      onClick={() => {
+                        if (item._id) {
+                          handleRemoveImage(index, item._id);
+                        } else {
+                          console.error(
+                            `Image ID is undefined for index ${index}`
+                          );
+                        }
+                      }}
                       className="ml-2 text-red-600 hover:text-red-800"
                     >
                       &times; {/* Remove image */}
@@ -131,7 +169,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             {/* File input for new image */}
             <input
               type="file"
-              name ="portfolio"
+              name="portfolio"
               onChange={handleInputChange}
               className="border border-gray-300 p-2 w-full rounded mt-4"
             />
@@ -140,7 +178,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             {previewImage && (
               <div className="mt-4">
                 <h3 className="text-slate-500">Image Preview</h3>
-                <img src={previewImage} alt="Selected" className="w-20 h-20 rounded mt-2 object-cover" />
+                <img
+                  src={previewImage}
+                  alt="Selected"
+                  className="w-20 h-20 rounded mt-2 object-cover"
+                />
               </div>
             )}
           </div>
@@ -196,14 +238,19 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                   </button>
                 ))
               ) : (
-                <p className="text-gray-500">{searchQuery ? "No matching skills found." : ""}</p>
+                <p className="text-gray-500">
+                  {searchQuery ? "No matching skills found." : ""}
+                </p>
               )}
             </div>
           </div>
         )}
 
         <div className="flex justify-end mt-4">
-          <button onClick={onClose} className="mr-2 text-gray-600 hover:underline">
+          <button
+            onClick={onClose}
+            className="mr-2 text-gray-600 hover:underline"
+          >
             Cancel
           </button>
           <button

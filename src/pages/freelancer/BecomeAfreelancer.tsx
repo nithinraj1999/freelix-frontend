@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../state/store";
 import { useNavigate } from "react-router-dom";
 import { userLogin } from "../../state/slices/userSlice";
-
+import { fetchSkills } from "../../api/client/clientServices";
+import { switchToSelling } from "../../api/freelancer/freelancerServices";
 // Zod schema for validation
 const freelancerSchema = z.object({
   name: z
@@ -96,6 +97,8 @@ const predefinedLanguages = [
   "Spanish",
   "Swedish",
 ];
+
+
 
 const BecomeFreelancerForm: React.FC = () => {
   const [name, setName] = useState<string>("");
@@ -200,9 +203,12 @@ const BecomeFreelancerForm: React.FC = () => {
       const response = await createFreelancerAccount(data);
       if (response.success) {
         console.log(response);
-        
-        dispatch(userLogin(response.freelancerData));
-        navigate("/freelancer");
+        const switchToFreelancer = await switchToSelling(response._id)
+        if(switchToFreelancer){
+          dispatch(userLogin(response.freelancerData));
+          navigate("/freelancer");
+        }
+       
       } else {
         navigate("/home");
       }
@@ -217,6 +223,48 @@ const BecomeFreelancerForm: React.FC = () => {
       }
     }
   };
+
+
+  const [predefinedSkills, setPredefinedSkills] = useState<string[]>([]); // Initialize as an empty array of strings
+
+  useEffect(() => {
+    async function getSkills() {
+      const response = await fetchSkills();
+      console.log(response);
+      const skillArray = response.skills.map((item: { skill: string }) => item.skill);
+      setPredefinedSkills(skillArray);
+    }
+    getSkills();
+  }, []);
+  
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
+  
+  useEffect(() => {
+    // Filter the skills based on the input
+    if (searchInput) {
+      const filtered = predefinedSkills.filter(skill =>
+        skill.toLowerCase().includes(searchInput.toLowerCase())
+      );
+      setSuggestedSkills(filtered);
+    } else {
+      setSuggestedSkills([]);
+    }
+  }, [searchInput]);
+  
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
+
+  const selectSkill = (skill: string) => {
+    // Function to add the selected skill to the skill list
+    setSkills([...skills, skill]);
+    console.log(`Selected skill: ${skill}`);
+    setSearchInput(''); // Clear the input after selection
+    setSuggestedSkills([]); // Clear suggestions
+  };
+
 
   return (
     <div className="bg-slate-100 py-1">
@@ -302,8 +350,50 @@ const BecomeFreelancerForm: React.FC = () => {
           )}
         </div>
 
+        <div>
+      <input
+        placeholder="Search skills"
+        value={searchInput}
+        onChange={handleInputChange}
+        className="h-10 mt-1 px-2 w-1/2"
+      />
+      {suggestedSkills.length > 0 && (
+        <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 w-1/2 z-10">
+          {suggestedSkills.map((skill, index) => (
+            <li
+              key={index}
+              onClick={() => selectSkill(skill)}
+              className="cursor-pointer hover:bg-blue-100 px-2 py-1"
+            >
+              {skill}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+              <div>
+                <h3 className="text-slate-500 mt-6">Selected Skills</h3>
+                <div className="flex flex-wrap mt-2">
+                  {skills.map((skill,index) => (
+                    <div
+                      key={skill}
+                      className="flex items-center bg-white rounded-full px-3 py-1 mr-2 mb-2"
+                    >
+                      <p className="text-sm text-blue-800">{skill}</p>
+                      <button
+                        onClick={(event) =>  removeSkill(index)}
+                        className="ml-2 text-blue-600 hover:text-blue-800"
+                      >
+                        &times; {/* Close icon */}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
         {/* Skills Section */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700">
             Skills
           </label>
@@ -339,7 +429,7 @@ const BecomeFreelancerForm: React.FC = () => {
           >
             Add
           </button>
-        </div>
+        </div> */}
 
        
        <div className="mb-6">

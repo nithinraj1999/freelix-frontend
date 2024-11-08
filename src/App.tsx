@@ -27,8 +27,10 @@ import ClientRouteGuard from "./router/ClientRouteGuard";
 import MyJobDetails from "./pages/user/MyJobdetails";
 import MyBids from "./pages/freelancer/MyBids";
 import MyBidsDetails from "./pages/freelancer/MyBidDetails";
+import FreelancerProfileView from "./pages/user/FreelancerProfileView";
+import SkillManagementPage from "./pages/admin/SkillManagementPage";
+
 function App() {
-  const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
   const userID = user?._id
 
@@ -42,19 +44,7 @@ function App() {
       console.log(`Registering user with ID: ${userID}`);
       socket.emit("registerUser", userID); // Register user with socket ID
     }
-
-    socket.on("newJobNotification", (notification) => {
-      console.log(notification);
-      
-      if (notification.userId === userID) {
-        dispatch(addNotification(notification)); // Only add the notification if it matches the current user
-      }
-    });
-
-    return () => {
-      socket.off("newJobNotification"); 
-    };
-  }, [dispatch, userID]);
+  }, [ userID]);
 
   return (
     <Router>
@@ -67,13 +57,14 @@ function App() {
 
         {/* ------------------- Client --------------------- */}
         
-        <Route element={<ClientRouteGuard/>}>
+      <Route element={<ClientRouteGuard/>}>
         <Route path="/home" element={<UserLandingPage />} />
         <Route path="/become-a-freelancer" element={<BecomeFreelancerForm />} />
         <Route path="/post-a-job" element={<JobPostForm />} />
         <Route path="/my-job-post" element={<AllJobPostsPage />} />
         <Route path="/job/details" element={<MyJobDetails/>} />
         <Route path="/job/:view" element={<MyJobDetails />} />
+        <Route path="/freelancer-info" element={<FreelancerProfileView />} />
       </Route>
 
         {/* ------------------- freelancer -------------------- */}
@@ -98,6 +89,8 @@ function App() {
           <Route path="/admin/" element={<AdminLandingPage />} />
           <Route path="/admin/clients" element={<ClientManagement />} />
           <Route path="/admin/freelancer" element={<FreelancerManagement />} />
+          <Route path="/admin/skills" element={<SkillManagementPage />} />
+
         </Route>
       </Routes>
     </Router>

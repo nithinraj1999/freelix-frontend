@@ -5,15 +5,18 @@ import 'react-toastify/dist/ReactToastify.css';
 import Modal from "./ModalComponent";
 import { verifyOTP } from "../api/user/authUser";
 import { resendOTP } from "../api/user/authUser";
+import { useLocation } from 'react-router-dom';
 
 const VerifyOtp: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(["", "", "", "", ""]);
   const [showResend, setShowResend] = useState<boolean>(false);
-  const [timer, setTimer] = useState<number>(60); 
+  const [timer, setTimer] = useState<number>(120); 
   const [resendTrigger, setResendTrigger] = useState<boolean>(false); // NEW STATE FOR RESEND TRIGGER
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]); 
 
   const navigate = useNavigate()
+
+  const location = useLocation();
 
   // Handle OTP input change
   const handleOtpChange = (value: string, index: number) => {
@@ -34,14 +37,16 @@ const VerifyOtp: React.FC = () => {
 
   const handleVerify = async () => {
     const otpValue = otp.join(""); 
-    const userID = new URLSearchParams(window.location.search).get('id'); 
+    // const userID = new URLSearchParams(window.location.search).get('id'); 
+    const {email } = location.state 
 
     const data = {
       otp: otpValue,
-      userID: userID
+      email: email
     };
 
     const response = await verifyOTP(data);
+    console.log("res...",response);
     
     if(response.success){
       navigate('/login');
@@ -61,14 +66,14 @@ const VerifyOtp: React.FC = () => {
   const handleResendOtp = async () => {
     try {
       console.log("resend otp");
-      const userID = new URLSearchParams(window.location.search).get('id'); 
-      const data = { userID };
+      const {email } = location.state 
+      const data = { email };
       const response = await resendOTP(data);
   
   
       if (response) {
         // Reset timer and trigger resend action
-        setTimer(60); 
+        setTimer(120); 
         setShowResend(false);
         setResendTrigger(!resendTrigger); // CHANGE THIS TO TRIGGER TIMER RESET
       } else {

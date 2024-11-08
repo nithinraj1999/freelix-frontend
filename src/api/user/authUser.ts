@@ -12,8 +12,9 @@ export const registerUser = async (data: object) => {
 
 export const verifyOTP = async (otp: object) => {
   try {
+    console.log("verification...",otp);
+    
     const response = await userInstance.post("/verification", otp);
-
     return response.data;
   } catch (error) {
     console.error(error);
