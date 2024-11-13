@@ -1,150 +1,136 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const JobFilter: React.FC = () => {
-  const [projectType, setProjectType] = useState<'fixed' | 'hourly' | ''>('');
-  const [fixedMinPrice, setFixedMinPrice] = useState('');
-  const [fixedMaxPrice, setFixedMaxPrice] = useState('');
-  const [hourlyMinPrice, setHourlyMinPrice] = useState('');
-  const [hourlyMaxPrice, setHourlyMaxPrice] = useState('');
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [selectedLanguage, setSelectedLanguage] = useState('');
+interface JobFilterProps {
+  onFilterChange: (filters: any) => void;
+  initialFilters: {
+    projectType: string;
+    minPrice: number;
+    maxPrice: number;
+    skills: string[];
+    language: string;
+    experience:string;
+  };
+}
 
-  const skills = ['React', 'Node.js', 'Python', 'UI/UX']; // Example skills
-  const languages = ['English', 'Spanish', 'French']; // Example languages
+const JobFilter: React.FC<JobFilterProps> = ({
+  onFilterChange,
+  initialFilters,
+}) => {
+  const [filters, setFilters] = useState(initialFilters);
+  const navigate = useNavigate();
 
-  const handleSkillChange = (skill: string) => {
-    setSelectedSkills((prev) =>
-      prev.includes(skill) ? prev.filter((s) => s !== skill) : [...prev, skill]
-    );
+  useEffect(() => {
+    // Update local state if initialFilters change (for example, due to query parameters)
+    setFilters(initialFilters);
+  }, [initialFilters]);
+
+  const handleFilterChange = (field: string, value: any) => {
+    const updatedFilters = { ...filters, [field]: value };
+    setFilters(updatedFilters);
+    onFilterChange(updatedFilters); // Notify the parent component of updated filters
   };
 
-  const handleFilterSubmit = () => {
-    const filters = {
-      projectType,
-      fixedPriceRange: { min: fixedMinPrice, max: fixedMaxPrice },
-      hourlyPriceRange: { min: hourlyMinPrice, max: hourlyMaxPrice },
-      selectedSkills,
-      selectedLanguage,
-    };
-    console.log(filters);
-    // Call filter logic here (e.g., API call with these filters)
+  // Handle the reset of filters to initial state
+  const defaultFilters = {
+    projectType: 'any',
+    minPrice: 0,
+    maxPrice: 10000,
+    skills: [],
+    language: 'any',
+    search: '',
+    deliveryDays: 0,
+    sort: '',
+    page: 1,
+    experience: 'any',
+  };
+  
+  const resetFilters = () => {
+    setFilters(initialFilters);
+    onFilterChange(defaultFilters); 
+    navigate("/freelancer/job-list"); 
   };
 
   return (
-    <div className="h-[600px] w-[250px] bg-white rounded p-4">
-      <h3 className="text-lg font-semibold mb-4">Filter Jobs</h3>
+    <div className="p-4 bg-white shadow-md rounded-md w-full">
+      <h2 className="text-xl font-semibold mb-4">Filter Jobs</h2>
 
       {/* Project Type Filter */}
       <div className="mb-4">
-        <label className="block font-medium mb-2">Project Type</label>
-        <div>
-          <label>
-            <input
-              type="radio"
-              name="projectType"
-              value="fixed"
-              checked={projectType === 'fixed'}
-              onChange={() => setProjectType('fixed')}
-            />
-            Fixed Rate
-          </label>
-          <label className="ml-4">
-            <input
-              type="radio"
-              name="projectType"
-              value="hourly"
-              checked={projectType === 'hourly'}
-              onChange={() => setProjectType('hourly')}
-            />
-            Hourly Rate
-          </label>
-        </div>
+        <label className="block text-sm font-medium text-gray-700">
+          Project Type
+        </label>
+        <select
+          value={filters.projectType}
+          onChange={(e) => handleFilterChange("projectType", e.target.value)}
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value="any">Any</option>
+          <option value="hourly">Hourly</option>
+          <option value="fixed">Fixed Rate</option>
+        </select>
       </div>
 
-      {/* Fixed Price Filter */}
-      {projectType === 'fixed' && (
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Fixed Price Range</label>
-          <div className="flex space-x-2">
+      {/* Price Range Filter - Min and Max Price in the same section */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Price Range
+        </label>
+        <div className="flex gap-4">
+          <div className="w-1/2">
+            <label className="block text-xs font-medium text-gray-700">
+              Min Price
+            </label>
             <input
               type="number"
-              placeholder="Min"
-              className="border p-2 rounded w-full"
-              value={fixedMinPrice}
-              onChange={(e) => setFixedMinPrice(e.target.value)}
+              placeholder="Min Price"
+              value={filters.minPrice}
+              onChange={(e) => handleFilterChange("minPrice", +e.target.value)}
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
+          </div>
+          <div className="w-1/2">
+            <label className="block text-xs font-medium text-gray-700">
+              Max Price
+            </label>
             <input
               type="number"
-              placeholder="Max"
-              className="border p-2 rounded w-full"
-              value={fixedMaxPrice}
-              onChange={(e) => setFixedMaxPrice(e.target.value)}
+              placeholder="Max Price"
+              value={filters.maxPrice}
+              onChange={(e) => handleFilterChange("maxPrice", +e.target.value)}
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
         </div>
-      )}
-
-      {/* Hourly Price Filter */}
-      {projectType === 'hourly' && (
-        <div className="mb-4">
-          <label className="block font-medium mb-2">Hourly Rate Range</label>
-          <div className="flex space-x-2">
-            <input
-              type="number"
-              placeholder="Min"
-              className="border p-2 rounded w-full"
-              value={hourlyMinPrice}
-              onChange={(e) => setHourlyMinPrice(e.target.value)}
-            />
-            <input
-              type="number"
-              placeholder="Max"
-              className="border p-2 rounded w-full"
-              value={hourlyMaxPrice}
-              onChange={(e) => setHourlyMaxPrice(e.target.value)}
-            />
-          </div>
-        </div>
-      )}
+      </div>
 
       {/* Skills Filter */}
       <div className="mb-4">
-        <label className="block font-medium mb-2">Skills</label>
-        <div className="flex flex-wrap">
-          {skills.map((skill) => (
-            <label key={skill} className="mr-4 mb-2">
-              <input
-                type="checkbox"
-                checked={selectedSkills.includes(skill)}
-                onChange={() => handleSkillChange(skill)}
-              />
-              {skill}
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Language Filter */}
-      <div className="mb-4">
-        <label className="block font-medium mb-2">Language</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Experience
+        </label>
         <select
-          className="border p-2 rounded w-full"
-          value={selectedLanguage}
-          onChange={(e) => setSelectedLanguage(e.target.value)}
+          value={filters.experience}
+          onChange={(e) => handleFilterChange("experience", e.target.value)}
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
-          <option value="">Select Language</option>
-          {languages.map((language) => (
-            <option key={language} value={language}>
-              {language}
-            </option>
-          ))}
+          <option value="any">Any</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Experienced">Experienced</option>
         </select>
       </div>
+
+      {/* Delivery Days Filter */}
+     
+
+      {/* Reset Button */}
       <button
-        className="bg-blue-500 text-white p-2 rounded w-full"
-        onClick={handleFilterSubmit}
+        type="button"
+        onClick={resetFilters}
+        className="mt-4 w-full py-2 bg-gray-300 text-white font-semibold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
       >
-        Apply Filters
+        Reset Filters
       </button>
     </div>
   );

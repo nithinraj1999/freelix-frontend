@@ -100,7 +100,6 @@ const deletePost = async (jobId: string) => {
 
   return (
     <>
-    
       <div className="mt-4 px-16 w-full">
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">{jobDetails?.title}</h1>

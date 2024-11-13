@@ -18,7 +18,6 @@ import AdminLoginGuard from "./router/AdminLoginGuard";
 import JobListPage from "./pages/freelancer/JobListPage";
 import { useDispatch,useSelector } from "react-redux";
 import socket from "./socket/socket";
-import { addNotification } from "./state/slices/notificationSlice";
 import { RootState } from "./state/store";
 import AllJobPostsPage from "./pages/user/AllJobPostsPage";
 import JobBidPage from "./pages/freelancer/JobBidPage";
@@ -29,6 +28,8 @@ import MyBids from "./pages/freelancer/MyBids";
 import MyBidsDetails from "./pages/freelancer/MyBidDetails";
 import FreelancerProfileView from "./pages/user/FreelancerProfileView";
 import SkillManagementPage from "./pages/admin/SkillManagementPage";
+import Checkout from "./pages/user/Checkout";
+import PaymentSuccessPage from "./pages/user/PaymentSuccessPage";
 
 function App() {
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
@@ -65,6 +66,9 @@ function App() {
         <Route path="/job/details" element={<MyJobDetails/>} />
         <Route path="/job/:view" element={<MyJobDetails />} />
         <Route path="/freelancer-info" element={<FreelancerProfileView />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/success" element={<PaymentSuccessPage />} />
+
       </Route>
 
         {/* ------------------- freelancer -------------------- */}

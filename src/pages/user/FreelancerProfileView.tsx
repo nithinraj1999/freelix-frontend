@@ -50,7 +50,6 @@ const FreelancerProfileView = () => {
           <ProfileSkills freelancerData={freelancerData}/>
         </div>
       </div>
-   
     </>
   )
 }

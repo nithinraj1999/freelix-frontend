@@ -47,12 +47,11 @@ export const createFreelancerAccount = async (data: FormData) => {
   }
 
 
-    
-  export const getJobList = async()=>{
-    const response =  await freelancerInstance.get("/job-list")
-    return response.data
-  }
-
+  export const getJobList = async (query: string) => {
+    const response = await freelancerInstance.get(`/job-list?${query}`);
+    return response.data;
+  };
+  
 
   export const editFreelancerProfile = async (data: any) => {
     try {
