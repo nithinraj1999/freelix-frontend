@@ -144,5 +144,9 @@ export const editBidSchema = z.object({
     .refine((val) => val?.trim().length > 0, { message: "Proposal cannot be only blank spaces" }),
 });
 
-
-
+export const completeOrderSchema = z.object({
+  description: z.string().min(1, { message: 'Description is required.' }),
+  file: z.instanceof(File, { message: 'File is required.' }).refine((file) => file.size > 0, {
+    message: 'Please upload a valid file.',
+  }),
+});

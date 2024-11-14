@@ -181,3 +181,34 @@ export const createFreelancerAccount = async (data: FormData) => {
       
     }
   }
+
+
+  export const fetchOrders = async (data:object)=>{
+    try{
+      
+      const response = await freelancerInstance.post("/my-orders",data);
+      console.log(response.data);
+      
+      return response.data
+    }catch(error){
+      console.error(error);
+    }
+  }
+
+
+  export const completeOrder = async (data:object)=>{
+    try{
+      console.log(data);
+      
+      const response = await freelancerInstance.post("/complete-order",data,{
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response.data);
+      return response.data
+    }catch(error){
+      console.error(error);
+      
+    }
+  }

@@ -30,7 +30,7 @@ import FreelancerProfileView from "./pages/user/FreelancerProfileView";
 import SkillManagementPage from "./pages/admin/SkillManagementPage";
 import Checkout from "./pages/user/Checkout";
 import PaymentSuccessPage from "./pages/user/PaymentSuccessPage";
-
+import MyOders from "./pages/freelancer/MyOders";
 function App() {
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
   const userID = user?._id
@@ -82,6 +82,7 @@ function App() {
         <Route path="/freelancer/job/:view" element={<JobBidPage />} />
         <Route path="/freelancer/your-bids" element={<MyBids />} />
         <Route path="/freelancer/your-bids/details" element={<MyBidsDetails />} />
+        <Route path="/freelancer/your-orders" element={<MyOders />} />
 
 
       </Route>
