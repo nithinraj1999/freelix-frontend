@@ -6,6 +6,7 @@ import { editFreelancerProfile } from "../../../api/freelancer/freelancerService
 import { userLogin } from "../../../state/slices/userSlice";
 import { IProfile } from '../../../pages/freelancer/interfaces/profile';
 import { IPortfolioItem } from "./interface/interface";
+
 interface PortfolioItem {
      _id?:string,
     image: string;
@@ -118,7 +119,6 @@ const handleAddImage = async (newValue: string | File | string[]) => {
             </div>
 )}
             
-
             {/* Modal for adding new images */}
             <ProfileModal
                 isOpen={isModalOpen}

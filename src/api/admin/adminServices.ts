@@ -188,4 +188,24 @@ export const addSkills = async (data:any)=>{
   }
 }
 
+
+export const dashboardData = async ()=>{
+  try{
+    const response =  await adminInstance.get("/dashboard-data")
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}
+
+
+export const fetchAllSkills = async ()=>{
+  try{
+    const response =  await adminInstance.get("/get-all-skills")
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}
+
   

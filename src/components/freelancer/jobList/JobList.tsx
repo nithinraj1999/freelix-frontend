@@ -118,7 +118,7 @@ const JobList: React.FC<JobListProps> = ({
           >
             <div className="flex justify-between items-start">
               <h1 className="text-black text-xl font-bold">{job.title}</h1>
-              <IoBookmarkOutline color="black" size={25} />
+              {/* <IoBookmarkOutline color="black" size={25} /> */}
             </div>
 
             <p className="text-slate-400 text-sm mt-1">

@@ -96,7 +96,7 @@ import { userLogin } from "../../../state/slices/userSlice";
 import { IProfile } from '../../../pages/freelancer/interfaces/profile';
 import { toast, ToastContainer } from "react-toastify"; // Import toast and ToastContainer
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS for toast
-
+import { fetchAllSkills } from '../../../api/freelancer/freelancerServices';
 interface ProfileSkillProps {
   freelancerData?: IProfile; // Mark as optional
 }
@@ -105,7 +105,7 @@ const ProfileSkills: React.FC<ProfileSkillProps> = ({ freelancerData }) => {
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
   const [skills, setSkills] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [skillSuggestion,setSkillSuggestion] =useState([])
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -149,6 +149,18 @@ const ProfileSkills: React.FC<ProfileSkillProps> = ({ freelancerData }) => {
     setIsModalOpen(false);
   };
 
+  useEffect(()=>{
+    async function fetchSkills(){
+      const response = await fetchAllSkills()
+      console.log("skill...",response);
+      const skillNames = response.map((skillObj: { skill: string }) => skillObj.skill);
+
+      // Update the state with skill names
+      setSkillSuggestion(skillNames);
+    }
+    fetchSkills()
+  },[])
+ 
   return (
     <div className="px-14 ">
       <div className="flex items-center">
@@ -183,7 +195,7 @@ const ProfileSkills: React.FC<ProfileSkillProps> = ({ freelancerData }) => {
           currentValue={skills}
           onSave={handleSaveSkills}
           inputType="skills"
-          availableSkills={['JavaScript', 'React', 'Node.js', 'CSS', 'HTML', 'TypeScript']} // Example skills
+          availableSkills={skillSuggestion} // Example skills
         />
       )}
 

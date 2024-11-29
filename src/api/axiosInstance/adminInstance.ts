@@ -6,14 +6,14 @@ import { adminLogout } from '../../state/slices/adminSlice';
 import store from '../../state/store';
 
 const adminInstance = axios.create({
-  baseURL: 'http://localhost:5000/api/admin',
+  baseURL: import.meta.env.VITE_ADMIN_API_URL,
   withCredentials: true, 
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-const ACCESS_TOKEN_KEY = 'accessToken';
+const ACCESS_TOKEN_KEY = import.meta.env.VITE_ADMIN_ACCESS_TOKEN;
 
 
 export const setAccessToken = (token: string) => {

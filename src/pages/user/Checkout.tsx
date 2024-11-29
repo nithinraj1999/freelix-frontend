@@ -1,11 +1,13 @@
 import React from 'react';
 import { gotoCheckout } from '../../api/client/clientServices';
 import { useLocation } from 'react-router-dom';
-
+import { useSelector } from 'react-redux';
+import { RootState } from '../../state/store';
 const Checkout = () => {
     const location = useLocation();
     const bidAmount = location.state.bidAmount
     const jobId = location.state.jobId
+    const { user } = useSelector((state: RootState) => state.user);
 
     const freelancerId = location.state.freelancerId
 
@@ -33,15 +35,15 @@ const Checkout = () => {
           <h3 className="text-lg font-semibold">Order Summary</h3>
           <div className="flex justify-between mt-2">
             <span>Freelancer Service</span>
-            <span>${bidAmount}</span>
+            <span>${bidAmount -bidAmount *.30}</span>
           </div>
           <div className="flex justify-between mt-2">
             <span>Service Fee</span>
-            <span>$20</span>
+            <span>${bidAmount *.30}</span>
           </div>
           <div className="flex justify-between mt-2 font-bold">
             <span>Total</span>
-            <span>$220</span>
+            <span>$ {bidAmount}</span>
           </div>
         </div>
 
@@ -50,37 +52,21 @@ const Checkout = () => {
           <h3 className="text-lg font-semibold">Client Details</h3>
           <div className="mt-2">
             <label className="block text-gray-600 text-sm">Name</label>
-            <input
-              type="text"
-              className="w-full border-gray-300 border rounded px-3 py-2 mt-1 focus:outline-none focus:border-indigo-500"
-              placeholder="John Doe"
-            />
+            <p>{user?.name}</p>
           </div>
           <div className="mt-2">
             <label className="block text-gray-600 text-sm">Email</label>
-            <input
-              type="email"
-              className="w-full border-gray-300 border rounded px-3 py-2 mt-1 focus:outline-none focus:border-indigo-500"
-              placeholder="johndoe@example.com"
-            />
+            <p>{user?.email}</p>
           </div>
         </div>
 
         {/* Payment Method */}
         <div className="mb-4">
           <h3 className="text-lg font-semibold">Payment Method</h3>
-          <div className="flex items-center mt-2">
-            <input
-              type="radio"
-              name="paymentMethod"
-              className="mr-2"
-              defaultChecked
-            />
-            <label className="text-gray-600">Credit Card</label>
-          </div>
+         
           <div className="flex items-center mt-2">
             <input type="radio" name="paymentMethod" className="mr-2" />
-            <label className="text-gray-600">PayPal</label>
+            <label className="text-gray-600">Stripe</label>
           </div>
         </div>
 

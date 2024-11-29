@@ -78,6 +78,10 @@ const FreelancerNavbar: React.FC = () => {
     navigate("/freelancer")
   }
 
+  const openChat=()=>{
+    navigate("/chat")
+  }
+
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
   {/* Freelancer Navbar */}
@@ -108,7 +112,7 @@ const FreelancerNavbar: React.FC = () => {
       <div className="flex items-center space-x-4 justify-end">
         {user && (
           <>
-            <div className="relative">
+            {/* <div className="relative">
               <HiOutlineFolderOpen
                 color="white"
                 size={24}
@@ -121,16 +125,17 @@ const FreelancerNavbar: React.FC = () => {
                   <JobNotification />
                 </div>
               )}
-            </div>
-            <IoIosNotificationsOutline
+            </div> */}
+            {/* <IoIosNotificationsOutline
               color="white"
               size={24}
               className="cursor-pointer"
-            />
+            /> */}
             <RxEnvelopeClosed
               color="white"
               size={24}
               className="cursor-pointer"
+              onClick={openChat}
             />
 
             <div className="relative" ref={dropdownRef}>
@@ -192,9 +197,7 @@ const FreelancerNavbar: React.FC = () => {
       <button onClick={getJobList} className="text-neutral-50">
         Find Work
       </button>
-      <button onClick={becomeFreelancer} className="text-neutral-50">
-        Become a Freelancer
-      </button>
+      
     </nav>
   </div>
 

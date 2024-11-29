@@ -5,13 +5,13 @@ import { userLogout } from '../../state/slices/userSlice';
 import Cookies from 'js-cookie';
 
 const freelancerInstance = axios.create({
-  baseURL: 'http://localhost:5000/api/freelancer',
+  baseURL: import.meta.env.VITE_FREELANCER_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-const ACCESS_TOKEN_KEY = 'userAccessToken';
+const ACCESS_TOKEN_KEY = import.meta.env.VITE_FREELANCER_ACCESS_TOKEN;
 
 export const setAccessToken = (token: string) => {
   localStorage.setItem(ACCESS_TOKEN_KEY, token);

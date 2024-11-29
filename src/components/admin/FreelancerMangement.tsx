@@ -8,7 +8,7 @@ import {
 } from "../../api/admin/adminServices"; 
 import { useDispatch } from "react-redux";
 import { updateFreelancerBlockStatus } from "../../state/slices/userSlice";
-
+import socket from "../../socket/socket";
 import Modal from "./Modal";
 const Freelancer: React.FC = () => {
 
@@ -28,14 +28,16 @@ const Freelancer: React.FC = () => {
   }
 
   const [freelancers, setFreelancers] = useState<Freelancer[]>([]);
-  const dispatch = useDispatch();
+  const [filteredFreelancers, setFilteredFreelancers] = useState<Freelancer[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage] = useState<number>(3); // Number of freelancers per page
 
   const fetchFreelancers = async () => {
     try {
       const response = await getAllFreelancerData();
-      console.log(response);
-
       setFreelancers(response.freelancers);
+      setFilteredFreelancers(response.freelancers);
     } catch (error) {
       console.error(error);
     }
@@ -44,6 +46,36 @@ const Freelancer: React.FC = () => {
   useEffect(() => {
     fetchFreelancers();
   }, []);
+
+  useEffect(() => {
+    const filtered = freelancers.filter((freelancer) =>
+      freelancer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      freelancer.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredFreelancers(filtered);
+    setCurrentPage(1); // Reset to the first page when the search term changes
+  }, [searchTerm, freelancers]);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredFreelancers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentFreelancers = filteredFreelancers.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+  };
+
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
@@ -209,11 +241,11 @@ const Freelancer: React.FC = () => {
   };
 
   const handleBlock = async (freelancerID: string) => {
-    const response = await blockFreelancer(freelancerID); // Update API call
-    console.log(response)
+    const response = await blockFreelancer(freelancerID); 
+    console.log("handleBlock",response)
     if (response.success) {
       fetchFreelancers();
-      dispatch(updateFreelancerBlockStatus({ userId: freelancerID, isFreelancerBlock: true }));
+      socket.emit("blockFreelancer", freelancerID);
     }
   };
 
@@ -222,7 +254,7 @@ const Freelancer: React.FC = () => {
     console.log(response)
     if (response.success) {
       fetchFreelancers();
-      dispatch(updateFreelancerBlockStatus({ userId: freelancerID, isFreelancerBlock: false }));
+      socket.emit("unblockFreelancer", freelancerID);
     }
   };
 
@@ -271,6 +303,13 @@ const Freelancer: React.FC = () => {
   return (
     <div className="p-8">
       <h1 className="text-2xl font-bold mb-2">Manage Freelancers</h1>
+      <input
+        type="text"
+        placeholder="Search by name or email"
+        value={searchTerm}
+        onChange={handleSearch}
+        className="block w-full mb-4 p-2 border rounded"
+      />
       <button
         onClick={() => setIsModalOpen(true)}
         className="mt-4 bg-green-500 text-white px-4 py-2 mb-2 rounded hover:bg-green-700"
@@ -285,18 +324,19 @@ const Freelancer: React.FC = () => {
             <th className="border px-4 py-2">Img</th>
             <th className="border px-4 py-2">Name</th>
             <th className="border px-4 py-2">Email</th>
-            <th className="border px-4 py-2">Description</th>
             <th className="border px-4 py-2">Skills</th>
             <th className="border px-4 py-2">Languages</th>
-            <th className="border px-4 py-2">Phone No</th>
+            <th className="border px-4 py-2">Phone</th>
             <th className="border px-4 py-2">Status</th>
             <th className="border px-4 py-2">Action</th>
           </tr>
         </thead>
         <tbody>
-          {freelancers.map((freelancer, index) => (
+          {currentFreelancers.map((freelancer, index) => (
             <tr key={freelancer._id} className="text-center">
-              <td className="border px-4 py-2">{index + 1}</td>
+              <td className="border px-4 py-2">
+                {(currentPage - 1) * itemsPerPage + index + 1}
+              </td>
               <td className="border px-4 py-2">
                 <img
                   src={
@@ -309,29 +349,8 @@ const Freelancer: React.FC = () => {
               </td>
               <td className="border px-4 py-2">{freelancer.name}</td>
               <td className="border px-4 py-2">{freelancer.email}</td>
-              <td className="border px-4 py-2">
-                {freelancer.description.length > 300
-                  ? freelancer.description.slice(0, 300) + "..."
-                  : freelancer.description}
-              </td>
-              <td className="border px-4 py-2">
-                <ul className=" list-inside text-left">
-                  {freelancer.skills.map(
-                    (skill: string, skillIndex: number) => (
-                      <li key={skillIndex}>{skill}</li>
-                    )
-                  )}
-                </ul>
-              </td>
-              <td className="border px-4 py-2">
-                <ul className=" list-inside text-left">
-                  {freelancer.languages.map(
-                    (language: string, langIndex: number) => (
-                      <li key={langIndex}>{language}</li>
-                    )
-                  )}
-                </ul>
-              </td>
+              <td className="border px-4 py-2">{freelancer.skills.join(", ")}</td>
+              <td className="border px-4 py-2">{freelancer.languages.join(", ")}</td>
               <td className="border px-4 py-2">{freelancer.phone}</td>
               <td className="border px-4 py-2">
                 {freelancer.isFreelancerBlock ? "Blocked" : "Active"}
@@ -363,6 +382,29 @@ const Freelancer: React.FC = () => {
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-6 p-4 border border-gray-200 rounded-lg shadow-sm bg-white">
+  <button
+    onClick={goToPreviousPage}
+    disabled={currentPage === 1}
+    className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+  >
+    Previous
+  </button>
+  <span className="text-gray-700 font-medium">
+    Page {currentPage} of {totalPages}
+  </span>
+  <button
+    onClick={goToNextPage}
+    disabled={currentPage === totalPages}
+    className="px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+  >
+    Next
+  </button>
+</div>
+
+
 
       {isModalOpen && (
         <Modal

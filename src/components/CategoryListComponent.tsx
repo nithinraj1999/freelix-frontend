@@ -12,7 +12,7 @@ function CategoryListComponent() {
   return (
     <>
       <div>
-        <h1 className="text-4xl font-bold mb-4">Popular Categories</h1>
+        <h1 className="text-4xl font-bold mb-4">Popular Services</h1>
       </div>
       <div className="flex flex-wrap gap-4  justify-between">
         {categories.map((category, index) => (

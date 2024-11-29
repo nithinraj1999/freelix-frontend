@@ -22,15 +22,15 @@ useEffect(() => {
       <Navbar />
       <HeroComponent  radius='rounded-3xl' width="w-11/12" height="h-[450px]" color="bg-brand-color">
       <div className="mt-24 ml-20">
-          <h1 className="text-white text-4xl font-bold">
+          <h1 className="text-white text-5xl font-bold">
             Instantly connect with
           </h1>
-          <h1 className="text-white text-4xl font-bold">The ideal freelance</h1>
-          <h1 className="text-white text-4xl font-bold">service for you</h1>
-          <input placeholder="search services" className="h-10" />
+          <h1 className="text-white text-5xl font-bold">The ideal freelance</h1>
+          <h1 className="text-white text-5xl font-bold">service for you</h1>
+          {/* <input placeholder="search jobs" className="h-10" />
           <button className="bg-black mt-10 h-10 text-white w-14">
             Search
-          </button>
+          </button> */}
         </div>
       </HeroComponent>
 

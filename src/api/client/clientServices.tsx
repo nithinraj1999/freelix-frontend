@@ -25,7 +25,7 @@ export const getAllJobPosts = async (data: object) => {
 
 export const deletepost = async (data:object)=>{
   try {
-    const response = await userInstance.post("/delete-post", data);
+    const response = await userInstance.put("/delete-post", data);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -107,9 +107,103 @@ export const gotoCheckout = async(data:object)=>{
     let result = stripe?.redirectToCheckout({
       sessionId:session.id
     })
-
   }catch(error){
     throw error
   }
 }
 
+
+
+export const getAllHiring = async (data:object)=>{
+  try{
+    const response = await userInstance.post("/get-all-hiring",data);
+    return response.data
+  }catch(error){
+    console.error(error);
+    
+  }
+}
+
+export const releasePaymentOfProject = async (data:object)=>{
+  try{
+    const response = await userInstance.post("/release-payment",data);
+    return response.data
+  }catch(error){
+    console.error(error);
+    
+  }
+}
+
+
+export const leaveAReview = async (data:object)=>{
+  try{
+    const response = await userInstance.post("/submit-review",data);
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}
+
+export const getAllContacts = async (data:object)=>{
+  try{
+    
+    const response = await userInstance.post("/get-all-contacts",data);
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}
+
+export const getChat = async (userId:string,activeChatId:string)=>{
+  try{
+    const response = await userInstance.get("/get-chat",{
+      params: { userId, contactId: activeChatId },
+    });
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}
+
+
+export const forgetPassword = async (data:object)=>{
+  try{
+    const response = await userInstance.post("/forget-password",data);
+
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}
+
+export const resetPassword = async (data:object)=>{
+  try{
+    const response = await userInstance.post("/reset-password",data);
+
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}
+
+export const fetchUserData = async (data:object)=>{
+  try{
+    const response = await userInstance.post("/get-userdata",data);
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}
+
+
+export const editprofile = async (data:object)=>{
+  try{
+    const response = await userInstance.put("/edit-profile",data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }});
+    return response.data
+  }catch(error){
+    console.error(error);
+  }
+}

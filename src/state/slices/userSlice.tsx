@@ -55,17 +55,29 @@ const userSlice = createSlice({
       localStorage.removeItem('userData');
     },
     
-    // New action to handle block/unblock
+    // updateUserBlockStatus: (state, action: PayloadAction<{ userId: string; isBlock: boolean }>) => {
+    //   if (state.user && state.user._id === action.payload.userId) {
+    //     console.log("updateUserBlockStatus");
+        
+    //     state.user.isBlock = action.payload.isBlock;
+    //     localStorage.setItem('userData', JSON.stringify(state.user)); 
+    //   }   
+    // },
+
     updateUserBlockStatus: (state, action: PayloadAction<{ userId: string; isBlock: boolean }>) => {
+    
       if (state.user && state.user._id === action.payload.userId) {
+
         state.user.isBlock = action.payload.isBlock;
-        localStorage.setItem('userData', JSON.stringify(state.user)); // Persist the updated block status
+        localStorage.setItem('userData', JSON.stringify(state.user));
       }
     },
-    updateFreelancerBlockStatus: (state, action: PayloadAction<{ userId: string; isFreelancerBlock: boolean }>) => {
+    
+    updateFreelancerBlockStatus: (state, action: PayloadAction<{ userId: string; isFreelancerBlock: boolean,role:string }>) => {
       if (state.user && state.user._id === action.payload.userId) {
         state.user.isFreelancerBlock = action.payload.isFreelancerBlock;
-        localStorage.setItem('userData', JSON.stringify(state.user)); // Persist the updated block status
+        state.user.role =  action.payload.role;
+        localStorage.setItem('userData', JSON.stringify(state.user)); 
       }
     } 
   }

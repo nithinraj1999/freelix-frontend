@@ -47,8 +47,10 @@ export const createFreelancerAccount = async (data: FormData) => {
   }
 
 
-  export const getJobList = async (query: string) => {
-    const response = await freelancerInstance.get(`/job-list?${query}`);
+  export const getJobList = async (query: string,data:object) => {
+    console.log("data...",data);
+    
+    const response = await freelancerInstance.post(`/job-list?${query}`,data);
     return response.data;
   };
   
@@ -56,9 +58,7 @@ export const createFreelancerAccount = async (data: FormData) => {
   export const editFreelancerProfile = async (data: any) => {
     try {
      
-      
-      
-      const response = await freelancerInstance.post("/profile/edit", data, {
+      const response = await freelancerInstance.put("/profile/edit", data, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -121,7 +121,7 @@ export const createFreelancerAccount = async (data: FormData) => {
 
   export const editMyBid = async(data:object)=>{
     try{
-      const editedBid = await freelancerInstance.post("/edit-my-bid", data);
+      const editedBid = await freelancerInstance.put("/edit-my-bid", data);
       return editedBid.data
     }catch(error){
       console.error(error);
@@ -205,6 +205,54 @@ export const createFreelancerAccount = async (data: FormData) => {
           "Content-Type": "multipart/form-data",
         },
       });
+      console.log(response.data);
+      return response.data
+    }catch(error){
+      console.error(error);
+      
+    }
+  }
+
+  export const fetchReviews = async (data:object)=>{
+    try{
+      
+      const response = await freelancerInstance.post("/fetch-reviews",data);
+      console.log(response.data);
+      return response.data
+    }catch(error){
+      console.error(error);
+      
+    }
+  }
+
+  export const fetchWalletInfo = async (data:object)=>{
+    try{
+      
+      const response = await freelancerInstance.post("/fetch-wallet",data);
+      console.log(response.data);
+      return response.data
+    }catch(error){
+      console.error(error);
+      
+    }
+  }
+
+  export const getDashboardData = async (data:object)=>{
+    try{
+      
+      const response = await freelancerInstance.post("/get-dashboard-data",data);
+      console.log(response.data);
+      return response.data
+    }catch(error){
+      console.error(error);
+      
+    }
+  }
+
+  export const fetchAllSkills = async ()=>{
+    try{
+      
+      const response = await freelancerInstance.get("/get-all-skills");
       console.log(response.data);
       return response.data
     }catch(error){

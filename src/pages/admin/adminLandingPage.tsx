@@ -5,7 +5,7 @@ import { RootState } from '../../state/store';
 import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-
+import AdminDashboard from '../../components/admin/AdminDashboard';
 
 const AdminLandingPage: React.FC = () => {
 
@@ -23,7 +23,7 @@ const AdminLandingPage: React.FC = () => {
       <div className="flex-1">
         <AdminNavbar />
         {/* You can add the main admin content here */}
-        
+        <AdminDashboard/>
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ const Sidebar: React.FC = () => {
       <ul className="mt-4 space-y-4">
         <li>
           <Link
-            to="/dashboard"
+            to="/freelancer"
             className="block px-4 py-2 hover:bg-gray-700 transition-colors"
           >
             Dashboard
@@ -27,10 +27,10 @@ const Sidebar: React.FC = () => {
         </li>
         <li>
           <Link
-            to="/earnings"
+            to="/freelancer/wallet"
             className="block px-4 py-2 hover:bg-gray-700 transition-colors"
           >
-            Earnings
+            Wallet
           </Link>
         </li>
         <li>

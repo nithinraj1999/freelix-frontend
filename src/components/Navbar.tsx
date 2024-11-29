@@ -9,11 +9,12 @@ import { RxEnvelopeClosed } from "react-icons/rx";
 import { switchToSelling } from "../api/freelancer/freelancerServices";
 import { userLogin } from "../state/slices/userSlice";
 import ClientNotification from "./client/notification/ClientNotification";
+
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
-  const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
+
+  const { user } = useSelector((state: RootState) => state.user);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const toggleSidebar = () => setSidebarVisible((prev) => !prev);
   const [dropdownVisible, setDropdownVisible] = useState(false); // State for dropdown visibility
@@ -24,12 +25,10 @@ const Navbar: React.FC = () => {
   const handleJoin = () => navigate("signup");
 
   const handleLogout = () => {
-    const ACCESS_TOKEN_KEY = 'userAccessToken';
-
+    const ACCESS_TOKEN_KEY = "userAccessToken";
     localStorage.removeItem(ACCESS_TOKEN_KEY);
-
     dispatch(userLogout()); // Dispatch logout action
-    navigate("/",{ replace: true }); 
+    navigate("/", { replace: true });
   };
 
   const handleDropdownToggle = () => setDropdownVisible((prev) => !prev);
@@ -49,10 +48,9 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
-  const becomeSeller = ()=>{
-    navigate("/become-a-freelancer")
-  }
+  const becomeSeller = () => {
+    navigate("/become-a-freelancer");
+  };
   const switchToSellingMode = async (userID: string) => {
     const response = await switchToSelling(userID);
     if (response) {
@@ -61,13 +59,25 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const yourYobPost = ()=>{
-    navigate("/my-job-post")
-  }
+  const yourYobPost = () => {
+    navigate("/my-job-post");
+  };
 
-  const toggleNotification =()=>{
-    setNotificationVisible((prev) => !prev)
-  }
+  const toggleNotification = () => {
+    setNotificationVisible((prev) => !prev);
+  };
+
+  const hirings = () => {
+    navigate("/hiring");
+  };
+
+  const profile = () => {
+    navigate("/profile");
+  };
+
+  const openChat = () => {
+    navigate("/chat");
+  };
   return (
     <>
       {/* Navbar */}
@@ -93,22 +103,22 @@ const Navbar: React.FC = () => {
             <h1 className="text-neutral-50 text-3xl font-bold">freelix</h1>
             {!user ? (
               <>
-                <a href="#" className="text-neutral-50 ml-8 mr-4">
-                  Hire Freelancer
-                </a>
-                <a href="#" className="text-neutral-50  mr-4">
+                <a href="#" className="text-neutral-50 ml-6 mr-4">
                   Find job
                 </a>
               </>
             ) : (
               <>
-              <button className="text-neutral-50 ml-8 ">
-                Hire Freelancer
-              </button>
-              <button className="text-neutral-50 ml-4 mr-4" onClick={yourYobPost}>
-              Your posts
-            </button>
-            </>
+                <button
+                  className="text-neutral-50 ml-4 mr-4"
+                  onClick={yourYobPost}
+                >
+                  Your Posts
+                </button>
+                <button className="text-neutral-50 ml-4 mr-4" onClick={hirings}>
+                  Your Hiring
+                </button>
+              </>
             )}
           </div>
 
@@ -118,7 +128,7 @@ const Navbar: React.FC = () => {
               <>
                 {!user.hasFreelancerAccount && (
                   <button
-                    className="text-neutral-50   w-30 h-8 rounded"
+                    className="text-neutral-50 w-30 h-8 rounded"
                     onClick={becomeSeller}
                   >
                     Become A Freelancer
@@ -131,37 +141,43 @@ const Navbar: React.FC = () => {
                 >
                   Post a Job
                 </button>
-                <IoIosNotificationsOutline color="white" className="cursor-pointer" onClick={toggleNotification} size={24} />
+                <IoIosNotificationsOutline
+                  color="white"
+                  className="cursor-pointer"
+                  onClick={toggleNotification}
+                  size={24}
+                />
                 {notificationVisible && (
-                <div className="absolute max-h-[300px] overflow-y-auto top-20 right-[100px] w-[400px] bg-slate-800 h-[400px] z-50">
-                  <ClientNotification/>
-                </div>
-              )}
-                <RxEnvelopeClosed color="white" size={24} />
+                  <div className="absolute max-h-[300px] overflow-y-auto top-20 right-[100px] w-[400px] bg-slate-800 h-[400px] z-50">
+                    <ClientNotification />
+                  </div>
+                )}
+                <RxEnvelopeClosed
+                  color="white"
+                  size={24}
+                  onClick={openChat}
+                  className="cursor-pointer"
+                />
                 <p className="text-white">{user.name}</p>
-                <div
-                  className="relative"
-                  ref={dropdownRef} // Attach ref to the dropdown container
-                >
+                <div className="relative" ref={dropdownRef}>
                   <img
                     src={
                       user.profilePicture ||
                       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-                    } // Use a default image if none
+                    }
                     alt={user.name}
                     className="w-8 h-8 rounded-full cursor-pointer object-cover"
-                    onClick={handleDropdownToggle} // Toggle dropdown on click
+                    onClick={handleDropdownToggle}
                   />
                   {dropdownVisible && (
                     <div className="absolute right-0 mt-2 w-40 bg-neutral-800 rounded shadow-lg z-50">
-                      <a
-                        href="#"
+                      <button
                         className="block px-4 py-2 text-neutral-50 hover:bg-neutral-700"
+                        onClick={profile}
                       >
                         Profile
-                      </a>
-
-                      {user.hasFreelancerAccount && (
+                      </button>
+                      {user.hasFreelancerAccount && !user.isFreelancerBlock && (
                         <button
                           className="block w-full text-left px-4 py-2 text-neutral-50 hover:bg-neutral-700"
                           onClick={() => switchToSellingMode(user._id)}
@@ -169,6 +185,7 @@ const Navbar: React.FC = () => {
                           Switch To Selling
                         </button>
                       )}
+
                       <button
                         className="block w-full text-left px-4 py-2 text-neutral-50 hover:bg-neutral-700"
                         onClick={handleLogout}
@@ -195,14 +212,16 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Small screen "Join" button */}
-          <div className="md:hidden absolute right-4 top-1/2 transform -translate-y-1/2 z-50">
-            <button
-              className="text-neutral-50 rounded border w-16 h-8"
-              onClick={handleJoin}
-            >
-              Join
-            </button>
-          </div>
+          {!user && (
+            <div className="md:hidden absolute right-4 top-1/2 transform -translate-y-1/2 z-50">
+              <button
+                className="text-neutral-50 rounded border w-16 h-8"
+                onClick={handleJoin}
+              >
+                Join
+              </button>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -223,22 +242,52 @@ const Navbar: React.FC = () => {
 
         {/* Sidebar Links */}
         <nav className="flex flex-col p-4 space-y-4">
-          <a href="#" className="text-neutral-50">
-            Sign in
-          </a>
-          <a href="#" className="text-neutral-50">
-            Hire Freelancer
-          </a>
+          {user ? (
+            <>
+              {!user.hasFreelancerAccount && (
+                <button
+                  className="text-neutral-50 w-30 h-8 rounded"
+                  onClick={becomeSeller}
+                >
+                  Become A Freelancer
+                </button>
+              )}
+              <button className="text-neutral-50" onClick={profile}>
+                profile
+              </button>
+              <button className="text-neutral-50" onClick={postAJob}>
+                Post a Job
+              </button>
+              <button className="text-neutral-50" onClick={hirings}>
+                Your Hiring
+              </button>
+              <button className="text-neutral-50" onClick={yourYobPost}>
+                Your Posts
+              </button>
+              <button className="text-neutral-50" onClick={openChat}>
+                chat
+              </button>
+
+              <button className="text-neutral-50" onClick={yourYobPost}>
+                Your Posts
+              </button>
+            </>
+          ) : (
+            <>
+              <a
+                href="#"
+                className="text-neutral-50"
+                onClick={handleSigninClick}
+              >
+                Sign in
+              </a>
+              <a href="#" className="text-neutral-50">
+                Hire Freelancer
+              </a>
+            </>
+          )}
         </nav>
       </div>
-
-      {/* Overlay to close sidebar when clicked outside */}
-      {sidebarVisible && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
-          onClick={toggleSidebar}
-        ></div>
-      )}
     </>
   );
 };

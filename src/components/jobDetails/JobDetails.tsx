@@ -8,6 +8,7 @@ import { submitBid } from "../../api/freelancer/freelancerServices";
 import { RootState } from "../../state/store";
 import { useSelector } from "react-redux";
 import { isBidAlreadyBid } from "../../api/freelancer/freelancerServices";
+import Swal from 'sweetalert2';
 
 const JobDetails: React.FC = () => {
   const location = useLocation();
@@ -48,6 +49,7 @@ const JobDetails: React.FC = () => {
           console.log(isExistingBidder);
           if (isExistingBidder.isExist) {
             setIsExistingBidder(true);
+           
           }
           setJobDetails(job.jobDetails);
         } catch (error) {
@@ -113,8 +115,14 @@ const JobDetails: React.FC = () => {
         const response = await submitBid(payload);
         if(response.success){
          navigate('/freelancer/job/proposals')
+        }else if(!response.success){
+          Swal.fire({
+            title: 'Something went wrong',
+            text: 'Please try again or contact support if the problem persists.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
         }
-        console.log(response);
       } catch (error) {
         console.error("Error submitting bid:", error);
       } finally {

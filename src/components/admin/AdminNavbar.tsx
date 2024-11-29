@@ -25,15 +25,13 @@ const AdminNavbar: React.FC = () => {
         <h1 className="text-white text-xl font-bold">Admin Panel</h1>
         <ul className="flex space-x-6 items-center">
           
-          {/* Email Icon */}
-          <li>
+          {/* <li>
             <SlEnvolope className="text-white text-2xl cursor-pointer hover:text-gray-300" />
           </li>
 
-          {/* Notification Icon */}
           <li>
             <IoIosNotificationsOutline className="text-white text-2xl cursor-pointer hover:text-gray-300" />
-          </li>
+          </li> */}
 
           {/* Logout Button */}
           <li>

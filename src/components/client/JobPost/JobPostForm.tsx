@@ -312,7 +312,7 @@ const JobPostForm: React.FC = () => {
                 <p className="text-red-500">{errors.description}</p>
               )}
             </div>
-            <div
+            {/* <div
               onDrop={handleFileDrop}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -343,7 +343,7 @@ const JobPostForm: React.FC = () => {
                 onChange={handleFileChange}
                 className="hidden"
               />
-            </div>
+            </div> */}
 
             <div>
               <h3 className="text-lg font-bold mt-6">

@@ -53,6 +53,10 @@ const handleClickOnsignup = async()=>{
   navigate('/signup')
 }
 
+const forgetPassword = async()=>{
+  navigate("/forgot-password")
+}
+
   return (
     <>
       <Modal title="Sign In" image="https://res.cloudinary.com/dhir9n7dj/image/upload/v1726150553/steptodown.com774020_my7gko.jpg">
@@ -80,9 +84,9 @@ const handleClickOnsignup = async()=>{
               value={password}
               onChange={(e)=>setPassword(e.target.value)}
             />
-            {/* <h1 className="text-right underline cursor-pointer">
+            <h1 className="text-right underline cursor-pointer" onClick={forgetPassword}>
               Forgot password?
-            </h1> */}
+            </h1>
             <button className="w-full h-10 font-white bg-black text-white" onClick={handleLogin}>
               login
             </button>

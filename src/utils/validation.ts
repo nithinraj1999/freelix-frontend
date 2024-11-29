@@ -55,10 +55,11 @@ export const signupValidation = (
     } else if (password.trim() !== password) {
       validationErrors.password = 'Password cannot start or end with whitespace';
       isValid = false;
-    } else if (password.length < 6) {
-      validationErrors.password = 'Password must be at least 6 characters long';
+    } else if (!/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{6,}$/.test(password)) {
+      validationErrors.password = 'Password must be at least 6 characters long and contain at least one letter, one number, and one special character';
       isValid = false;
     }
+    
 
     if (!confirmPassword || !confirmPassword.trim()) {
       validationErrors.confirmPassword = 'confirmPassword is required';

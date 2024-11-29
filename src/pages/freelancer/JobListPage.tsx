@@ -3,7 +3,8 @@ import JobList from "../../components/freelancer/jobList/JobList";
 import JobFilter from "../../components/freelancer/jobList/JobFilter";
 import FreelancerNavbar from "../../components/freelancer/FreelancerNavbar";
 import { getJobList } from "../../api/freelancer/freelancerServices";
-
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
 const JobListPage: React.FC = () => {
   const [jobList, setJobList] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -11,6 +12,7 @@ const JobListPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1); // Track current page
   const [totalPages, setTotalPages] = useState<number>(1); // Track total pages
   const [jobCount, setJobCount] = useState<number>(0); 
+  const { user } = useSelector((state: RootState) => state.user);
 
 
   interface Job {
@@ -67,7 +69,10 @@ const JobListPage: React.FC = () => {
   useEffect(() => {
     const fetchJobList = async () => {
       const queryString = buildQueryString();
-      const response = await getJobList(queryString); 
+      const data = {
+        freelancerSkills:user?.skills
+      }
+      const response = await getJobList(queryString,data); 
       console.log(response);
       setJobCount(response.jobListCount)
       setJobList(response.jobList);

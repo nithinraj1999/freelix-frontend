@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import { updateUserBlockStatus } from "../../state/slices/userSlice";
 import Modal from "./Modal";
 import { useSearchParams } from "react-router-dom";
-
+import socket from "../../socket/socket";
 const Client: React.FC = () => {
   interface Client {
     _id: string;
@@ -170,13 +170,16 @@ const Client: React.FC = () => {
 
   const handleBlock = async (clientID: string) => {
     const response = await blockClient(clientID);
+    console.log(response);
+    
     if (response.success) {
       setClients((prevClients) =>
         prevClients.map((client) =>
           client._id === clientID ? { ...client, isBlock: true } : client
         )
       );
-      dispatch(updateUserBlockStatus({ userId: clientID, isBlock: true }));
+      socket.emit("blockClient", clientID);
+
     }
   };
 
@@ -188,7 +191,8 @@ const Client: React.FC = () => {
           client._id === clientID ? { ...client, isBlock: false } : client
         )
       );
-      dispatch(updateUserBlockStatus({ userId: clientID, isBlock: false }));
+      socket.emit("unblockClient", clientID);
+
     }
   };
 

@@ -6,13 +6,13 @@ import Cookies from 'js-cookie';
 
 
 const userInstance = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_CLIENT_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-const ACCESS_TOKEN_KEY = 'userAccessToken';
+const ACCESS_TOKEN_KEY = import.meta.env.VITE_CLIENT_ACCESS_TOKEN;
 
 export const setAccessToken = (token: string) => {
   localStorage.setItem(ACCESS_TOKEN_KEY, token);

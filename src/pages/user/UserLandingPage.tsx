@@ -74,15 +74,15 @@ const UserLandingPage: React.FC = () => {
         <h1 className="text-white text-4xl font-bold mb-4">Instantly connect with</h1>
         <h1 className="text-white text-4xl font-bold">The ideal freelance service for you</h1>
         
-        <div className="mt-8 flex justify-center items-center gap-4">
+        {/* <div className="mt-8 flex justify-center items-center gap-4">
           <input
-            placeholder="Search services"
+            placeholder="Search Jobs"
             className="h-10 w-[300px] px-4 rounded-md outline-none"
           />
           <button className="bg-black h-10 text-white px-6 rounded-md">
             Search
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   </div>

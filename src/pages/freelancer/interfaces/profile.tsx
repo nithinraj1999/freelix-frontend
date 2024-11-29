@@ -7,6 +7,7 @@ interface PortfolioItem {
   }
   
   export interface IProfile {
+    profilePicture:string
     name: string; // User's name
     title: string; // Job title or professional title
     skills: string[]; // Array of skills (strings)
