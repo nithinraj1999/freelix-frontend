@@ -76,7 +76,7 @@ const OrderList = () => {
               {order.status}
             </span>
 
-            <div className="w-1/5 text-gray-600">{calculateDeliveryDate(order.orderDate, order.bidId.deliveryDays)}</div>
+            <div className="w-1/5 text-gray-600">{calculateDeliveryDate(order.orderDate, order.bidId?.deliveryDays)}</div>
 
             <div className="w-1/5 text-gray-600">$ {order.total}</div>
 

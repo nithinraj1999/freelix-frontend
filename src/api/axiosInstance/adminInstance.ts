@@ -20,7 +20,6 @@ export const setAccessToken = (token: string) => {
   localStorage.setItem(ACCESS_TOKEN_KEY, token);
 };
 
-// Function to retrieve access token from local storage
 export const getAccessToken = () => {
   return localStorage.getItem("accessToken");
 };
@@ -30,7 +29,7 @@ adminInstance.interceptors.request.use(
   (config) => {
     const token = getAccessToken();
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`; // Attach the access token to the Authorization header
+      config.headers['Authorization'] = `Bearer ${token}`; 
     }
     return config;
   },
@@ -45,17 +44,15 @@ adminInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Check if the error is a 401 and the request hasn't been retried yet
     if (error.response && error.response.status === 401 && !originalRequest._retry) {
       console.log("Attempting to refresh token...");
 
-      // Bypass the interceptor for refresh token request
       if (originalRequest.url.includes('/refresh-token')) {
         return Promise.reject(error);
       }
-      originalRequest._retry = true; // Mark the request as retried
+      originalRequest._retry = true;
       try {
-        const newToken = await refreshAccessToken(); // Try refreshing the token
+        const newToken = await refreshAccessToken(); 
 
         if (!newToken) {
           store.dispatch(adminLogout())
@@ -68,20 +65,18 @@ adminInstance.interceptors.response.use(
         }
 
         console.log("New token retrieved:", newToken);
-        originalRequest.headers['Authorization'] = `Bearer ${newToken}`; // Set new token in request header
+        originalRequest.headers['Authorization'] = `Bearer ${newToken}`; 
         
-        return adminInstance(originalRequest); // Retry the original request
+        return adminInstance(originalRequest); 
       } catch (refreshError) {
         store.dispatch(adminLogout())
         console.error('Failed to refresh token:', refreshError);
         localStorage.removeItem('accessToken');
         Cookies.remove('adminRefreshJWT');
-        window.location.href = '/admin/login'; // Redirect to login page
+        window.location.href = '/admin/login'; 
         return Promise.reject(refreshError);
       } 
     }
-
-    // Handle other errors
     return Promise.reject(error);
   }
 );

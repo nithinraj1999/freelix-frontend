@@ -22,6 +22,8 @@ const Portfolio: React.FC<ProfilePortfolioProps> = ({ freelancerData }) => {
     const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
     const [portfolioItems, setPortfolioItems] = useState<IPortfolioItem[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [newPortfolio, setNewPortfolio] = useState<string | File | string[]>(); 
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -34,53 +36,27 @@ const Portfolio: React.FC<ProfilePortfolioProps> = ({ freelancerData }) => {
             })));
         }
     }, [freelancerData]);
+    
 
-    // Update function signature to match the expected type
-    // Function to handle adding a new image
-const handleAddImage = async (newValue: string | File | string[]) => {
-  let updatedPortfolioItem: IPortfolioItem | null = null;
+const handleAddImage = async (newValue: any) => {
+    
   const formData = new FormData();
-
-  if (typeof newValue === "string") {
-      updatedPortfolioItem = {
-          image: newValue,
-          title: `Project ${portfolioItems.length + 1}`,
-          description: "sample description"
-      };
-      formData.append("portfolio", newValue); // Append the image URL string to FormData
-  } else if (newValue instanceof File) {
-      const newImageUrl = URL.createObjectURL(newValue);
-      updatedPortfolioItem = {
-          image: newImageUrl,
-          title: `Project ${portfolioItems.length + 1}`,
-          description: "sample description"
-      };
-      formData.append("portfolio", newValue); // Append the actual file to FormData
-  }
-
-  if (updatedPortfolioItem) {
-      // Add the new item to the local state for immediate display
-      setPortfolioItems(prevItems => [...prevItems, updatedPortfolioItem]);
-
-      // Append any additional data needed, like userID, to the FormData
       formData.append("userID", user?._id || "");
-      formData.append("title", updatedPortfolioItem.title);
-      formData.append("description", updatedPortfolioItem.description);
-
+      formData.append("portfolio", newValue);
+    
       try {
-          // Call API function that sends FormData
           const response = await editFreelancerProfile(formData);
           if (response.success) {
+            setPortfolioItems(prevItems => [...prevItems, newValue]);
               dispatch(userLogin(response.data));
-              console.log("New image saved successfully:", response.data);
-              setIsModalOpen(false); // Close the modal after saving
+              setIsModalOpen(false); 
           }
       } catch (error) {
           console.error("Error updating profile:", error);
       }
-  }
+  
 };
-
+ 
   
 
     return (
@@ -125,7 +101,7 @@ const handleAddImage = async (newValue: string | File | string[]) => {
                 onClose={() => setIsModalOpen(false)}
                 title="Add New Portfolio Image"
                 currentValue={""}
-                onSave={handleAddImage} // Pass the updated function
+                onSave={handleAddImage} 
                 inputType="file"
                 portfolioImages={portfolioItems}
                 setPortfolioImages={setPortfolioItems}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation,useNavigate } from "react-router-dom";
 import { getJobDetails } from "../../api/freelancer/freelancerServices";
-import { IJobDetailsType } from "../../../../backend/src/domain/entities/jobPost";
+// import { IJobDetailsType } from "../../../../backend/src/domain/entities/jobPost";
 import { bidSchema } from "../../utils/validation";
 import { z } from "zod"; // For validation error handling
 import { submitBid } from "../../api/freelancer/freelancerServices";
@@ -11,6 +11,25 @@ import { isBidAlreadyBid } from "../../api/freelancer/freelancerServices";
 import Swal from 'sweetalert2';
 
 const JobDetails: React.FC = () => {
+   interface IJobDetailsType {
+    category: string;
+    createdAt: string;
+    description: string;
+    experience: string;
+    file?: string | null;
+    fixedPrice?: number;
+    hourlyPrice?: {
+      from: number;
+      to: number;
+    };
+    paymentType: string;
+    skills: string[];
+    subCategory: string;
+    title: string;
+    userID: string;
+    _id: string;
+  }
+  
   const location = useLocation();
   const jobId = location.state?.jobId || localStorage.getItem("selectedJobId"); // Get jobId from state or local storage
 

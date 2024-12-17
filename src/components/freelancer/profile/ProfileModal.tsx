@@ -15,15 +15,12 @@ interface ProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  currentValue: string | File | string[]; // Allow string[], string, or File
-  onSave: (
-    newValue: string | File | string[],
-    updatedPortfolioImages?: IPortfolioItem[]
-  ) => void; // Pass updated portfolio images
+  currentValue: string | File | string[]; 
+  onSave: (newValue: string | File | string[]) => void;
   inputType: "text" | "textarea" | "file" | "skills";
-  portfolioImages?: IPortfolioItem[]; // Only relevant when inputType is 'file'
-  setPortfolioImages?: React.Dispatch<React.SetStateAction<IPortfolioItem[]>>; // Function to update portfolio images
-  availableSkills?: string[]; // Only relevant when inputType is 'skills'
+  portfolioImages?: IPortfolioItem[];
+  setPortfolioImages?: React.Dispatch<React.SetStateAction<IPortfolioItem[]>>; 
+  availableSkills?: string[]; 
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -34,7 +31,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   onSave,
   inputType,
   portfolioImages = [],
-  setPortfolioImages = () => {}, // Provide a default no-op function
+  setPortfolioImages = () => {},
   availableSkills = [],
 }) => {
 
@@ -42,11 +39,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 
   const [newValue, setNewValue] = useState<string | File | string[]>(
     currentValue
-  ); // Updated state to handle all types
+  ); 
   const [previewImage, setPreviewImage] = useState<string | null>(null); // State for image preview
   const [newSkills, setNewSkills] = useState<string[]>(
     Array.isArray(currentValue) ? currentValue : []
-  ); // Handle skills array
+  ); 
   const [searchQuery, setSearchQuery] = useState(""); // State for search bar
 
   // Handle input changes based on type
@@ -60,28 +57,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       target.files
     ) {
       const file = target.files[0];
-      setNewValue(file); // Accept only one file at a time
-      setPreviewImage(URL.createObjectURL(file)); // Generate preview URL for the selected image
+      setNewValue(file); 
+      setPreviewImage(URL.createObjectURL(file));
     } else if (inputType !== "file") {
-      setNewValue(target.value); // Handle text or textarea input
+      setNewValue(target.value);
     }
   };
 
-  const handleRemoveImage = async (index: number, imageId: string) => {
+  const handleRemoveImage = async (index: number, imageId: string,image:string) => {
     const data = {
       imageId: imageId,
       userId:user?._id,
+      image:image
     };
     const response = await deletePortFolio(data);
     console.log(response);
 
     const updatedImages = portfolioImages.filter((_, i) => i !== index);
-
-    setPortfolioImages(updatedImages); // Update the state with remaining images
-
-    // Update newValue to be an array of image URLs (if needed)
+    setPortfolioImages(updatedImages); 
     const newImageUrls = updatedImages.map((item) => item.image);
-    setNewValue(newImageUrls); // Now newValue is of type string[]
+    setNewValue(newImageUrls); 
   };
 
   const handleAddSkill = (skill: string) => {
@@ -105,7 +100,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       skill.toLowerCase().includes(searchQuery.toLowerCase()) &&
       !newSkills.includes(skill)
   );
-
+   
   if (!isOpen) return null;
 
   return (
@@ -148,7 +143,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                     <button
                       onClick={() => {
                         if (item._id) {
-                          handleRemoveImage(index, item._id);
+                          handleRemoveImage(index, item._id,item.image);
                         } else {
                           console.error(
                             `Image ID is undefined for index ${index}`

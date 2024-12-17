@@ -31,13 +31,16 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ onClose, order, updateOrder
     setIsCompleteOrderModalOpen(false);
   };
 
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCompleteOrder = async () => {
     try {
+
       completeOrderSchema.parse({
         description: deliveryDescription,
         file: selectedFile,
       });
+      setIsLoading(true);
 
       const formData = new FormData();
       formData.append('orderId', order._id);
@@ -47,6 +50,8 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ onClose, order, updateOrder
       const response = await completeOrder(formData);
 
       if (response.success) {
+        setIsLoading(false);
+
         Swal.fire({
           icon: 'success',
           title: 'Order Completed!',
@@ -54,8 +59,8 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ onClose, order, updateOrder
           confirmButtonText: 'OK',
         });
 
-        // Update the status of the order locally without refreshing the screen
         updateOrderStatus(order._id, 'Completed');
+
       } else {
         Swal.fire({
           icon: 'error',
@@ -154,9 +159,17 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ onClose, order, updateOrder
 
       {/* Buttons */}
       <div className="flex justify-between">
-        <button onClick={handleCompleteOrder} className="bg-green-600 text-white px-4 py-2 rounded-lg">
-          Complete
-        </button>
+        <button
+      onClick={handleCompleteOrder}
+      disabled={isLoading}
+      className="bg-green-600 text-white px-4 py-2 rounded-lg"
+    >
+      {isLoading ? (
+        <span className="spinner-border animate-spin inline-block w-4 h-4 border-2 border-white rounded-full"></span>
+      ) : (
+        'Complete'
+      )}
+    </button>
         <button onClick={closeCompleteOrderModal} className="bg-gray-400 text-white px-4 py-2 rounded-lg">
           Cancel
         </button>

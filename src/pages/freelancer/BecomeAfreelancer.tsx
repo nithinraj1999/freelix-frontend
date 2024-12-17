@@ -98,8 +98,6 @@ const predefinedLanguages = [
   "Swedish",
 ];
 
-
-
 const BecomeFreelancerForm: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -113,7 +111,6 @@ const BecomeFreelancerForm: React.FC = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
-
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -139,13 +136,11 @@ const BecomeFreelancerForm: React.FC = () => {
   const removeSkill = (index: number) =>
     setSkills(skills.filter((_, i) => i !== index));
 
-
   const handleLanguageChange = (index: number, value: string) => {
     const newLanguages = [...languages];
     newLanguages[index] = value;
     setLanguages(newLanguages);
 
-    // Filter suggestions based on input
     if (value) {
       const filteredSuggestions = predefinedLanguages.filter((lang) =>
         lang.toLowerCase().startsWith(value.toLowerCase())
@@ -160,24 +155,21 @@ const BecomeFreelancerForm: React.FC = () => {
     const newLanguages = [...languages];
     newLanguages[index] = suggestion;
     setLanguages(newLanguages);
-    setSuggestions([]); // Clear suggestions after selection
+    setSuggestions([]);
   };
 
   const addLanguage = () => {
     setLanguages([...languages, ""]);
   };
 
-  // const removeLanguage = (index: number) => setLanguages(languages.filter((_, i) => i !== index));
   const removeLanguage = (index: number) => {
     setLanguages(languages.filter((_, i) => i !== index));
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Clear previous errors
     setErrors({});
 
-    // Validate the form with Zod schema
     try {
       const formData = freelancerSchema.parse({
         name,
@@ -203,12 +195,11 @@ const BecomeFreelancerForm: React.FC = () => {
       const response = await createFreelancerAccount(data);
       if (response.success) {
         console.log(response);
-        const switchToFreelancer = await switchToSelling(response._id)
-        if(switchToFreelancer){
+        const switchToFreelancer = await switchToSelling(response._id);
+        if (switchToFreelancer) {
           dispatch(userLogin(response.freelancerData));
           navigate("/freelancer");
         }
-       
       } else {
         navigate("/home");
       }
@@ -219,31 +210,31 @@ const BecomeFreelancerForm: React.FC = () => {
         error.errors.forEach((err) => {
           validationErrors[err.path[0]] = err.message;
         });
-        setErrors(validationErrors); // Set validation errors in state
+        setErrors(validationErrors); 
       }
     }
   };
 
-
-  const [predefinedSkills, setPredefinedSkills] = useState<string[]>([]); // Initialize as an empty array of strings
-
+  const [predefinedSkills, setPredefinedSkills] = useState<string[]>([]); 
   useEffect(() => {
     async function getSkills() {
       const response = await fetchSkills();
       console.log(response);
-      const skillArray = response.skills.map((item: { skill: string }) => item.skill);
+      const skillArray = response.skills.map(
+        (item: { skill: string }) => item.skill
+      );
       setPredefinedSkills(skillArray);
     }
     getSkills();
   }, []);
-  
-  const [searchInput, setSearchInput] = useState<string>('');
+
+  const [searchInput, setSearchInput] = useState<string>("");
   const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
-  
+
   useEffect(() => {
     // Filter the skills based on the input
     if (searchInput) {
-      const filtered = predefinedSkills.filter(skill =>
+      const filtered = predefinedSkills.filter((skill) =>
         skill.toLowerCase().includes(searchInput.toLowerCase())
       );
       setSuggestedSkills(filtered);
@@ -251,7 +242,6 @@ const BecomeFreelancerForm: React.FC = () => {
       setSuggestedSkills([]);
     }
   }, [searchInput]);
-  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
@@ -261,10 +251,9 @@ const BecomeFreelancerForm: React.FC = () => {
     // Function to add the selected skill to the skill list
     setSkills([...skills, skill]);
     console.log(`Selected skill: ${skill}`);
-    setSearchInput(''); // Clear the input after selection
+    setSearchInput(""); // Clear the input after selection
     setSuggestedSkills([]); // Clear suggestions
   };
-
 
   return (
     <div className="bg-slate-100 py-1">
@@ -351,46 +340,46 @@ const BecomeFreelancerForm: React.FC = () => {
         </div>
 
         <div>
-      <input
-        placeholder="Search skills"
-        value={searchInput}
-        onChange={handleInputChange}
-        className="h-10 mt-1 px-2 w-1/2"
-      />
-      {suggestedSkills.length > 0 && (
-        <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 w-1/2 z-10">
-          {suggestedSkills.map((skill, index) => (
-            <li
-              key={index}
-              onClick={() => selectSkill(skill)}
-              className="cursor-pointer hover:bg-blue-100 px-2 py-1"
-            >
-              {skill}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+          <input
+            placeholder="Search skills"
+            value={searchInput}
+            onChange={handleInputChange}
+            className="h-10 mt-1 px-2 w-1/2"
+          />
+          {suggestedSkills.length > 0 && (
+            <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 w-1/2 z-10">
+              {suggestedSkills.map((skill, index) => (
+                <li
+                  key={index}
+                  onClick={() => selectSkill(skill)}
+                  className="cursor-pointer hover:bg-blue-100 px-2 py-1"
+                >
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
-              <div>
-                <h3 className="text-slate-500 mt-6">Selected Skills</h3>
-                <div className="flex flex-wrap mt-2">
-                  {skills.map((skill,index) => (
-                    <div
-                      key={skill}
-                      className="flex items-center bg-white rounded-full px-3 py-1 mr-2 mb-2"
-                    >
-                      <p className="text-sm text-blue-800">{skill}</p>
-                      <button
-                        onClick={(event) =>  removeSkill(index)}
-                        className="ml-2 text-blue-600 hover:text-blue-800"
-                      >
-                        &times; {/* Close icon */}
-                      </button>
-                    </div>
-                  ))}
-                </div>
+        <div>
+          <h3 className="text-slate-500 mt-6">Selected Skills</h3>
+          <div className="flex flex-wrap mt-2">
+            {skills.map((skill, index) => (
+              <div
+                key={skill}
+                className="flex items-center bg-white rounded-full px-3 py-1 mr-2 mb-2"
+              >
+                <p className="text-sm text-blue-800">{skill}</p>
+                <button
+                  onClick={(event) => removeSkill(index)}
+                  className="ml-2 text-blue-600 hover:text-blue-800"
+                >
+                  &times; {/* Close icon */}
+                </button>
               </div>
+            ))}
+          </div>
+        </div>
 
         {/* Skills Section */}
         {/* <div className="mb-6">
@@ -431,45 +420,58 @@ const BecomeFreelancerForm: React.FC = () => {
           </button>
         </div> */}
 
-       
-       <div className="mb-6">
-      <label className="block text-sm font-medium text-gray-700">Languages</label>
-      <div className="space-y-2">
-        {languages.map((language, index) => (
-          <div key={index} className="flex items-center relative">
-            <input
-              type="text"
-              value={language}
-              onChange={(e) => handleLanguageChange(index, e.target.value)}
-              className={`mt-1 block w-full border ${errors.languages ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
-              placeholder="Language"
-            />
-            <button type="button" onClick={() => removeLanguage(index)} className="ml-2 text-red-600">
-              Remove
-            </button>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700">
+            Languages
+          </label>
+          <div className="space-y-2">
+            {languages.map((language, index) => (
+              <div key={index} className="flex items-center relative">
+                <input
+                  type="text"
+                  value={language}
+                  onChange={(e) => handleLanguageChange(index, e.target.value)}
+                  className={`mt-1 block w-full border ${
+                    errors.languages ? "border-red-500" : "border-gray-300"
+                  } rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
+                  placeholder="Language"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeLanguage(index)}
+                  className="ml-2 text-red-600"
+                >
+                  Remove
+                </button>
 
-            {/* Show suggestions below the input box */}
-            {suggestions.length > 0 && (
-              <ul className="absolute left-0 top-full z-10 bg-white border border-gray-300 rounded-md mt-1 w-full max-h-40 overflow-y-auto">
-                {suggestions.map((suggestion, i) => (
-                  <li
-                    key={i}
-                    className="cursor-pointer p-2 hover:bg-gray-200"
-                    onClick={() => selectSuggestion(index, suggestion)}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
+                {/* Show suggestions below the input box */}
+                {suggestions.length > 0 && (
+                  <ul className="absolute left-0 top-full z-10 bg-white border border-gray-300 rounded-md mt-1 w-full max-h-40 overflow-y-auto">
+                    {suggestions.map((suggestion, i) => (
+                      <li
+                        key={i}
+                        className="cursor-pointer p-2 hover:bg-gray-200"
+                        onClick={() => selectSuggestion(index, suggestion)}
+                      >
+                        {suggestion}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+            {errors.languages && (
+              <p className="text-red-500 text-sm">{errors.languages}</p>
             )}
           </div>
-        ))}
-        {errors.languages && <p className="text-red-500 text-sm">{errors.languages}</p>}
-      </div>
-      <button type="button" onClick={addLanguage} className="mt-2 text-green-600">
-        Add
-      </button>
-    </div>
+          <button
+            type="button"
+            onClick={addLanguage}
+            className="mt-2 text-green-600"
+          >
+            Add
+          </button>
+        </div>
 
         {/* Submit Button */}
         <button

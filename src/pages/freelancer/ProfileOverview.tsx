@@ -17,9 +17,6 @@ const FreelancerProfile: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const freelancerId = location.state?.userID 
-
-  
-  
  const [freelancerData,setFreelancerData] =useState<IProfile>()
 
   useEffect(() => {

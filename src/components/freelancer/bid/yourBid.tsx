@@ -3,7 +3,6 @@ import { RootState } from "../../../state/store";
 import { useSelector } from "react-redux";
 import { myBids } from "../../../api/freelancer/freelancerServices";
 import { useNavigate } from "react-router-dom";
-// Dummy data for bids
 
 
 const YourBid: React.FC = () => {

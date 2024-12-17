@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IJobDetailsType } from "../../../../../backend/src/domain/entities/jobPost";
+// import { IJobDetailsType } from "../../../../../backend/src/domain/entities/jobPost";
 import { RootState } from "../../../state/store";
 import { useSelector } from "react-redux";
 import { selectedJobDetails } from "../../../api/client/clientServices";
@@ -9,6 +9,25 @@ import { deletepost } from "../../../api/client/clientServices";
 import Swal from 'sweetalert2';
 
 const JobDetail: React.FC = () => {
+   interface IJobDetailsType {
+    category: string;
+    createdAt: string;
+    description: string;
+    experience: string;
+    file?: string | null;
+    fixedPrice?: number;
+    hourlyPrice?: {
+      from: number;
+      to: number;
+    };
+    paymentType: string;
+    skills: string[];
+    subCategory: string;
+    title: string;
+    userID: string;
+    _id: string;
+  }
+  
   interface Job {
     _id: string;
     userID: string;

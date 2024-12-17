@@ -66,7 +66,7 @@ export const createFreelancerAccount = async (data: FormData) => {
       return response.data;
     } catch (error) {
       console.error("Error while editing freelancer profile:", error);
-      throw error;  // You can handle the error as needed
+      throw error; 
     }
   };
 

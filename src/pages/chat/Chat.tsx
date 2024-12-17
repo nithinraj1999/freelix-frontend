@@ -41,7 +41,7 @@ const Chat = () => {
 
   const generateKitToken = (userId: string, roomId: string) => {
     const appID = 218939913; // Your Zego App ID
-    const serverSecret = import.meta.env.VITE_ZEGOCLOUDE_SERVER_SECRET; // Your Zego Server Secret
+    const serverSecret = import.meta.env.VITE_ZEGOCLOUDE_SERVER_SECRET; 
 
     return ZegoUIKitPrebuilt.generateKitTokenForTest(
       appID,
@@ -55,7 +55,6 @@ const Chat = () => {
   const joinRoom = (roomId: string) => {
     const kitToken = generateKitToken(userId!, roomId);
     const zegoVideoCall = ZegoUIKitPrebuilt.create(kitToken);
-
     zegoVideoCall.joinRoom({
       container: document.getElementById("video-call-container"),
       sharedLinks: [],

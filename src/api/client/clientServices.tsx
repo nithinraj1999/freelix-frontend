@@ -207,3 +207,16 @@ export const editprofile = async (data:object)=>{
     console.error(error);
   }
 }
+
+export const downloadDeliverable = async (data: object) => {
+  try {
+    const response = await userInstance.post("/download-file", data, {
+      responseType: "blob", 
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Error downloading the file:", error);
+    throw error; // Optional: rethrow error to handle it in the caller
+  }
+};
