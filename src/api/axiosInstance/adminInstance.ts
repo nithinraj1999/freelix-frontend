@@ -1,7 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { refreshAccessToken } from '../admin/adminServices';
-import { useDispatch } from 'react-redux';
 import { adminLogout } from '../../state/slices/adminSlice';
 import store from '../../state/store';
 

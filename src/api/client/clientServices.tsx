@@ -104,7 +104,7 @@ export const gotoCheckout = async(data:object)=>{
     const stripe  = await loadStripe("pk_test_51QIqFWLXI5UC7UZcNNLpIxqjCRdLjGKpuL15U7Wt9tYu3hYn6DivvAd3DDSbaE49dlAeGZFrY2gYRBt6kX3vNxW400wvP8Zw16")
     const response = await userInstance.post("/make-payment",data);
     const session = response.data
-    let result = stripe?.redirectToCheckout({
+    stripe?.redirectToCheckout({
       sessionId:session.id
     })
   }catch(error){
