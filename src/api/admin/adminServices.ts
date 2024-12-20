@@ -1,3 +1,4 @@
+import { log } from "node:console";
 import adminInstance from "../axiosInstance/adminInstance";
 
 
@@ -181,6 +182,7 @@ export const unblockClient = async (clientID:string): Promise<any> => {
 
 export const addSkills = async (data:any)=>{
   try{
+    console.log(data);
     const response =  await adminInstance.post("/add-skills",data)
     return response.data
   }catch(error){

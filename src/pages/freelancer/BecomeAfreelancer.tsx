@@ -219,7 +219,7 @@ const BecomeFreelancerForm: React.FC = () => {
   useEffect(() => {
     async function getSkills() {
       const response = await fetchSkills();
-      console.log(response);
+      console.log("skills....",response);
       const skillArray = response.skills.map(
         (item: { skill: string }) => item.skill
       );
