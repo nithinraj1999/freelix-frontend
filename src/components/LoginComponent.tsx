@@ -100,12 +100,12 @@ function LoginComponent() {
               login
             </button>
             
-            {/* <GoogleLogin
+            <GoogleLogin
              onSuccess={successlogin}
              onError={() => {
                console.log("Login Failed");
              }}
-           /> */}
+           />
             <h1>
               Dont have an account?{" "}
               <span
