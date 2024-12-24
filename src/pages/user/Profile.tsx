@@ -7,7 +7,8 @@ import { editprofile } from "../../api/client/clientServices";
 import { z } from "zod";
 import MyHiring from "../../components/client/hirings/MyHiring";
 import AllJobPosts from "../../components/client/JobPost/AllJobPosts";
-
+import { useDispatch } from "react-redux";
+import { userLogin } from "../../state/slices/userSlice";
 const Profile = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const [userData, setUserData] = useState<any>({});
@@ -20,6 +21,7 @@ const Profile = () => {
   });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [errors, setErrors] = useState<any>({});
+  const dispatch = useDispatch()
   const profileSchema = z.object({
     name: z
       .string()
@@ -104,10 +106,11 @@ const Profile = () => {
         email: editData.email,
         profilePicture: previewImage || prev.profilePicture,
       }));
+      dispatch(userLogin(response.data))
     }
 
     setIsModalOpen(false);
-    console.log("Updated profile:", editData);
+    
   };
 
   return (
