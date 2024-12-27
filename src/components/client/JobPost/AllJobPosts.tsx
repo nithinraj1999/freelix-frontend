@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../state/store";
-import EditJobPostModal from "./EditJobPostModal";
 import { getAllJobPosts } from "../../../api/client/clientServices";
-import { deletepost } from "../../../api/client/clientServices";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 interface Job {
   _id: string;
@@ -25,23 +25,22 @@ const AllJobPosts: React.FC = () => {
   const [jobList, setJobList] = useState<Job[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const postsPerPage = 3; // Number of posts to show per page
-  const [totalpage,setTotalPage] = useState(1)
+  const postsPerPage = 3;
+  const [totalpage, setTotalPage] = useState(1);
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJobList = async () => {
       if (user?._id) {
-        const data = { userID: user._id, searchQuery, page: currentPage }
+        const data = { userID: user._id, searchQuery, page: currentPage };
         const response = await getAllJobPosts(data);
-        console.log(response.jobPosts);
-        setTotalPage(response.jobPosts.totalDocs)
+        setTotalPage(response.jobPosts.totalDocs);
         setJobList(response.jobPosts.MyPost);
       }
-    };   
+    };
     fetchJobList();
-  }, [user, searchQuery,currentPage]);
+  }, [user, searchQuery, currentPage]);
 
   const toggleExpand = (id: string) => {
     setIsExpanded(isExpanded === id ? null : id);
@@ -52,16 +51,16 @@ const AllJobPosts: React.FC = () => {
     navigate("/job/details", { state: { jobId } });
   };
 
-  
-  
   const totalPages = Math.ceil(totalpage / postsPerPage);
-
-
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {
       setCurrentPage(page);
     }
+  };
+
+  const cleanContent = (content: string) => {
+    return content.replace(/<p>\s*<\/p>/g, "").replace(/<br\s*\/?>/g, "");
   };
 
   return (
@@ -70,15 +69,15 @@ const AllJobPosts: React.FC = () => {
 
       {/* Search Field */}
       {jobList.length > 0 && (
-      <div className="mb-4">
-        <input
-          type="text"
-          className="w-full p-2 border rounded"
-          placeholder="Search by job title"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </div>
+        <div className="mb-4">
+          <input
+            type="text"
+            className="w-full p-2 border rounded"
+            placeholder="Search by job title"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       )}
 
       {jobList.length > 0 ? (
@@ -106,22 +105,10 @@ const AllJobPosts: React.FC = () => {
                   : "max-h-[150px] overflow-hidden"
               }`}
             >
-              <p
-                className="text-slate-300 mt-2 text-slate-500"
-                style={{ whiteSpace: "pre-wrap" }}
-              >
-                {isExpanded === job._id
-                  ? job.description
-                  : `${job.description.split(" ").slice(0, 30).join(" ")}...`}
-                {job.description.length > 100 && (
-                  <span
-                    className="text-blue-400 cursor-pointer ml-1"
-                    onClick={() => toggleExpand(job._id)}
-                  >
-                    {isExpanded === job._id ? "See Less" : "See More"}
-                  </span>
-                )}
-              </p>
+              <div
+                dangerouslySetInnerHTML={{ __html: job.description }}
+              />
+              
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2 w-full">

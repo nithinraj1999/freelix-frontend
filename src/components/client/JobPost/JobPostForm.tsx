@@ -1,4 +1,4 @@
-import React, { useRef, useState,useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { RootState } from "../../../state/store";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -10,6 +10,10 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { userLogout } from "../../../state/slices/userSlice";
 import { fetchSkills } from "../../../api/client/clientServices";
+import ReactQuill from "react-quill";
+import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.core.css'; // Import the Core theme CSS
+
 const JobPostForm: React.FC = () => {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -27,9 +31,9 @@ const JobPostForm: React.FC = () => {
   const [totalAmount, setTotalAmount] = useState<number | "">(""); // State for fixed total amount
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (!user) {
       navigate("/");
@@ -49,7 +53,6 @@ const JobPostForm: React.FC = () => {
           "Title cannot start with a space"
         ),
 
-     
       description: z.string().min(1, "Description is required"),
       skills: z.array(z.string()).min(1, "At least one skill is required"),
       experience: z.string().min(1, "Experience level is required"),
@@ -87,8 +90,7 @@ const JobPostForm: React.FC = () => {
         return true; // If paymentType is not set, return true (not expected)
       },
       {
-        message:
-          "",
+        message: "",
         path: ["paymentType"], // Specify where to show the error
       }
     );
@@ -157,7 +159,7 @@ const JobPostForm: React.FC = () => {
 
     const validationResult = schema.safeParse({
       title,
-      
+
       description,
       skills: skillList,
       experience: selectedLevel,
@@ -188,7 +190,7 @@ const JobPostForm: React.FC = () => {
       }
       postData.append("skills", JSON.stringify(skillList));
       postData.append("title", title);
-  
+
       postData.append("description", description);
       postData.append("experience", selectedLevel);
       postData.append("paymentType", selectedPaymentType);
@@ -205,7 +207,7 @@ const JobPostForm: React.FC = () => {
         toast.success("Job post created successfully!", {
           position: "top-right",
         });
-        navigate("/my-job-post")
+        navigate("/my-job-post");
         console.log("Job post created successfully:", response);
       } else {
         console.error("Failed to create job post:", response.statusText);
@@ -221,19 +223,21 @@ const JobPostForm: React.FC = () => {
     async function getSkills() {
       const response = await fetchSkills();
       console.log(response);
-      const skillArray = response.skills.map((item: { skill: string }) => item.skill);
+      const skillArray = response.skills.map(
+        (item: { skill: string }) => item.skill
+      );
       setPredefinedSkills(skillArray);
     }
     getSkills();
   }, []);
-  
-  const [searchInput, setSearchInput] = useState<string>('');
+
+  const [searchInput, setSearchInput] = useState<string>("");
   const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
-  
+
   useEffect(() => {
     // Filter the skills based on the input
     if (searchInput) {
-      const filtered = predefinedSkills.filter(skill =>
+      const filtered = predefinedSkills.filter((skill) =>
         skill.toLowerCase().includes(searchInput.toLowerCase())
       );
       setSuggestedSkills(filtered);
@@ -241,22 +245,20 @@ const JobPostForm: React.FC = () => {
       setSuggestedSkills([]);
     }
   }, [searchInput]);
-  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
   };
 
   const selectSkill = (skill: string) => {
-    // Function to add the selected skill to the skill list
     setSkillList([...skillList, skill]);
-    console.log(`Selected skill: ${skill}`);
-    setSearchInput(''); // Clear the input after selection
-    setSuggestedSkills([]); // Clear suggestions
+    setSearchInput("");
+    setSuggestedSkills([]);
   };
 
-
-
+  const saveDescription = (description:any) => {
+    setDescription(description)
+  };
   return (
     <>
       <div className="min-h-screen flex items-center justify-center">
@@ -299,98 +301,48 @@ const JobPostForm: React.FC = () => {
                 </li>
               </ul>
             </div>
-           
+
             <div>
-              <h3 className="text-lg font-bold mt-6">Descriptio</h3>
-              <textarea
-                rows={6}
-                className="mt-1 px-2 py-0.5 w-full"
+              <h3 className="text-lg font-bold mt-6">Description</h3>
+              
+              <ReactQuill
+                theme="snow"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              ></textarea>
+                onChange={saveDescription}
+                className="h-[200px] bg-white"
+                placeholder="Write something..."
+              />
               {errors.description && (
                 <p className="text-red-500">{errors.description}</p>
               )}
             </div>
-            {/* <div
-              onDrop={handleFileDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onClick={handleClick}
-              className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 text-gray-500 hover:bg-gray-100 mt-6"
-            >
-              {!selectedFile && !isDragging ? (
-                <>
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <p className="mb-2 text-sm text-gray-500">
-                      Drag & drop any images or documents that might be helpful
-                      in explaining your brief here.
-                    </p>
-                    <p className="text-xs text-gray-400">(Max 25 MB)</p>
-                  </div>
-                </>
-              ) : isDragging ? (
-                <p className="text-sm text-gray-700">Drop to attach file</p>
-              ) : (
-                <p className="text-sm text-gray-600">
-                  Selected File: {selectedFile?.name}
-                </p>
-              )}
-
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </div> */}
 
             <div>
-              <h3 className="text-lg font-bold mt-6">
+              <h3 className="text-lg font-bold mt-14">
                 What are the main skills required for your work?
               </h3>
-              {/* <div>
-                <input
-                  placeholder="search skills"
-                  value={skillInput}
-                  onChange={handleSkillInputChange} // Set input value on change
-                  className="h-10 mt-1 px-2 w-1/2"
-                ></input>
-                <button
-                  className="bg-black h-10 w-20 text-white"
-                  onClick={addSkillToList}
-                >
-                  Add
-                </button>
-                <p className="text-slate-400 mt-1">
-                  for the best results.add 3-5 skills
-                </p>
-                {errors.skills && (
-                  <p className="text-red-500">{errors.skills}</p>
-                )}
-              </div> */}
 
               <div>
-      <input
-        placeholder="Search skills"
-        value={searchInput}
-        onChange={handleInputChange}
-        className="h-10 mt-1 px-2 w-1/2"
-      />
-      {suggestedSkills.length > 0 && (
-        <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 w-1/2 z-10">
-          {suggestedSkills.map((skill, index) => (
-            <li
-              key={index}
-              onClick={() => selectSkill(skill)}
-              className="cursor-pointer hover:bg-blue-100 px-2 py-1"
-            >
-              {skill}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+                <input
+                  placeholder="Search skills"
+                  value={searchInput}
+                  onChange={handleInputChange}
+                  className="h-10 mt-1 px-2 w-1/2"
+                />
+                {suggestedSkills.length > 0 && (
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 w-1/2 z-10">
+                    {suggestedSkills.map((skill, index) => (
+                      <li
+                        key={index}
+                        onClick={() => selectSkill(skill)}
+                        className="cursor-pointer hover:bg-blue-100 px-2 py-1"
+                      >
+                        {skill}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
 
               <div>
                 <h3 className="text-slate-500 mt-6">Selected Skills</h3>
@@ -495,7 +447,6 @@ const JobPostForm: React.FC = () => {
                     <p className="text-red-500">{errors.paymentType}</p>
                   )}
 
-                 
                   {selectedPaymentType === "hourly" && (
                     <div className="flex space-x-4">
                       <input
@@ -539,12 +490,11 @@ const JobPostForm: React.FC = () => {
                           )
                         } // Update state
                       />
-                      
                     </div>
                   )}
-                   {errors.totalAmount && (
-                        <p className="text-red-500">{errors.totalAmount}</p>
-                      )}
+                  {errors.totalAmount && (
+                    <p className="text-red-500">{errors.totalAmount}</p>
+                  )}
                 </div>
               </div>
             </div>
