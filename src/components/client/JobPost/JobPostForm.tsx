@@ -301,7 +301,7 @@ const JobPostForm: React.FC = () => {
             </div>
            
             <div>
-              <h3 className="text-lg font-bold mt-6">Description</h3>
+              <h3 className="text-lg font-bold mt-6">Descriptio</h3>
               <textarea
                 rows={6}
                 className="mt-1 px-2 py-0.5 w-full"
