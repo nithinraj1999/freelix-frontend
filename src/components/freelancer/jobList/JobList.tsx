@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { IoBookmarkOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 interface Job {
   _id: string;

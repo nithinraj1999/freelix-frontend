@@ -172,7 +172,7 @@ const Navbar: React.FC = () => {
                   {dropdownVisible && (
                     <div className="absolute right-0 mt-2 w-40 bg-neutral-800 rounded shadow-lg z-50">
                       <button
-                        className="block px-4 py-2 text-neutral-50 hover:bg-neutral-700"
+                        className="block w-full text-left px-4 py-2 text-neutral-50 hover:bg-neutral-700"
                         onClick={profile}
                       >
                         Profile

@@ -14,9 +14,13 @@ export const createJobPost = async (data: object) => {
   }
 };
 
-export const getAllJobPosts = async (data: object) => {
+export const getAllJobPosts = async (data: any) => {
   try {
-    const response = await userInstance.post("/my-job-posts", data);
+    const response = await userInstance.post(`/my-job-posts?page=${data.page}`, data,{
+      params: {
+        page: data.page
+      }
+    });
     return response.data;
   } catch (error) {
     console.error(error);

@@ -99,7 +99,6 @@ function App() {
   const generateKitToken = (userId: string, roomId: string) => {
     const appID = Number(import.meta.env.VITE_ZEGOCLOUDE_APP_ID);
     const serverSecret = import.meta.env.VITE_ZEGOCLOUDE_SERVER_SECRET;
-
     return ZegoUIKitPrebuilt.generateKitTokenForTest(
       appID,
       serverSecret,
@@ -195,10 +194,7 @@ function App() {
           <Route path="/freelancer/job/details" element={<JobBidPage />} />
           <Route path="/freelancer/job/:view" element={<JobBidPage />} />
           <Route path="/freelancer/your-bids" element={<MyBids />} />
-          <Route
-            path="/freelancer/your-bids/details"
-            element={<MyBidsDetails />}
-          />
+          <Route path="/freelancer/your-bids/details" element={<MyBidsDetails />}/>
           <Route path="/freelancer/your-orders" element={<MyOders />} />
           <Route path="/freelancer/wallet" element={<WalletPage />} />
         </Route>
