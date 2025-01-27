@@ -75,43 +75,16 @@ const MyHiring = () => {
     }
   };
 
-  // const downloadFile = async (fileUrl: string) => {
-  //   try {
-  //     // Add 'fl_attachment' to force file download without changing the format
-  //     const downloadUrl = fileUrl.replace("/upload/", "/upload/fl_attachment/");
-
-  //     const response = await axios.get(downloadUrl, {
-  //       responseType: "blob",
-  //     });
-
-  //     // Create a URL for the blob and initiate download
-  //     const url = window.URL.createObjectURL(new Blob([response.data]));
-
-  //     // Extract the file name from the URL and use the original file extension
-  //     const fileName = fileUrl.split("/").pop() || "downloaded_file";
-
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.setAttribute("download", fileName); // Set the file name to the last part of the URL or a custom name
-  //     document.body.appendChild(link);
-  //     link.click();
-
-  //     // Clean up
-  //     document.body.removeChild(link);
-  //     window.URL.revokeObjectURL(url);
-  //   } catch (error) {
-  //     console.error("Error downloading the file:", error);
-  //     alert("There was an error downloading the file. Please try again.");
-  //   }
-  // };
 
   useEffect(() => {
     if (user?._id) {
       async function fetchAllHirings(clientId: string) {
         const data = { clientId: clientId };
         const response = await getAllHiring(data);
-        console.log(response);
-        setHirings(response.allHirings);
+        if(response.success){
+          setHirings(response.allHirings)
+        }
+        
       }
       fetchAllHirings(user._id);
     }
@@ -178,6 +151,9 @@ const MyHiring = () => {
     }
   };
 
+
+  console.log(hirings);
+  
   return (
     <div className="p-4 px-16">
       <h2 className="text-xl font-bold">Your Hirings</h2>
