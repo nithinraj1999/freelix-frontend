@@ -120,7 +120,7 @@ const MyHiring = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const downloadFile = async (id: string) => {
-    setIsLoading(true); // Show loading spinner
+    setIsLoading(true); 
 
     const data = {
       orderId: id,
@@ -159,67 +159,77 @@ const MyHiring = () => {
       <h2 className="text-xl font-bold">Your Hirings</h2>
 
       {/* Hirings List */}
-      <div className="space-y-4 bg-white">
-        {hirings.length === 0 ? (
-          <div className="flex flex-col items-center justify-center bg-gray-100 p-6 rounded-lg shadow-md w-full">
-            <h2 className="text-xl font-semibold text-gray-700 mb-2">
-              No Hirings Available
-            </h2>
-            <p className="text-gray-600 text-center mb-4">
-              It seems like there are no hirings at the moment. Check back later
-              for new opportunities!
-            </p>
-          </div>
-        ) : (
-          hirings.map((hiring: any) => (
-            <div
-              key={hiring._id}
-              className="border p-4 rounded-lg shadow-md flex justify-between"
-            >
-              <div>
-                <h3 className="font-semibold text-lg">
-                  {hiring.projectId.title}
-                </h3>
-                <p className="text-gray-500">
-                  Freelancer: {hiring.freelancerId.name}
-                </p>
-                <p className="text-sm text-gray-400">Status: {hiring.status}</p>
-                <p className="text-sm text-gray-400">
-                  Start Date: {hiring.orderDate}
-                </p>
-                {/* <p className="text-sm text-gray-400">
-                  End Date: {hiring.endDate}
-                </p> */}
-              </div>
+      <div className="space-y-6 bg-white p-6 rounded-lg shadow-lg">
+  {hirings.length === 0 ? (
+    <div className="flex flex-col items-center justify-center bg-gray-50 p-8 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">
+        No Hirings Available
+      </h2>
+      <p className="text-gray-600 text-center">
+        It seems like there are no hirings at the moment. Check back later for
+        new opportunities!
+      </p>
+    </div>
+  ) : (
+    hirings.map((hiring: any) => (
+      <div
+        key={hiring._id}
+        className="border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4"
+      >
+        {/* Hiring Details */}
+        <div>
+          <h3 className="text-xl font-semibold text-gray-800">
+            {hiring.projectId?.title}
+          </h3>
+          <p className="text-gray-600">
+            <span className="font-medium">Freelancer:</span>{" "}
+            {hiring.freelancerId.name}
+          </p>
+          <p className="text-gray-500 text-sm">
+            <span className="font-medium">Status:</span> {hiring.status}
+          </p>
+          <p className="text-gray-500 text-sm">
+            <span className="font-medium">Start Date:</span> {hiring.orderDate}
+          </p>
+        </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2">
-                <p className="p-2 rounded text-gray-700 bg-blue-200">
-                  {hiring.status}
-                </p>
+        {/* Actions */}
+        <div className="flex items-center gap-3">
+          <span
+            className={`p-2 rounded text-white ${
+              hiring.status === "Completed"
+                ? "bg-green-500"
+                : hiring.status === "In Progress"
+                ? "bg-yellow-500"
+                : "bg-gray-500"
+            }`}
+          >
+            {hiring.status}
+          </span>
 
-                <button
-                  className="bg-blue-500 text-white p-2 rounded"
-                  onClick={() => openModal(hiring)}
-                >
-                  View
-                </button>
-                <button
-                  className="bg-blue-500 text-white p-2 rounded"
-                  onClick={() =>
-                    navigateToChat(
-                      hiring.freelancerId._id,
-                      hiring.freelancerId.name
-                    )
-                  }
-                >
-                  Chat
-                </button>
-              </div>
-            </div>
-          ))
-        )}
+          <button
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition"
+            onClick={() => openModal(hiring)}
+          >
+            View
+          </button>
+          <button
+            className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition"
+            onClick={() =>
+              navigateToChat(
+                hiring.freelancerId._id,
+                hiring.freelancerId.name
+              )
+            }
+          >
+            Chat
+          </button>
+        </div>
       </div>
+    ))
+  )}
+</div>
+
 
       {/* Modal */}
       {modalOpen && selectedHiring && (

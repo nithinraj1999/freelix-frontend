@@ -9,6 +9,10 @@ import { RootState } from "../../state/store";
 import { useSelector } from "react-redux";
 import { isBidAlreadyBid } from "../../api/freelancer/freelancerServices";
 import Swal from 'sweetalert2';
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import "react-quill/dist/quill.core.css";
+
 
 const JobDetails: React.FC = () => {
    interface IJobDetailsType {
@@ -47,7 +51,7 @@ const JobDetails: React.FC = () => {
   
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const bidFormRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<ReactQuill>(null)
 
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
   const navigate = useNavigate()
@@ -90,18 +94,21 @@ const JobDetails: React.FC = () => {
   };
 
   const handleInput = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: any
   ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
-  const handleInputResize = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // Reset the height
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set height based on content
-    }
+  const saveDescription = (value: any) => {
+    setFormData({ ...formData, proposal: value });
   };
+
+  // const handleInputResize = () => {
+  //   if (textareaRef.current) {
+  //     textareaRef.current.style.height = "auto"; // Reset the height
+  //     textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set height based on content
+  //   }
+  // };
 
   const validateForm = () => {
     try {
@@ -159,11 +166,15 @@ const JobDetails: React.FC = () => {
     }); // Reset form data
   };
 
+  if(!jobDetails){
+    return <div><h1>no job details</h1></div>
+  }
+
   return (
     <>
       <div className="mt-4 px-16 w-full">
         <div className="flex justify-between">
-          <h1 className="text-2xl font-bold">{jobDetails?.title}</h1>
+          <h1 className="text-2xl font-bold">{jobDetails.title}</h1>
           {!loadingBidStatus && !isExistingBidder && (
             <button
               className="bg-black text-white w-32 h-12 rounded"
@@ -174,9 +185,13 @@ const JobDetails: React.FC = () => {
           )}
         </div>
         <div className="mt-6 p-6 bg-white">
-          <h1>{jobDetails?.description}</h1>
-          <div className="pt-6">
-            <p>Experience level : {jobDetails?.experience}</p>
+          {/* <h1>{jobDetails?.description}</h1> */}
+          <div
+          className=" text-gray-700 mt-2"
+          dangerouslySetInnerHTML={{ __html: jobDetails.description }}
+        />
+          <div className="">
+            <p>Experience level : {jobDetails.experience}</p>
           </div>
           <div className="flex flex-wrap gap-2 pt-6 rounded-lg">
             {jobDetails?.skills.map((skill, index) => (
@@ -257,7 +272,16 @@ const JobDetails: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700">
                 Describe your proposal
               </label>
-              <textarea
+                            <ReactQuill
+                             ref={textareaRef}
+                              theme="snow"
+                              value={formData.proposal}
+                              onChange={saveDescription}
+                              placeholder="Write your proposal here..."
+                              className="mt-2"
+                            />
+              
+              {/* <textarea
                 ref={textareaRef}
                 name="proposal"
                 value={formData.proposal}
@@ -266,7 +290,7 @@ const JobDetails: React.FC = () => {
                 placeholder="Write your proposal here..."
                 rows={8}
                 onInput={handleInputResize}
-              />
+              /> */}
               {errors.proposal && (
                 <p className="text-red-500">{errors.proposal}</p>
               )}

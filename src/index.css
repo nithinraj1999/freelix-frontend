@@ -1,13 +1,24 @@
+@import "react-quill/dist/quill.snow.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-
 :root {
-    --bg-color: #f0f0f0; /* Change this to your desired color */
+    --bg-color: #f0f0f0; 
   }
   body {
     background-color: var(--bg-color);
   }
+  
+  ol li {
+    list-style: decimal;
+    list-style-position: inside;
+}
 
+.ql-container {
+  background-color: white ; 
+  height: 230px ;          
+}
+
+
+  

@@ -6,10 +6,10 @@ import { useSelector } from "react-redux";
 import { selectedJobDetails } from "../../../api/client/clientServices";
 import EditJobPostModal from "./EditJobPostModal";
 import { deletepost } from "../../../api/client/clientServices";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
 const JobDetail: React.FC = () => {
-   interface IJobDetailsType {
+  interface IJobDetailsType {
     category: string;
     createdAt: string;
     description: string;
@@ -27,7 +27,7 @@ const JobDetail: React.FC = () => {
     userID: string;
     _id: string;
   }
-  
+
   interface Job {
     _id: string;
     userID: string;
@@ -84,38 +84,36 @@ const JobDetail: React.FC = () => {
     setSelectedJob(null);
   };
 
+  const deletePost = async (jobId: string) => {
+    // Show a confirmation dialog using SweetAlert
+    const { isConfirmed } = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
 
-const deletePost = async (jobId: string) => {
-  // Show a confirmation dialog using SweetAlert
-  const { isConfirmed } = await Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!',
-  });
-
-  // If the user confirms, proceed with the deletion
-  if (isConfirmed) {
-    try {
-      const data = { jobId: jobId };
-      const response = await deletepost(data);
-      if (response) {
-        setJobDetails(null); // Clear job details after deletion
-        navigate("/my-job-post")
-        // Show a success message
-        Swal.fire('Deleted!', 'Your job has been deleted.', 'success');
+    // If the user confirms, proceed with the deletion
+    if (isConfirmed) {
+      try {
+        const data = { jobId: jobId };
+        const response = await deletepost(data);
+        if (response) {
+          setJobDetails(null); // Clear job details after deletion
+          navigate("/my-job-post");
+          // Show a success message
+          Swal.fire("Deleted!", "Your job has been deleted.", "success");
+        }
+      } catch (error) {
+        console.error(`Error deleting job:`, error);
+        // Optionally, show an error message
+        Swal.fire("Error!", "There was an error deleting the job.", "error");
       }
-    } catch (error) {
-      console.error(`Error deleting job:`, error);
-      // Optionally, show an error message
-      Swal.fire('Error!', 'There was an error deleting the job.', 'error');
     }
-  }
-};
-
+  };
 
   return (
     <>
@@ -123,22 +121,30 @@ const deletePost = async (jobId: string) => {
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">{jobDetails?.title}</h1>
           <div className="flex justify-end space-x-2">
-          <button
-            onClick={() => handleEditClick()}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Edit Post
-          </button>
-          <button
-            className="bg-gray-200 text-black px-4 py-2 rounded"
-            onClick={() => jobDetails?._id && deletePost(jobDetails._id)}
-          >
-            Delete Post
-          </button>
-        </div>
+            <button
+              onClick={() => handleEditClick()}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >
+              Edit Post
+            </button>
+            <button
+              className="bg-gray-200 text-black px-4 py-2 rounded"
+              onClick={() => jobDetails?._id && deletePost(jobDetails._id)}
+            >
+              Delete Post
+            </button>
+          </div>
         </div>
         <div className="mt-6 p-6 bg-white">
-          <h1>{jobDetails?.description}</h1>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: jobDetails?.description
+                ? jobDetails.description
+                : "No description available",
+            }}
+          />
+
+         
           <div className="pt-6">
             <p>Experience level : {jobDetails?.experience}</p>
           </div>
@@ -170,9 +176,7 @@ const deletePost = async (jobId: string) => {
             jobData={jobDetails}
           />
         )}
-        
       </div>
-    
     </>
   );
 };
