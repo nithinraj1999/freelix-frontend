@@ -133,7 +133,7 @@ const JobList: React.FC<JobListProps> = ({
                   : "max-h-[150px] overflow-hidden"
               }`}
             >
-              <p className="text-slate-500 mt-2">
+              {/* <p className="text-slate-500 mt-2">
                 {isExpanded === job._id
                   ? job.description
                   : `${job.description.split(" ").slice(0, 30).join(" ")}...`}
@@ -145,7 +145,11 @@ const JobList: React.FC<JobListProps> = ({
                     {isExpanded === job._id ? "See Less" : "See More"}
                   </span>
                 )}
-              </p>
+              </p> */}
+                      <div
+          className="line-clamp-3 text-gray-700 mt-2"
+          dangerouslySetInnerHTML={{ __html: job.description }}
+        />
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">

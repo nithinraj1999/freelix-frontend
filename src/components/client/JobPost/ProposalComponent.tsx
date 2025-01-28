@@ -113,6 +113,11 @@ const ProposalComponent: React.FC = () => {
     navigate('/chat', { state: { freelancerId,name } });
   };
   
+  const truncatedContent = (content:any) => {
+    const words = content.split(" ");
+    return words.length > 60 ? `${words.slice(0, 60).join(" ")}...` : content;
+  };
+
 
   return (
     <>
@@ -191,7 +196,12 @@ const ProposalComponent: React.FC = () => {
 
           <div className="flex justify-between mt-4">
             <div className="flex-grow">
-              <p>{expandedBids[bid._id] ? bid.proposal : `${bid.proposal.split(" ").slice(0, 60).join(" ")}...`}</p>
+              {/* <p>{expandedBids[bid._id] ? bid.proposal : `${bid.proposal.split(" ").slice(0, 60).join(" ")}...`}</p> */}
+              <div className="text-gray-700 mt-2" dangerouslySetInnerHTML={{ __html: expandedBids[bid._id]
+            ? bid.proposal
+            : truncatedContent(bid.proposal),
+        }}
+      />
               <button
                 onClick={() => toggleExpand(bid._id)}
                 className="text-blue-500 hover:underline mt-2"

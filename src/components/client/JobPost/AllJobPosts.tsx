@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../state/store";
 import { getAllJobPosts } from "../../../api/client/clientServices";
-import "react-quill/dist/quill.snow.css";
-import { CSSProperties } from "react";
 
 interface Job {
   _id: string;
