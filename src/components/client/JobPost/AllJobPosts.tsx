@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { RootState } from "../../../state/store";
 import { getAllJobPosts } from "../../../api/client/clientServices";
 
-// Define Job Interface
 interface Job {
   _id: string;
   userID: string;
@@ -20,7 +19,6 @@ interface Job {
   hourlyPrice?: { from: number; to: number };
 }
 
-// Define API Response Type
 interface JobResponse {
   jobPosts: {
     totalDocs: number;
@@ -48,7 +46,7 @@ const AllJobPosts: React.FC = () => {
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
-  const { data, isLoading, error } = useQuery<JobResponse>({
+  const { data, isLoading, error } = useQuery<JobResponse, Error, JobResponse>({
     queryKey: ["jobPosts", user?._id, debouncedSearch, currentPage],
     queryFn: async () => {
       if (!user?._id) return { jobPosts: { totalDocs: 0, MyPost: [] } };
@@ -59,6 +57,9 @@ const AllJobPosts: React.FC = () => {
       });
     },
     enabled: !!user?._id,
+    // onSuccess:()=>{
+
+    // }
   });
   useEffect(() => {
     if (!isLoading && searchInputRef.current) {
@@ -113,7 +114,7 @@ const AllJobPosts: React.FC = () => {
         <input
           type="text"
           ref={searchInputRef}
-          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
           placeholder="Search by job title"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -151,7 +152,7 @@ const AllJobPosts: React.FC = () => {
               <div className="line-clamp-3 text-gray-700 mt-2" dangerouslySetInnerHTML={{ __html: job.description }} />
               <div className="mt-4 flex flex-wrap gap-2">
                 {job.skills.map((skill, index) => (
-                  <span key={index} className="bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-xs font-medium">
+                  <span key={index} className="bg-black text-white rounded-full px-4 py-2 text-xs font-medium">
                     {skill}
                   </span>
                 ))}

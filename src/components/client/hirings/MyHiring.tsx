@@ -74,23 +74,30 @@ const MyHiring = () => {
 
   const { data, isLoading: queryLoading, error } = useQuery({
     queryKey: ["allHirings", user?._id],
-    queryFn: () => getAllHiring({ clientId: user?._id }), // No `await` needed
+    queryFn: () => getAllHiring({ clientId: user?._id }), 
     enabled: !!user?._id,
   });
-  console.log("use query data....",data);
-  
-  useEffect(() => {
-    if (user?._id) {
-      async function fetchAllHirings(clientId: string) {
-        const data = { clientId: clientId };
-        const response = await getAllHiring(data);
-        if (response.success) {
-          setHirings(response.allHirings);
-        }
-      }
-      fetchAllHirings(user._id);
+  if(data){
+    console.log("hirin....",data.allHirings);
+
+  }
+  useEffect(()=>{
+    if(data){
+      setHirings(data.allHirings);
     }
-  }, [user, paymentReleased]);
+  },[data,user, paymentReleased])
+  // useEffect(() => {
+  //   if (user?._id) {
+  //     async function fetchAllHirings(clientId: string) {
+  //       const data = { clientId: clientId };
+  //       const response = await getAllHiring(data);
+  //       if (response.success) {
+  //         setHirings(response.allHirings);
+  //       }
+  //     }
+  //     fetchAllHirings(user._id);
+  //   }
+  // }, [user, paymentReleased]);
 
   const submitReview = async (freelancerId: string) => {
     if (user?._id) {
