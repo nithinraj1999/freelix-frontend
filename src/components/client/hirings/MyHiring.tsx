@@ -1,32 +1,29 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { RootState } from "../../../state/store";
 import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
 import { getAllHiring } from "../../../api/client/clientServices";
 import { releasePaymentOfProject } from "../../../api/client/clientServices";
 import Swal from "sweetalert2";
 import { leaveAReview } from "../../../api/client/clientServices";
 import { useNavigate } from "react-router-dom";
 import { downloadDeliverable } from "../../../api/client/clientServices";
+
 const MyHiring = () => {
   const [hirings, setHirings] = useState<any>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedHiring, setSelectedHiring] = useState<any>(null);
-  const { user } = useSelector((state: RootState) => state.user);
   const [paymentReleased, setPaymentReleased] = useState(false);
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(0);
+  const { user } = useSelector((state: RootState) => state.user);
 
   const navigate = useNavigate();
-  // Function to open modal with hiring details
   const openModal = (hiring: any) => {
-    console.log("hiring",hiring);
-    
     setSelectedHiring(hiring);
     setModalOpen(true);
   };
 
-  // Function to close modal
   const closeModal = () => {
     setModalOpen(false);
     setSelectedHiring(null);
@@ -75,16 +72,21 @@ const MyHiring = () => {
     }
   };
 
-
+  const { data, isLoading: queryLoading, error } = useQuery({
+    queryKey: ["allHirings", user?._id],
+    queryFn: () => getAllHiring({ clientId: user?._id }), // No `await` needed
+    enabled: !!user?._id,
+  });
+  console.log("use query data....",data);
+  
   useEffect(() => {
     if (user?._id) {
       async function fetchAllHirings(clientId: string) {
         const data = { clientId: clientId };
         const response = await getAllHiring(data);
-        if(response.success){
-          setHirings(response.allHirings)
+        if (response.success) {
+          setHirings(response.allHirings);
         }
-        
       }
       fetchAllHirings(user._id);
     }
@@ -120,7 +122,7 @@ const MyHiring = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const downloadFile = async (id: string) => {
-    setIsLoading(true); 
+    setIsLoading(true);
 
     const data = {
       orderId: id,
@@ -151,85 +153,84 @@ const MyHiring = () => {
     }
   };
 
-
   console.log(hirings);
-  
+
   return (
     <div className="p-4 px-16">
       <h2 className="text-xl font-bold">Your Hirings</h2>
 
       {/* Hirings List */}
       <div className="space-y-6 bg-white p-6 rounded-lg shadow-lg">
-  {hirings.length === 0 ? (
-    <div className="flex flex-col items-center justify-center bg-gray-50 p-8 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">
-        No Hirings Available
-      </h2>
-      <p className="text-gray-600 text-center">
-        It seems like there are no hirings at the moment. Check back later for
-        new opportunities!
-      </p>
-    </div>
-  ) : (
-    hirings.map((hiring: any) => (
-      <div
-        key={hiring._id}
-        className="border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4"
-      >
-        {/* Hiring Details */}
-        <div>
-          <h3 className="text-xl font-semibold text-gray-800">
-            {hiring.projectId?.title}
-          </h3>
-          <p className="text-gray-600">
-            <span className="font-medium">Freelancer:</span>{" "}
-            {hiring.freelancerId.name}
-          </p>
-          <p className="text-gray-500 text-sm">
-            <span className="font-medium">Status:</span> {hiring.status}
-          </p>
-          <p className="text-gray-500 text-sm">
-            <span className="font-medium">Start Date:</span> {hiring.orderDate}
-          </p>
-        </div>
+        {hirings.length === 0 ? (
+          <div className="flex flex-col items-center justify-center bg-gray-50 p-8 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              No Hirings Available
+            </h2>
+            <p className="text-gray-600 text-center">
+              It seems like there are no hirings at the moment. Check back later
+              for new opportunities!
+            </p>
+          </div>
+        ) : (
+          hirings.map((hiring: any) => (
+            <div
+              key={hiring._id}
+              className="border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4"
+            >
+              {/* Hiring Details */}
+              <div>
+                <h3 className="text-xl font-semibold text-gray-800">
+                  {hiring.projectId?.title}
+                </h3>
+                <p className="text-gray-600">
+                  <span className="font-medium">Freelancer:</span>{" "}
+                  {hiring.freelancerId.name}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  <span className="font-medium">Status:</span> {hiring.status}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  <span className="font-medium">Start Date:</span>{" "}
+                  {hiring.orderDate}
+                </p>
+              </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-3">
-          <span
-            className={`p-2 rounded text-white ${
-              hiring.status === "Completed"
-                ? "bg-green-500"
-                : hiring.status === "In Progress"
-                ? "bg-yellow-500"
-                : "bg-gray-500"
-            }`}
-          >
-            {hiring.status}
-          </span>
+              {/* Actions */}
+              <div className="flex items-center gap-3">
+                <span
+                  className={`p-2 rounded text-white ${
+                    hiring.status === "Completed"
+                      ? "bg-green-500"
+                      : hiring.status === "In Progress"
+                      ? "bg-yellow-500"
+                      : "bg-gray-500"
+                  }`}
+                >
+                  {hiring.status}
+                </span>
 
-          <button
-            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition"
-            onClick={() => openModal(hiring)}
-          >
-            View
-          </button>
-          <button
-            className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition"
-            onClick={() =>
-              navigateToChat(
-                hiring.freelancerId._id,
-                hiring.freelancerId.name
-              )
-            }
-          >
-            Chat
-          </button>
-        </div>
+                <button
+                  className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition"
+                  onClick={() => openModal(hiring)}
+                >
+                  View
+                </button>
+                <button
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition"
+                  onClick={() =>
+                    navigateToChat(
+                      hiring.freelancerId._id,
+                      hiring.freelancerId.name
+                    )
+                  }
+                >
+                  Chat
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
-    ))
-  )}
-</div>
-
 
       {/* Modal */}
       {modalOpen && selectedHiring && (
@@ -345,3 +346,4 @@ const MyHiring = () => {
 };
 
 export default MyHiring;
+

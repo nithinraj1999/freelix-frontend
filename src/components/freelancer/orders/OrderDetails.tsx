@@ -107,7 +107,8 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ onClose, order, updateOrder
           </div>
 
           <p className="font-medium text-gray-800">Project Description:</p>
-          <p className="text-gray-600 mb-4">{order.projectId.description}</p>
+         
+          <div className="line-clamp-3 text-gray-700 mt-2" dangerouslySetInnerHTML={{ __html: order.projectId.description }} />
 
           <p className="font-medium text-gray-800">Status:</p>
           <span
