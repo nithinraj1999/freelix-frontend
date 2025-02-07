@@ -123,7 +123,9 @@ const YourBidDetails: React.FC = () => {
 
       <div className="mt-2 p-6 bg-white">
         <label className="font-bold">Your Proposal</label>
-        <h1 className="mt-2">{bidDetails?.proposal || "No proposal available"}</h1>
+        <div className="line-clamp-3 text-gray-700 mt-2" dangerouslySetInnerHTML={{ __html: bidDetails?.proposal }} />
+
+        {/* <h1 className="mt-2">{bidDetails?.proposal || "No proposal available"}</h1> */}
         <div className="pt-6">
           <p>Delivery days: {bidDetails?.deliveryDays || "Not specified"}</p>
         </div>
