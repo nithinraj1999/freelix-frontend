@@ -77,10 +77,7 @@ const MyHiring = () => {
     queryFn: () => getAllHiring({ clientId: user?._id }), 
     enabled: !!user?._id,
   });
-  if(data){
-    console.log("hirin....",data.allHirings);
-
-  }
+  
   useEffect(()=>{
     if(data){
       setHirings(data.allHirings);

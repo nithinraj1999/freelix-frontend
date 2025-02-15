@@ -44,19 +44,16 @@ const JobList: React.FC<JobListProps> = ({
   const navigate = useNavigate();
 
   const handlePageChange = (newPage: number) => {
-    console.log(newPage);
     if (newPage > 0) pagination(newPage);
   };
 
-  const toggleExpand = (id: string) => {
-    setIsExpanded(isExpanded === id ? null : id);
-  };
+  
 
   const navigateToDetails = (jobId: string) => {
     localStorage.setItem("selectedJobId", jobId);
     navigate("/freelancer/job/details", { state: { jobId } });
   };
-  const jobPostCount = jobCount; // Example count; replace with dynamic count from your API
+  const jobPostCount = jobCount; 
   const postsPerPage = 3;
   const totalPage = Math.ceil(jobPostCount / postsPerPage);
 
@@ -133,19 +130,6 @@ const JobList: React.FC<JobListProps> = ({
                   : "max-h-[150px] overflow-hidden"
               }`}
             >
-              {/* <p className="text-slate-500 mt-2">
-                {isExpanded === job._id
-                  ? job.description
-                  : `${job.description.split(" ").slice(0, 30).join(" ")}...`}
-                {job.description.length > 100 && (
-                  <span
-                    className="text-blue-400 cursor-pointer ml-1"
-                    onClick={() => toggleExpand(job._id)}
-                  >
-                    {isExpanded === job._id ? "See Less" : "See More"}
-                  </span>
-                )}
-              </p> */}
                       <div
           className="line-clamp-3 text-gray-700 mt-2"
           dangerouslySetInnerHTML={{ __html: job.description }}
@@ -156,7 +140,7 @@ const JobList: React.FC<JobListProps> = ({
               {job.skills.map((skill, index) => (
                 <span
                   key={index}
-                  className="bg-slate-300 text-black rounded-full px-3 py-1 text-sm"
+                  className="bg-black text-white rounded-full px-3 py-1 text-sm"
                 >
                   {skill}
                 </span>
