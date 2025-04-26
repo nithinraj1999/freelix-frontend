@@ -4,7 +4,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { z } from "zod";
 import { useDispatch } from "react-redux";
 import { editPost } from "../../../api/client/clientServices";
-
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import "react-quill/dist/quill.core.css";
 interface EditJobPostModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -147,12 +149,15 @@ const EditJobPostModal: React.FC<EditJobPostModalProps> = ({
 
             <div>
               <label>Description</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="border p-1 w-full"
-                rows={10}
-              />
+         
+              <ReactQuill
+                        theme="snow"
+                        value={description}
+                        onChange={(value) => setDescription(value)}
+                        placeholder="Write something..."
+                        className="mt-2"
+                      />
+
               {errors.description && <p className="text-red-500">{errors.description}</p>}
             </div>
 
