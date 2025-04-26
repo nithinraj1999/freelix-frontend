@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-// import { IJobDetailsType } from "../../../../../backend/src/domain/entities/jobPost";
 import { getBidDetails } from "../../../api/freelancer/freelancerServices";
 import EditProposalModal from "../Proposal/EditProposalModal";
 

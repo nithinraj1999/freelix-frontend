@@ -109,7 +109,6 @@ const AllJobPosts: React.FC = () => {
     <div className="w-full px-8 lg:px-16 bg-gray-50 min-h-screen p-10">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Your Job Posts</h1>
       
-      {/* Search Field */}
       <div className="mb-6">
         <input
           type="text"
