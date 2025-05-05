@@ -146,11 +146,10 @@ function App() {
   });
 
   useEffect(() => {
-    // Register user when component mounts
 
     if (userID) {
       console.log(`Registering user with ID: ${userID}`);
-      socket.emit("registerUser", userID); // Register user with socket ID
+      socket.emit("registerUser", userID); 
     }
   }, [userID]);
 
