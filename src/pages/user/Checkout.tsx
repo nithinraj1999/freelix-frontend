@@ -60,15 +60,6 @@ const Checkout = () => {
           </div>
         </div>
 
-        {/* Payment Method */}
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Payment Method</h3>
-         
-          <div className="flex items-center mt-2">
-            <input type="radio" name="paymentMethod" className="mr-2" />
-            <label className="text-gray-600">Stripe</label>
-          </div>
-        </div>
 
         {/* Confirm Payment Button */}
         <button className="w-full bg-black text-white py-2 rounded-lg  focus:outline-none" onClick={makePayment}>

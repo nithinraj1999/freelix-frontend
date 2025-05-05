@@ -189,10 +189,10 @@ const Chat = () => {
         </div>
 
         <div className="bg-white p-4 flex items-center space-x-4">
-          <FaVideo
+          {/* <FaVideo
             className="text-blue-500 text-2xl cursor-pointer"
             onClick={startVideoCall}
-          />
+          /> */}
           <input
             type="text"
             className="flex-1 p-2 border rounded"

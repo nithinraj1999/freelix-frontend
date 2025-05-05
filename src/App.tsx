@@ -96,50 +96,50 @@ function App() {
     };
   }, [dispatch]);
 
-  const generateKitToken = (userId: string, roomId: string) => {
-    const appID = Number(import.meta.env.VITE_ZEGOCLOUDE_APP_ID);
-    const serverSecret = import.meta.env.VITE_ZEGOCLOUDE_SERVER_SECRET;
-    return ZegoUIKitPrebuilt.generateKitTokenForTest(
-      appID,
-      serverSecret,
-      roomId,
-      userId,
-      "chatroom"
-    );
-  };
+  // const generateKitToken = (userId: string, roomId: string) => {
+  //   const appID = Number(import.meta.env.VITE_ZEGOCLOUDE_APP_ID);
+  //   const serverSecret = import.meta.env.VITE_ZEGOCLOUDE_SERVER_SECRET;
+  //   return ZegoUIKitPrebuilt.generateKitTokenForTest(
+  //     appID,
+  //     serverSecret,
+  //     roomId,
+  //     userId,
+  //     "chatroom"
+  //   );
+  // };
 
-  const joinRoom = (roomId: string) => {
-    const kitToken = generateKitToken(userId!, roomId);
-    const zegoVideoCall = ZegoUIKitPrebuilt.create(kitToken);
+  // const joinRoom = (roomId: string) => {
+  //   const kitToken = generateKitToken(userId!, roomId);
+  //   const zegoVideoCall = ZegoUIKitPrebuilt.create(kitToken);
 
-    zegoVideoCall.joinRoom({
-      container: document.getElementById("video-call-container"),
-      sharedLinks: [],
-    });
+  //   zegoVideoCall.joinRoom({
+  //     container: document.getElementById("video-call-container"),
+  //     sharedLinks: [],
+  //   });
 
-    setIsInCall(true);
-  };
+  //   setIsInCall(true);
+  // };
 
-  const acceptIncomingCall = () => {
-    if (incomingCallData) {
-      joinRoom(incomingCallData.roomId);
-      setIncomingCallData(null);
-    }
-  };
+  // const acceptIncomingCall = () => {
+  //   if (incomingCallData) {
+  //     joinRoom(incomingCallData.roomId);
+  //     setIncomingCallData(null);
+  //   }
+  // };
 
-  const rejectIncomingCall = () => {
-    setIncomingCallData(null);
-  };
+  // const rejectIncomingCall = () => {
+  //   setIncomingCallData(null);
+  // };
 
-  useEffect(() => {
-    socket.on("incomingVideoCall", (data) => {
-      setIncomingCallData(data);
-    });
+  // useEffect(() => {
+  //   socket.on("incomingVideoCall", (data) => {
+  //     setIncomingCallData(data);
+  //   });
 
-    return () => {
-      socket.off("incomingVideoCall");
-    };
-  }, []);
+  //   return () => {
+  //     socket.off("incomingVideoCall");
+  //   };
+  // }, []);
 
   socket.on("connect", () => {
     console.log("Connected to server with socket ID:", socket.id);
@@ -210,7 +210,7 @@ function App() {
           <Route path="/admin/skills" element={<SkillManagementPage />} />
         </Route>
       </Routes>
-      {incomingCallData && (
+      {/* {incomingCallData && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-4 rounded shadow">
             <p>Incoming Video Call</p>
@@ -230,7 +230,7 @@ function App() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </Router>
   );
 }
