@@ -1,247 +1,486 @@
-import React, { useEffect, useState } from "react";
+// import { useEffect, useRef, useState } from "react";
+// import { useSelector } from "react-redux";
+// import { RootState } from "../../state/store";
+// import socket from "../../socket/socket";
+// import { getChat } from "../../api/client/clientServices";
+// import { GrAttachment } from "react-icons/gr";
+// import { ChangeEvent } from "react";
+// import { sendFile } from "../../api/client/clientServices";
+// interface ChatProps {
+//   selectedUser: {
+//     id: string;
+//     name: string;
+//   } | null;
+// }
+
+// interface Message {
+//   senderId: string;
+//   recipientId: string;
+//   text: string;
+//   file: string;
+//   timestamp: string;
+//   name?: string;
+// }
+
+// const Chat = ({ selectedUser }: ChatProps) => {
+//   const { user } = useSelector((state: RootState) => state.user);
+//   const [messages, setMessages] = useState<Message[]>([]);
+//   const [input, setInput] = useState("");
+//   const [file, setFile] = useState<any>();
+//   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+//   useEffect(() => {
+//     if (!selectedUser || !user?._id) return;
+
+//     // 👇 Fetch chat history
+//     const fetchMessages = async () => {
+//       try {
+//         const res = await getChat(user._id, selectedUser.id);
+//         console.log("......", res);
+
+//         setMessages(res.chat || []);
+//       } catch (err) {
+//         console.error("Failed to fetch messages:", err);
+//         setMessages([]);
+//       }
+//     };
+
+//     fetchMessages();
+//   }, [selectedUser, user]);
+
+//   useEffect(() => {
+//     if (user?._id) {
+//       socket.emit("registerUser", user._id);
+//     }
+
+//     const handleReceive = (message: Message) => {
+//       // only add message if it's relevant to current chat
+//       if (
+//         (message.senderId === selectedUser?.id &&
+//           message.recipientId === user?._id) ||
+//         (message.senderId === user?._id &&
+//           message.recipientId === selectedUser?.id)
+//       ) {
+//         setMessages((prev) => [...prev, message]);
+//       }
+//     };
+
+//     socket.on("receiveMessage", handleReceive);
+
+//     return () => {
+//       socket.off("receiveMessage", handleReceive);
+//     };
+//   }, [user, selectedUser]);
+
+//   const sendMessage = () => {
+//     if (!input.trim() || !selectedUser || !user) return;
+
+//     const message: Message = {
+//       senderId: user._id,
+//       recipientId: selectedUser.id,
+//       text: input.trim(),
+//       file: file,
+//       timestamp: new Date().toISOString(),
+//       name: user.name,
+//     };
+
+//     socket.emit("sendMessage", message);
+//     setMessages((prev) => [...prev, message]); // Optimistic UI
+//     setInput("");
+//   };
+
+//   useEffect(() => {
+//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+//   }, [messages]);
+
+//   if (!selectedUser) {
+//     return (
+//       <div className="h-full flex items-center justify-center text-gray-500 text-lg">
+//         👋 Select a contact to start chatting!
+//       </div>
+//     );
+//   }
+
+//   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+//     const files = e.target.files;
+//     if (!files || files.length === 0) return;
+//     const file = files[0];
+//     console.log(file);
+//     const formData = new FormData();
+//     formData.append("file", file);
+//     const response = await sendFile(formData);
+
+//     setFile(response.data.fileUrl);
+//   };
+
+//   return (
+//     <div className="flex flex-col h-full bg-gray-100">
+//       {/* Header */}
+//       <div className="p-4 border-b bg-white shadow-sm text-lg font-medium">
+//         Chatting with <span className="font-semibold">{selectedUser.name}</span>
+//       </div>
+
+//       {/* Messages */}
+// <div className="flex-1 p-4 space-y-3 overflow-y-auto">
+//   {messages.map((msg, idx) => (
+//     <div
+//       key={idx}
+//       className={`p-3 rounded-md shadow max-w-xs ${
+//         msg.senderId === user?._id
+//           ? "bg-blue-200 ml-auto text-right"
+//           : "bg-white"
+//       }`}
+//     >
+//       <div>{msg.text}</div>
+
+//       {msg.file && (
+//         <div className="mt-2 space-y-2">
+//           {/* 🖼️ Image Preview */}
+//           {msg.file.match(/\.(jpeg|jpg|png|gif|webp)$/i) ? (
+//             <img
+//               src={msg.file}
+//               alt="Uploaded preview"
+//               className="max-w-full h-auto rounded border"
+//             />
+//           ) : (
+//             // 📄 File Icon + Name for PDF/DOC/PPT/etc.
+//             <div className="flex items-center gap-2 text-sm text-gray-700">
+//               <span>📄</span>
+//               <span>{msg.file.split("/").pop()}</span>
+//             </div>
+//           )}
+
+//           {/* ⬇️ Download Button */}
+//           <a
+//             href={msg.file}
+//             download
+//             className="inline-block px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
+//           >
+//             ⬇️ Download File
+//           </a>
+//         </div>
+//       )}
+//     </div>
+//   ))}
+//   <div ref={messagesEndRef}></div>
+// </div>
+
+//       {/* Input */}
+//       <div className="p-4 border-t bg-white flex items-center gap-3">
+//         <input
+//           type="file"
+//           id="fileUpload"
+//           onChange={handleFileUpload}
+//           className="hidden"
+//         />
+
+//         {/* Label acts as button to trigger file input */}
+//         <label
+//           htmlFor="fileUpload"
+//           className="cursor-pointer text-gray-500 hover:text-blue-500 text-xl"
+//         >
+//           <GrAttachment />
+//         </label>
+
+//         {/* Text input */}
+//         <input
+//           type="text"
+//           value={input}
+//           onChange={(e) => setInput(e.target.value)}
+//           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+//           placeholder="Type a message..."
+//           className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+//         />
+
+//         {/* Send button */}
+//         <button
+//           onClick={sendMessage}
+//           className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all"
+//         >
+//           Send
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Chat;
+
+import { useEffect, useRef, useState, ChangeEvent } from "react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import socket from "../../socket/socket";
 import { RootState } from "../../state/store";
-import Sidebar from "./ChatSidebar";
-import { getAllContacts, getChat } from "../../api/client/clientServices";
-import { FaVideo } from "react-icons/fa";
-import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
+import socket from "../../socket/socket";
+import { getChat, sendFile } from "../../api/client/clientServices";
+import { GrAttachment } from "react-icons/gr";
+import { downloadFileFromChat } from "../../api/client/clientServices";
+interface ChatProps {
+  selectedUser: {
+    id: string;
+    name: string;
+  } | null;
+}
 
-type Message = {
-  name: string;
-  sender: string;
-  text: string;
+interface Message {
   senderId: string;
-  timestamp: Date;
   recipientId: string;
+  text: string;
+  file: string;
+  timestamp: string;
+  name?: string;
+}
+
+// 🛠️ Utility functions
+const formatDate = (isoString: string) => {
+  const date = new Date(isoString);
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 };
 
-type Contact = {
-  id: string;
-  name: string;
+const formatTime = (isoString: string) => {
+  const date = new Date(isoString);
+  return date.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 };
 
-const Chat = () => {
+const Chat = ({ selectedUser }: ChatProps) => {
   const { user } = useSelector((state: RootState) => state.user);
-  const location = useLocation();
-  const recipientId = location.state?.freelancerId;
-  const name = location.state?.name;
-
-  const userId = user?._id;
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [activeChat, setActiveChat] = useState<Contact | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState("");
-  const [isInCall, setIsInCall] = useState(false);
-  const [incomingCallData, setIncomingCallData] = useState<{
-    roomId: string;
-    senderId: string;
-  } | null>(null);
-
-  const generateKitToken = (userId: string, roomId: string) => {
-    const appID = 218939913; // Your Zego App ID
-    const serverSecret = import.meta.env.VITE_ZEGOCLOUDE_SERVER_SECRET; 
-
-    return ZegoUIKitPrebuilt.generateKitTokenForTest(
-      appID,
-      serverSecret,
-      roomId,
-      userId,
-      "chatroom"
-    );
-  };
-
-  const joinRoom = (roomId: string) => {
-    const kitToken = generateKitToken(userId!, roomId);
-    const zegoVideoCall = ZegoUIKitPrebuilt.create(kitToken);
-    zegoVideoCall.joinRoom({
-      container: document.getElementById("video-call-container"),
-      sharedLinks: [],
-    });
-
-    setIsInCall(true);
-  };
-
-  const startVideoCall = () => {
-    if (!userId || !activeChat) return;
-
-    const roomId = `${userId}-${activeChat.id}-${Date.now()}`; // Unique room ID
-    joinRoom(roomId);
-
-    socket.emit("startVideoCall", {
-      senderId: userId,
-      recipientId: activeChat.id,
-      roomId,
-    });
-  };
-
-  const acceptIncomingCall = () => {
-    if (incomingCallData) {
-      joinRoom(incomingCallData.roomId);
-      setIncomingCallData(null);
-    }
-  };
-
-  const rejectIncomingCall = () => {
-    setIncomingCallData(null);
-  };
-
+  const [input, setInput] = useState("");
+  const [file, setFile] = useState<any>();
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const [loding, setIsLoading] = useState(false);
   useEffect(() => {
-    async function fetchContacts() {
-      const response = await getAllContacts({ userId });
-      setActiveChat({ id: recipientId, name });
-      // setContacts(response.allContacts);
-      const updatedContacts = [...response.allContacts];
-    if (recipientId && name && !updatedContacts.some(contact => contact.id === recipientId)) {
-      updatedContacts.push({ id: recipientId, name });
-    }
+    if (!selectedUser || !user?._id) return;
 
-    setContacts(updatedContacts);
-    }
-
-    fetchContacts();
-  }, [userId]);
-  useEffect(() => {
-    async function fetchMessages() {
-      if (activeChat && userId) {
-        const response = await getChat(userId, activeChat.id);
-        if (response.success) {
-          setMessages(response.chat);
-        }
+    const fetchMessages = async () => {
+      try {
+        const res = await getChat(user._id, selectedUser.id);
+        setMessages(res.chat || []);
+      } catch (err) {
+        console.error("Failed to fetch messages:", err);
+        setMessages([]);
       }
-    }
-    fetchMessages();
-  }, [activeChat, userId]);
-  useEffect(() => {
-    socket.on("incomingVideoCall", (data) => {
-      setIncomingCallData(data);
-    });
+    };
 
-    socket.on("receiveMessage", (message: Message) => {
-      setMessages((prev) => [...prev, message]);
-      addToContacts(message.senderId, message.name);
-    });
+    fetchMessages();
+  }, [selectedUser, user]);
+
+  useEffect(() => {
+    if (user?._id) {
+      socket.emit("registerUser", user._id);
+    }
+
+    const handleReceive = (message: Message) => {
+      if (
+        (message.senderId === selectedUser?.id &&
+          message.recipientId === user?._id) ||
+        (message.senderId === user?._id &&
+          message.recipientId === selectedUser?.id)
+      ) {
+        setMessages((prev) => [...prev, message]);
+      }
+    };
+
+    socket.on("receiveMessage", handleReceive);
 
     return () => {
-      socket.off("incomingVideoCall");
-      socket.off("receiveMessage");
+      socket.off("receiveMessage", handleReceive);
     };
-  }, []);
+  }, [user, selectedUser]);
 
-  const addToContacts = (id: string, name: string) => {
-    setContacts((prev) =>
-      prev.some((contact) => contact.id === id) ? prev : [...prev, { id, name }]
-    );
+  const sendMessage = () => {
+    if (!input.trim() || !selectedUser || !user) return;
+
+    const message: Message = {
+      senderId: user._id,
+      recipientId: selectedUser.id,
+      text: input.trim(),
+      file: file,
+      timestamp: new Date().toISOString(),
+      name: user.name,
+    };
+
+    socket.emit("sendMessage", message);
+    setMessages((prev) => [...prev, message]);
+    setInput("");
+    setFile(null);
   };
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() && userId && activeChat) {
-      const message: Message = {
-        name: user.name,
-        senderId: userId,
-        recipientId: activeChat.id,
-        text: newMessage,
-        timestamp: new Date(),
-        sender: "Freelancer",
-      };
-      socket.emit("sendMessage", message);
-      setMessages((prev) => [...prev, message]);
-      setNewMessage("");
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const selectedFile = files[0];
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const response = await sendFile(formData);
+      setFile(response.data.fileUrl);
+    } catch (err) {
+      console.error("Failed to upload file:", err);
     }
   };
 
+  if (!selectedUser) {
+    return (
+      <div className="h-full flex items-center justify-center text-gray-500 text-lg">
+        👋 Select a contact to start chatting!
+      </div>
+    );
+  }
+
+  // Group messages by date
+  const groupedMessages: { [date: string]: Message[] } = {};
+  messages.forEach((msg) => {
+    const date = formatDate(msg.timestamp);
+    if (!groupedMessages[date]) groupedMessages[date] = [];
+    groupedMessages[date].push(msg);
+  });
+
+    const downloadFile = async (fileName: string) => {
+      setIsLoading(true);
+  
+      
+  
+      try {
+        const response = await downloadFileFromChat(fileName);
+        console.log(response);
+  
+        const contentDisposition = response.headers["content-disposition"];
+        const filename = contentDisposition
+          ? contentDisposition.split("filename=")[1].replace(/"/g, "")
+          : "downloaded-file";
+  
+        const blob = response.data;
+        const url = window.URL.createObjectURL(blob);
+  
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.click();
+  
+        window.URL.revokeObjectURL(url);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Failed to download file:", error);
+        setIsLoading(false);
+      }
+    };
+  
+  
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar
-        contacts={contacts}
-        activeChat={activeChat}
-        setActiveChat={setActiveChat}
-      />
+    <div className="flex flex-col h-full bg-gray-100">
+      {/* Header */}
+      <div className="p-4 border-b bg-white shadow-sm text-lg font-medium">
+        Chatting with <span className="font-semibold">{selectedUser.name}</span>
+      </div>
 
-      <div className="flex-1 flex flex-col">
-        <div className="bg-blue-500 text-white p-4">
-          <h1>Chat with {activeChat?.name || "Select a Contact"}</h1>
-        </div>
+      {/* Messages */}
+      <div className="flex-1 p-4 space-y-6 overflow-y-auto">
+        {Object.entries(groupedMessages).map(([date, msgs], groupIdx) => (
+          <div key={groupIdx} className="space-y-4">
+            {/* 📅 Date Header */}
+            <div className="text-center text-gray-500 text-sm font-medium">
+              {date}
+            </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`flex ${
-                message.senderId === userId ? "justify-end" : "justify-start"
-              }`}
-            >
+            {msgs.map((msg, idx) => (
               <div
-                className={`max-w-xs px-4 py-2 rounded ${
-                  message.senderId === userId
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-black"
+                key={idx}
+                className={`p-3 rounded-md shadow max-w-xs relative ${
+                  msg.senderId === user?._id
+                    ? "bg-blue-200 ml-auto text-right"
+                    : "bg-white"
                 }`}
               >
-                <p>{message.text}</p>
-                <p className="text-xs mt-1 text-gray-500">
-                  {new Date(message.timestamp).toLocaleTimeString()}
-                </p>
+                <div>{msg.text}</div>
+
+                {msg.file && (
+                  <div className="mt-2 space-y-2">
+                    {msg.file.match(/\.(jpeg|jpg|png|gif|webp)$/i) ? (
+                      <img
+                        src={msg.file}
+                        alt="Uploaded preview"
+                        className="max-w-full h-auto rounded border"
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <span>📄</span>
+                        <span>{msg.file.split("/").pop()}</span>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2">
+                      <button
+                        className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm cursor-pointer"
+                        onClick={() => downloadFile(msg.file)}
+                      >
+                        ⬇️ Download File
+                      </button>
+                      <a
+                        href={msg.file}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-sm"
+                      >
+                        🔍 Open File
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                <div className="text-xs text-gray-600 mt-1">
+                  {formatTime(msg.timestamp)}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-white p-4 flex items-center space-x-4">
-          {/* <FaVideo
-            className="text-blue-500 text-2xl cursor-pointer"
-            onClick={startVideoCall}
-          /> */}
-          <input
-            type="text"
-            className="flex-1 p-2 border rounded"
-            placeholder="Type a message"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-          />
-          <button
-            className="bg-blue-500 text-white p-2 rounded"
-            onClick={handleSendMessage}
-          >
-            Send
-          </button>
-        </div>
-
-        <div
-          id="video-call-container"
-          style={{
-            width: "100vw",
-            height: "100vh",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            zIndex: 50,
-            display: isInCall ? "block" : "none",
-          }}
-        ></div>
-
-        {incomingCallData && (
-          <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-4 rounded shadow">
-              <p>Incoming Video Call</p>
-              <div className="space-x-4">
-                <button
-                  className="bg-green-500 text-white px-4 py-2 rounded"
-                  onClick={acceptIncomingCall}
-                >
-                  Accept
-                </button>
-                <button
-                  className="bg-red-500 text-white px-4 py-2 rounded"
-                  onClick={rejectIncomingCall}
-                >
-                  Reject
-                </button>
-              </div>
-            </div>
+            ))}
           </div>
-        )}
+        ))}
+        <div ref={messagesEndRef}></div>
+      </div>
+
+      {/* Input */}
+      <div className="p-4 border-t bg-white flex items-center gap-3">
+        <input
+          type="file"
+          id="fileUpload"
+          onChange={handleFileUpload}
+          className="hidden"
+        />
+
+        <label
+          htmlFor="fileUpload"
+          className="cursor-pointer text-gray-500 hover:text-blue-500 text-xl"
+        >
+          <GrAttachment />
+        </label>
+
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          placeholder="Type a message..."
+          className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <button
+          onClick={sendMessage}
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all"
+        >
+          Send
+        </button>
       </div>
     </div>
   );

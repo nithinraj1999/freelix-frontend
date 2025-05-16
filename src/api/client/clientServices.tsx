@@ -224,3 +224,31 @@ export const downloadDeliverable = async (data: object) => {
     throw error; // Optional: rethrow error to handle it in the caller
   }
 };
+
+
+
+export const sendFile = async(data:Object)=>{
+      const response = await userInstance.post("/file-upload", data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response
+}
+
+
+
+export const downloadFileFromChat = async (url:string) => {
+  try {
+    const response = await userInstance.post("/download-attachment", {url:url}, {
+      responseType: "blob", 
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Error downloading the file:", error);
+    throw error; // Optional: rethrow error to handle it in the caller
+  }
+};
+
+ 
