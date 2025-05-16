@@ -41,7 +41,7 @@ import { useState } from "react";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { updateFreelancerBlockStatus } from "./state/slices/userSlice";
 import { updateUserBlockStatus } from "./state/slices/userSlice";
-
+import ChatSidebar from "./pages/chat/ChatSidebar";
 function App() {
   const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
   const userID = user?._id;
@@ -96,50 +96,6 @@ function App() {
     };
   }, [dispatch]);
 
-  // const generateKitToken = (userId: string, roomId: string) => {
-  //   const appID = Number(import.meta.env.VITE_ZEGOCLOUDE_APP_ID);
-  //   const serverSecret = import.meta.env.VITE_ZEGOCLOUDE_SERVER_SECRET;
-  //   return ZegoUIKitPrebuilt.generateKitTokenForTest(
-  //     appID,
-  //     serverSecret,
-  //     roomId,
-  //     userId,
-  //     "chatroom"
-  //   );
-  // };
-
-  // const joinRoom = (roomId: string) => {
-  //   const kitToken = generateKitToken(userId!, roomId);
-  //   const zegoVideoCall = ZegoUIKitPrebuilt.create(kitToken);
-
-  //   zegoVideoCall.joinRoom({
-  //     container: document.getElementById("video-call-container"),
-  //     sharedLinks: [],
-  //   });
-
-  //   setIsInCall(true);
-  // };
-
-  // const acceptIncomingCall = () => {
-  //   if (incomingCallData) {
-  //     joinRoom(incomingCallData.roomId);
-  //     setIncomingCallData(null);
-  //   }
-  // };
-
-  // const rejectIncomingCall = () => {
-  //   setIncomingCallData(null);
-  // };
-
-  // useEffect(() => {
-  //   socket.on("incomingVideoCall", (data) => {
-  //     setIncomingCallData(data);
-  //   });
-
-  //   return () => {
-  //     socket.off("incomingVideoCall");
-  //   };
-  // }, []);
 
   socket.on("connect", () => {
     console.log("Connected to server with socket ID:", socket.id);
@@ -180,7 +136,7 @@ function App() {
           <Route path="/hiring" element={<AllHiring />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
-        <Route path="/chat" element={<Chat />} />
+        <Route path="/chat" element={<ChatSidebar />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 

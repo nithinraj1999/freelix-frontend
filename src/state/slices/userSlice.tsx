@@ -55,14 +55,6 @@ const userSlice = createSlice({
       localStorage.removeItem('userData');
     },
     
-    // updateUserBlockStatus: (state, action: PayloadAction<{ userId: string; isBlock: boolean }>) => {
-    //   if (state.user && state.user._id === action.payload.userId) {
-    //     console.log("updateUserBlockStatus");
-        
-    //     state.user.isBlock = action.payload.isBlock;
-    //     localStorage.setItem('userData', JSON.stringify(state.user)); 
-    //   }   
-    // },
 
     updateUserBlockStatus: (state, action: PayloadAction<{ userId: string; isBlock: boolean }>) => {
     
