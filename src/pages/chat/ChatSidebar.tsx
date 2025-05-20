@@ -36,23 +36,26 @@ const ChatSidebar = () => {
       {/* Sidebar */}
       <div className="w-72 border-r bg-white p-4 overflow-y-auto">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Contacts</h2>
-        <ul className="space-y-2">
-          {contacts.length > 0 ? (
-            contacts.map((contact) => (
-              <li
-                key={contact.id}
-                onClick={() => setSelectedUser(contact)}
-                className={`p-3 rounded-lg cursor-pointer transition-all hover:bg-blue-100 ${
-                  selectedUser?.id === contact.id ? "bg-blue-100 font-semibold" : ""
-                }`}
-              >
-                {contact.name || "Unnamed Contact"}
-              </li>
-            ))
-          ) : (
-            <p className="text-sm text-gray-500">No contacts found</p>
-          )}
-        </ul>
+     <ul className="space-y-2">
+  {contacts.length > 0 ? (
+    contacts
+      .filter((contact) => contact.id !== user?._id) // filter out the current user
+      .map((contact) => (
+        <li
+          key={contact.id}
+          onClick={() => setSelectedUser(contact)}
+          className={`p-3 rounded-lg cursor-pointer transition-all hover:bg-blue-100 ${
+            selectedUser?.id === contact.id ? "bg-blue-100 font-semibold" : ""
+          }`}
+        >
+          {contact.name || "Unnamed Contact"}
+        </li>
+      ))
+  ) : (
+    <li className="text-sm text-gray-500">No contacts found</li>
+  )}
+</ul>
+
       </div>
 
       {/* Chat Window */}
