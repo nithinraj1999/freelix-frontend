@@ -9,6 +9,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { jwtDecode } from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
+import { useLocation } from "react-router-dom";
 
 function LoginComponent() {
   const [email, setEmail] = useState("");
@@ -18,7 +19,14 @@ function LoginComponent() {
   const dispatch = useDispatch();
   const { user } = useSelector((state: RootState) => state.user);
 
+  const location = useLocation()
   useEffect(() => {
+    if (location.state?.showSignupSuccess) {
+      toast.success("Account verified! Let’s get you started 🚀");
+      navigate(location.pathname, { replace: true, state: {} });
+
+    }
+
     if (user) {
       navigate("/home");
     }

@@ -39,17 +39,16 @@ const SignupComponent: React.FC = () => {
 
       if (!isValid) {
         setErrors(validationErrors);
-        setLoading(false); // Stop loading if validation fails
+        setLoading(false); 
         return;
       }
 
-      // If validation passes, proceed with registration
       const data = {
         name,
         email,
         password,
         confirmPassword,
-        phone:phoneNumber, // Convert back to number
+        phone:phoneNumber, 
       };
 
       const response = await registerUser(data);
@@ -66,7 +65,7 @@ const SignupComponent: React.FC = () => {
       
     } catch (error) {
       console.error(error);
-      setLoading(false); // Stop loading in case of an error
+      setLoading(false); 
     }
   };
 

@@ -18,7 +18,6 @@ const VerifyOtp: React.FC = () => {
 
   const location = useLocation();
 
-  // Handle OTP input change
   const handleOtpChange = (value: string, index: number) => {
     const newOtp = [...otp];
     newOtp[index] = value;
@@ -49,7 +48,9 @@ const VerifyOtp: React.FC = () => {
     console.log("res...",response);
     
     if(response.success){
-      navigate('/login');
+      
+      navigate('/login', { state: { showSignupSuccess: true } });
+
     } else {
       toast.error('Wrong OTP, please try again!', {
         position: "top-right",

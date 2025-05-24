@@ -64,8 +64,8 @@ export const signupValidation = (
     if (!confirmPassword || !confirmPassword.trim()) {
       validationErrors.confirmPassword = 'confirmPassword is required';
       isValid = false;
-    } else if (confirmPassword.trim() !== confirmPassword) {
-      validationErrors.confirmPassword = 'confirmPassword cannot start or end with whitespace';
+    } else if (password !== confirmPassword) {
+      validationErrors.confirmPassword = 'password is not matching';
       isValid = false;
     }
   
