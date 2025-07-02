@@ -64,7 +64,7 @@ const OrderList = () => {
         {orders.map((order) => (
           <div key={order._id} className="flex justify-between items-center px-6 py-4 border-b border-gray-100 hover:bg-gray-50 transition duration-200">
             <div className="w-1/5 flex items-center space-x-4">
-              <img src={order.clientId.profilePicture} alt="Client" className="w-10 h-10 rounded-full" />
+              <img src={order.clientId?.profilePicture} alt="Client" className="w-10 h-10 rounded-full" />
               <span className="text-gray-800 font-medium">{order.clientId.name}</span>
             </div>
 
@@ -93,7 +93,7 @@ const OrderList = () => {
         <OrderDetails
           order={selectedOrder}
           onClose={closeDetailsModal}
-          updateOrderStatus={updateOrderStatus} // Pass the callback function
+          updateOrderStatus={updateOrderStatus} 
         />
       )}
     </div>

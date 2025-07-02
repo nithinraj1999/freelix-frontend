@@ -43,7 +43,7 @@ import { updateFreelancerBlockStatus } from "./state/slices/userSlice";
 import { updateUserBlockStatus } from "./state/slices/userSlice";
 import ChatSidebar from "./pages/chat/ChatSidebar";
 function App() {
-  const { user } = useSelector((state: RootState) => state.user); // Get user from Redux store
+  const { user } = useSelector((state: RootState) => state.user);
   const userID = user?._id;
   const userId = user?._id;
   const [isInCall, setIsInCall] = useState(false);
