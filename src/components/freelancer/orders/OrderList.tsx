@@ -50,6 +50,8 @@ const OrderList = () => {
 
 
   if(!orders){
+    console.log("orders",orders);
+    
     return(
       <>
       <div>No orders yet</div>

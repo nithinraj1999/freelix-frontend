@@ -35,7 +35,7 @@ const AllJobPosts: React.FC = () => {
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const { user } = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  // const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Debounce search input to prevent excessive API calls
   useEffect(() => {
@@ -61,16 +61,17 @@ const AllJobPosts: React.FC = () => {
 
     // }
   });
-  useEffect(() => {
-    if (!isLoading && searchInputRef.current) {
+  
+  // useEffect(() => {
+  //   if (!isLoading) {
     
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 100);
-    }
-    console.log("second effect");
+  //     setTimeout(() => {
+  //       searchInputRef.current?.focus();
+  //     }, 100);
+  //   }
+  //   console.log("second effect");
 
-  }, [isLoading, debouncedSearch])
+  // }, [isLoading, debouncedSearch])
   // Extract jobs & pagination data
   const jobList = data?.jobPosts.MyPost || [];
   const totalPages = Math.ceil((data?.jobPosts.totalDocs || 0) / POSTS_PER_PAGE);
@@ -112,7 +113,7 @@ const AllJobPosts: React.FC = () => {
       <div className="mb-6">
         <input
           type="text"
-          ref={searchInputRef}
+          // ref={searchInputRef}
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
           placeholder="Search by job title"
           value={searchQuery}

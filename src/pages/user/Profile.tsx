@@ -25,7 +25,7 @@ const Profile = () => {
   const profileSchema = z.object({
     name: z
       .string()
-      .min(1, "Name cannot be empty")
+      .min(1, "Name cannot be empty") 
       .trim()
       .refine((value) => value.length > 0, {
         message: "Name cannot be only spaces",
