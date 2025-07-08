@@ -13,7 +13,7 @@ import { fetchSkills } from "../../../api/client/clientServices";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.core.css";
-
+import LoadingSpinner from "../../LoadingSpinner";
 const JobPostForm: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -31,6 +31,7 @@ const JobPostForm: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.user); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -152,7 +153,8 @@ const JobPostForm: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+      if (isLoading) return;
+setIsLoading(true);
     const validationResult = schema.safeParse({
       title,
       description,
@@ -170,12 +172,16 @@ const JobPostForm: React.FC = () => {
       validationResult.error.errors.forEach((error) => {
         validationErrors[error.path[0]] = error.message;
       });
+      setIsLoading(false);
+
       setErrors(validationErrors);
       return;
     } else {
       setErrors({});
     }
     try {
+            setIsLoading(true);
+
       const postData = new FormData();
       if (selectedFile) {
         postData.append("file", selectedFile);
@@ -203,11 +209,16 @@ const JobPostForm: React.FC = () => {
           position: "top-right",
         });
         navigate("/my-job-post");
+        setIsLoading(false);
         console.log("Job post created successfully:", response);
       } else {
+                setIsLoading(false);
+
         console.error("Failed to create job post:", response.statusText);
       }
     } catch (error) {
+              setIsLoading(false);
+
       console.error("An error occurred while creating the job post:", error);
     }
   };
@@ -402,7 +413,7 @@ const JobPostForm: React.FC = () => {
                 This will help us match you to talent within your range.
               </p>
               <div className="flex space-x-4 mt-4">
-                {["hourly", "fixed"].map((type) => (
+                {[ "fixed"].map((type) => (
                   <label
                     key={type}
                     className={`flex-1 cursor-pointer h-10 text-center flex items-center justify-center rounded-lg transition-colors duration-300 ${
@@ -419,7 +430,7 @@ const JobPostForm: React.FC = () => {
                       onChange={() => onPaymentTypeChange(type)}
                       className="hidden"
                     />
-                    {type === "hourly" ? "Hourly Pay" : "Fixed Price"}
+                    {type === "hourly" ? "Hourly Pay" : " Price"}
                   </label>
                 ))}
               </div>
@@ -465,7 +476,7 @@ const JobPostForm: React.FC = () => {
 
             {selectedPaymentType === "fixed" && (
               <div className="mt-6">
-                <h4 className="text-gray-700 font-bold mb-2">Fixed Price</h4>
+                <h4 className="text-gray-700 font-bold mb-2"> Price</h4>
                 <input
                   type="number"
                   placeholder="Enter total amount"
@@ -486,9 +497,14 @@ const JobPostForm: React.FC = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full h-12 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors"
+              className="w-full h-12 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center disabled:opacity-60"
             >
-              Submit
+                {isLoading ? (
+<LoadingSpinner/>
+  ) : (
+    "Submit"
+  )}
+              
             </button>
           </form>
         </div>

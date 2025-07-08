@@ -131,7 +131,7 @@ const JobListPage: React.FC = () => {
             handleSearch={handleSearch}
           />
         </div>
-      </div>
+      </div>     
     </>
   );
 };

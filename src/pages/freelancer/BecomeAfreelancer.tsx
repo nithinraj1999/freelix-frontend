@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { userLogin } from "../../state/slices/userSlice";
 import { fetchSkills } from "../../api/client/clientServices";
 import { switchToSelling } from "../../api/freelancer/freelancerServices";
+import LoadingSpinner from "../../components/LoadingSpinner";
 // Zod schema for validation
 const freelancerSchema = z.object({
   name: z
@@ -105,6 +106,7 @@ const BecomeFreelancerForm: React.FC = () => {
   const [skills, setSkills] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+    const [isLoading, setIsLoading] = useState(false);
 
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
@@ -166,6 +168,10 @@ const BecomeFreelancerForm: React.FC = () => {
     setLanguages(languages.filter((_, i) => i !== index));
   };
   const handleSubmit = async (e: React.FormEvent) => {
+      if (isLoading) return;
+
+  setIsLoading(true);
+
     e.preventDefault();
 
     setErrors({});
@@ -196,15 +202,20 @@ const BecomeFreelancerForm: React.FC = () => {
       if (response.success) {
         console.log(response);
         const switchToFreelancer = await switchToSelling(response._id);
+        setIsLoading(false);
         if (switchToFreelancer) {
           dispatch(userLogin(response.freelancerData));
           navigate("/freelancer");
+          setIsLoading(false);
+
         }
       } else {
         navigate("/home");
+        setIsLoading(false);
+
       }
     } catch (error) {
-      // Catch validation errors
+        setIsLoading(false);
       if (error instanceof z.ZodError) {
         const validationErrors: Record<string, string> = {};
         error.errors.forEach((err) => {
@@ -380,46 +391,6 @@ const BecomeFreelancerForm: React.FC = () => {
             ))}
           </div>
         </div>
-
-        {/* Skills Section */}
-        {/* <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700">
-            Skills
-          </label>
-          <div className="space-y-2">
-            {skills.map((skill, index) => (
-              <div key={index} className="flex items-center">
-                <input
-                  type="text"
-                  value={skill}
-                  onChange={(e) => handleSkillChange(index, e.target.value)}
-                  className={`mt-1 block w-full border ${
-                    errors.skills ? "border-red-500" : "border-gray-300"
-                  } rounded-md shadow-sm focus:border-green-500 focus:ring-green-500 p-2`}
-                  placeholder="Select Skill"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeSkill(index)}
-                  className="ml-2 text-red-600"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-            {errors.skills && (
-              <p className="text-red-500 text-sm">{errors.skills}</p>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={addSkill}
-            className="mt-2 text-green-600"
-          >
-            Add
-          </button>
-        </div> */}
-
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700">
             Languages
@@ -476,9 +447,15 @@ const BecomeFreelancerForm: React.FC = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-green-500 text-white p-2 rounded-md"
+          className="w-full bg-green-500 text-white p-2 rounded-md flex items-center justify-center disabled:opacity-60"
+            disabled={isLoading}
+
         >
-          Submit
+            {isLoading ? (
+<LoadingSpinner/>
+  ) : (
+    "Submit"
+  )} 
         </button>
       </form>
     </div>

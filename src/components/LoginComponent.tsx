@@ -10,10 +10,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { jwtDecode } from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
 import { useLocation } from "react-router-dom";
-
+import LoadingSpinner from "./LoadingSpinner";
 function LoginComponent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,6 +34,11 @@ function LoginComponent() {
   }, [navigate, user]);
 
   const handleLogin = async () => {
+      if (isLoading) return; 
+
+
+  setIsLoading(true);
+
     const data = {
       email,
       password,
@@ -43,7 +49,10 @@ function LoginComponent() {
     if (response && response.success && response.user) {
       dispatch(userLogin(response.user));
       navigate("/home");
+            setIsLoading(false);
+
     } else {
+      setIsLoading(false);
       console.error(response);
       toast.error("Incorrect email or password", {
         position: "top-right", // Use the string directly
@@ -63,7 +72,7 @@ function LoginComponent() {
     console.log(details);
     console.log(credentialResponse);
   }
-  
+
 
   return (
     <>
@@ -81,7 +90,7 @@ function LoginComponent() {
           </h1>
 
           <div className="px-5 py-5 space-y-3.5">
-            <h1>Email or username</h1>
+            <h1>Email</h1>
             <input
               type="text"
               className="border-2 w-full h-10 font-medium rounded-md px-2"
@@ -101,19 +110,19 @@ function LoginComponent() {
             >
               Forgot password?
             </h1>
-            <button
-              className="w-full h-10 font-white bg-black text-white"
-              onClick={handleLogin}
-            >
-              login
-            </button>
+<button
+  className="w-full h-10 font-white bg-black text-white flex items-center justify-center disabled:opacity-60"
+  onClick={handleLogin}
+  disabled={isLoading}
+>
+  {isLoading ? (
+<LoadingSpinner/>
+  ) : (
+    "login"
+  )}
+</button>
+
             
-            {/* <GoogleLogin
-             onSuccess={successlogin}
-             onError={() => {
-               console.log("Login Failed");
-             }}
-           /> */}
             <h1>
               Dont have an account?{" "}
               <span
@@ -123,9 +132,7 @@ function LoginComponent() {
                 signup
               </span>{" "}
             </h1>
-           
           </div>
-          
         </div>
       </Modal>
       <ToastContainer />

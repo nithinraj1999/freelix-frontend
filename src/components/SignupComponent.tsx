@@ -3,7 +3,6 @@ import { useState } from "react";
 import { registerUser } from "../api/user/authUser";
 import { signupValidation } from "../utils/validation";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Using react-icons for eye icons
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,7 +13,7 @@ const SignupComponent: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [errors, setErrors] = useState<Record<string, string>>({}); // For storing validation errors
+  const [errors, setErrors] = useState<Record<string, string>>({}); 
   const [loading, setLoading] = useState(false); // Add loading state
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
 
@@ -128,9 +127,9 @@ const SignupComponent: React.FC = () => {
               )}{" "}
               <div className="mt-4">
               <input
-                  type= "password"// Toggle input type
+                  type= "password"
                   value={confirmPassword}
-                  className="border-2 w-full h-10 font-medium rounded-md px-3 pr-10" // Add padding-right for icon space
+                  className="border-2 w-full h-10 font-medium rounded-md px-3 pr-10" 
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="confirm password"
                 />
@@ -165,7 +164,7 @@ const SignupComponent: React.FC = () => {
               <button
                 className="border-2 w-full h-10 font-medium rounded-md"
                 onClick={handleRegister}
-                disabled={loading} // Disable button during loading
+                disabled={loading} 
               >
                 Continue
               </button>

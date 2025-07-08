@@ -50,7 +50,7 @@ const AllJobPosts: React.FC = () => {
     queryKey: ["jobPosts", user?._id, debouncedSearch, currentPage],
     queryFn: async () => {
       if (!user?._id) return { jobPosts: { totalDocs: 0, MyPost: [] } };
-      return await getAllJobPosts({
+      return await getAllJobPosts({ 
         userID: user._id,
         searchQuery: debouncedSearch,
         page: currentPage,
@@ -62,17 +62,6 @@ const AllJobPosts: React.FC = () => {
     // }
   });
   
-  // useEffect(() => {
-  //   if (!isLoading) {
-    
-  //     setTimeout(() => {
-  //       searchInputRef.current?.focus();
-  //     }, 100);
-  //   }
-  //   console.log("second effect");
-
-  // }, [isLoading, debouncedSearch])
-  // Extract jobs & pagination data
   const jobList = data?.jobPosts.MyPost || [];
   const totalPages = Math.ceil((data?.jobPosts.totalDocs || 0) / POSTS_PER_PAGE);
 

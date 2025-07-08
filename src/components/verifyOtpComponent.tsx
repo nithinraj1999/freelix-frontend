@@ -6,13 +6,14 @@ import Modal from "./ModalComponent";
 import { verifyOTP } from "../api/user/authUser";
 import { resendOTP } from "../api/user/authUser";
 import { useLocation } from 'react-router-dom';
-
+import LoadingSpinner from "./LoadingSpinner";
 const VerifyOtp: React.FC = () => {
   const [otp, setOtp] = useState<string[]>(["", "", "", "", ""]);
   const [showResend, setShowResend] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(120); 
   const [resendTrigger, setResendTrigger] = useState<boolean>(false); // NEW STATE FOR RESEND TRIGGER
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate()
 
@@ -35,6 +36,9 @@ const VerifyOtp: React.FC = () => {
   };
 
   const handleVerify = async () => {
+      if (isLoading) return;
+  setIsLoading(true);
+
     const otpValue = otp.join(""); 
     // const userID = new URLSearchParams(window.location.search).get('id'); 
     const {email } = location.state 
@@ -50,8 +54,11 @@ const VerifyOtp: React.FC = () => {
     if(response.success){
       
       navigate('/login', { state: { showSignupSuccess: true } });
+      setIsLoading(false);
 
     } else {
+      setIsLoading(false);
+
       toast.error('Wrong OTP, please try again!', {
         position: "top-right",
         autoClose: 3000,
@@ -134,8 +141,13 @@ const VerifyOtp: React.FC = () => {
           )}
         </div>
         <div className="text-center">
-          <button className="w-full bg-black h-10 text-white" onClick={handleVerify}>
-            Verify
+          <button className="w-full bg-black h-10 text-white flex items-center justify-center disabled:opacity-60"   disabled={isLoading} onClick={handleVerify}>
+              {isLoading ? (
+<LoadingSpinner/>
+  ) : (
+    "Verify"
+  )}
+            
           </button>
           {/* Resend OTP Link */}
           {showResend && (

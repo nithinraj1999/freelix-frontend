@@ -21,17 +21,15 @@ const JobFilter: React.FC<JobFilterProps> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Update local state if initialFilters change (for example, due to query parameters)
     setFilters(initialFilters);
-  }, [initialFilters]);
+  }, [initialFilters,filters]);
 
   const handleFilterChange = (field: string, value: any) => {
     const updatedFilters = { ...filters, [field]: value };
     setFilters(updatedFilters);
-    onFilterChange(updatedFilters); // Notify the parent component of updated filters
+    onFilterChange(updatedFilters);
   };
 
-  // Handle the reset of filters to initial state
   const defaultFilters = {
     projectType: 'any',
     minPrice: 0,
@@ -56,7 +54,7 @@ const JobFilter: React.FC<JobFilterProps> = ({
       <h2 className="text-xl font-semibold mb-4">Filter Jobs</h2>
 
       {/* Project Type Filter */}
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Project Type
         </label>
@@ -70,7 +68,7 @@ const JobFilter: React.FC<JobFilterProps> = ({
           <option value="fixed">Fixed Rate</option>
         </select>
       </div>
-
+ */}
       {/* Price Range Filter - Min and Max Price in the same section */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
@@ -128,7 +126,7 @@ const JobFilter: React.FC<JobFilterProps> = ({
       <button
         type="button"
         onClick={resetFilters}
-        className="mt-4 w-full py-2 bg-gray-300 text-white font-semibold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
+        className="mt-4 w-full py-2 bg-black text-white font-semibold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50"
       >
         Reset Filters
       </button>
